@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+# Name of the installed module
+#export PYBUILD_NAME = mailman
+
+# see EXAMPLES in dpkg-buildflags(1) and read /usr/share/dpkg/*
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+MM3_BIN_DIR=/usr/lib/mailman3/bin/
+export PYBUILD_INSTALL_ARGS ?= \
+	--install-scripts=${MM3_BIN_DIR}/
+
+# main packaging script based on dh7 syntax
+%:
+	dh $@ --with python3,systemd,sphinxdoc --buildsystem=pybuild
+
+override_dh_auto_test:
+
+
+override_dh_auto_install:
+	dh_auto_install
+	install -o list -g list -m 755 -d debian/tmp/etc/mailman3/
+	install -o list -g list -m 644 debian/contrib/mailman.cfg debian/tmp/etc/mailman3/mailman.cfg
+	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
+	find debian/tmp -type d -empty -delete
+	# Builds sphinx doc
+	PYTHONPATH=. sphinx-build -N -q -E -c ./ -b html . debian/compiled_doc/temp
+	mv debian/compiled_doc/temp/src/mailman debian/compiled_doc/html
+	rm -rf debian/compiled_doc/temp
+
+# dh_make generated override targets
+# This is example for Cmake (See https://bugs.debian.org/641051 )
+#override_dh_auto_configure:
+#	dh_auto_configure -- \
+#	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
+
+
+
+

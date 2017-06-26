@@ -1,0 +1,10 @@
+Document: mailman3-core-doc
+Title: Mailman3 core server documentation
+Author: The Mailman Developers
+Abstract: This manual describes how to use Mailman3 core server
+ functionalities
+Section: Network/Communication
+
+Format: HTML
+Index: /usr/share/doc/mailman3-core-doc/html/docs/introduction.html
+Files: /usr/share/doc/mailman3-core-doc/html/*
