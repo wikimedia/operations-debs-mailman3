@@ -2,6 +2,8 @@
 
 [Unit]
 Description=Mailman3 Core program
+Documentation=man:mailman(1)
+Documentation=https://wiki.list.org/Mailman3
 ConditionPathExists=/etc/mailman3/mailman.cfg
 
 [Service]
