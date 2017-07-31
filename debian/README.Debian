@@ -2,7 +2,7 @@ mailman3-core for Debian
 ------------------------
 
  TODO:
-  * manpages for scripts
-  * add sysv services
+  * Still no real manpage
+  * Decide whether this package should ship a sysv service script
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 17 Sep 2015 11:27:05 +0200
+ -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 26 Jun 2017 17:06:00 +0200
