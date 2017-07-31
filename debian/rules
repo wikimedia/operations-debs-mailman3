@@ -39,6 +39,9 @@ override_dh_auto_install:
 	PYTHONPATH=. sphinx-build -N -q -E -c ./ -b html . debian/compiled_doc/temp
 	mv debian/compiled_doc/temp/src/mailman debian/compiled_doc/html
 
+override_dh_installchangelogs:
+	dh_installchangelogs src/mailman/docs/NEWS.rst
+
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
 #override_dh_auto_configure:
