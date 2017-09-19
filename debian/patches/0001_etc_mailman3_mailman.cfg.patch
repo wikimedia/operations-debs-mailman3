@@ -1,0 +1,53 @@
+From: Jonas Meurer <mejo@debian.org>
+Date: Tue, 19 Sep 2017 15:50:20 +0200
+Subject: Consider /etc/mailman3/mailman.cfg as config file
+
+---
+ src/mailman/config/docs/config.rst   |    1 +
+ src/mailman/core/initialize.py       |    4 ++++
+ src/mailman/tests/test_configfile.py |   11 +++++++++++
+ 3 files changed, 16 insertions(+)
+
+--- a/src/mailman/config/docs/config.rst
++++ b/src/mailman/config/docs/config.rst
+@@ -19,6 +19,7 @@ site's custom ``mailman.cfg`` file.  The
+ * ``var/etc/mailman.cfg`` relative to the current working directory
+ * ``$HOME/.mailman.cfg``
+ * ``/etc/mailman.cfg``
++* ``/etc/mailman3/mailman.cfg``
+ * ``../../etc/mailman.cfg`` relative to the working directory of ``argv[0]``
+ 
+ You can also use the ``-C`` option to specify an explicit path, and this
+--- a/src/mailman/core/initialize.py
++++ b/src/mailman/core/initialize.py
+@@ -71,6 +71,10 @@ def search_for_configuration_file():
+     config_path = '/etc/mailman.cfg'
+     if os.path.exists(config_path):
+         return os.path.abspath(config_path)
++    # /etc/mailman3/mailman.cfg
++    config_path = '/etc/mailman3/mailman.cfg'
++    if os.path.exists(config_path):
++        return os.path.abspath(config_path)
+     # $argv0/../../etc/mailman.cfg
+     bindir = os.path.dirname(sys.argv[0])
+     parent = os.path.dirname(bindir)
+--- a/src/mailman/tests/test_configfile.py
++++ b/src/mailman/tests/test_configfile.py
+@@ -171,6 +171,17 @@ class TestConfigFileSearchWithChroot(Tes
+                 print('# Fake mailman.cfg file', file=fp)
+             self.assertEqual(search_for_configuration_file(), config_file)
+ 
++    def test_etc_mailman3_file(self):
++        # Test /etc/mailman3/mailman.cfg
++        fake_etc = '/etc/mailman3'
++        fake_testdir = self._make_fake(fake_etc)
++        config_file = os.path.join(fake_etc, 'mailman.cfg')
++        with fakedirs(fake_testdir):
++            # Write a mostly empty configuration file.
++            with open(os.path.join(fake_testdir, 'mailman.cfg'), 'w') as fp:
++                print('# Fake mailman.cfg file', file=fp)
++            self.assertEqual(search_for_configuration_file(), config_file)
++
+     def test_sibling_directory(self):
+         # Test $argv0/../../etc/mailman.cfg
+         fake_root = '/usr/local/mm3'
