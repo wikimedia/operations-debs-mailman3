@@ -35,6 +35,7 @@ override_dh_auto_install:
 	install -o list -g list -m 644 debian/contrib/mailman.cfg debian/tmp/etc/mailman3/mailman.cfg
 	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
 	find debian/tmp -type d -empty -delete
+	install -o list -g list -m 755 -d debian/tmp/var/lib/mailman3/
 	# Builds sphinx doc
 	PYTHONPATH=. sphinx-build -N -q -E -c ./ -b html . debian/compiled_doc/temp
 	mv debian/compiled_doc/temp/src/mailman debian/compiled_doc/html
@@ -47,7 +48,5 @@ override_dh_installchangelogs:
 #override_dh_auto_configure:
 #	dh_auto_configure -- \
 #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
-
-
 
 
