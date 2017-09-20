@@ -2,6 +2,7 @@ Source: mailman3-core
 Section: mail
 Priority: optional
 Maintainer: Pierre-Elliott Bécue <becue@crans.org>
+Uploaders: Jonas Meurer <mejo@debian.org>
 Build-Depends: debhelper (>= 10),
                dh-systemd,
                python3-aiosmtpd (>=1.0),
