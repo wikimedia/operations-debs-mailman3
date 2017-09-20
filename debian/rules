@@ -36,6 +36,7 @@ override_dh_auto_install:
 	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
 	find debian/tmp -type d -empty -delete
 	install -o list -g list -m 755 -d debian/tmp/var/lib/mailman3/
+	install -o list -g list -m 755 -d debian/tmp/var/log/mailman3/
 	# Builds sphinx doc
 	#PYTHONPATH=. sphinx-build -N -q -E -c ./ -b html . debian/compiled_doc/temp
 	PYTHONPATH=. sphinx-build -b html -N . debian/compiled_doc/html
