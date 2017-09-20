@@ -1,4 +1,1 @@
-debian/tmp/etc/*
 debian/tmp/usr/lib/*
-debian/tmp/var/lib/*
-debian/tmp/var/log/*

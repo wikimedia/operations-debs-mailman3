@@ -36,12 +36,11 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_auto_install
-	install -o list -g list -m 755 -d debian/tmp/etc/mailman3/
-	install -o list -g list -m 644 debian/contrib/mailman.cfg debian/tmp/etc/mailman3/mailman.cfg
+	install -o list -g list -m 755 -d debian/mailman3-core/etc/mailman3/
+	install -o list -g list -m 644 debian/contrib/mailman.cfg debian/mailman3-core/etc/mailman3/mailman.cfg
+	install -o list -g list -m 755 -d debian/mailman3-core/var/lib/mailman3/
+	install -o list -g list -m 755 -d debian/mailman3-core/var/log/mailman3/
 	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
-	find debian/tmp -type d -empty -delete
-	install -o list -g list -m 755 -d debian/tmp/var/lib/mailman3/
-	install -o list -g list -m 755 -d debian/tmp/var/log/mailman3/
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst
