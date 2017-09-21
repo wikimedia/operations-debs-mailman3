@@ -8,13 +8,10 @@ General maintenance
 
 Building the package
 
-    Build the package using git-buildpackage with pristine tar:
+    This package has been designed and tested with sbuild. You can
+    build it, assuming you have a proper unstable chroot for sbuild using
 
-        gbp buildpackage --git-pristine-tar
-
-    You might need to manually copy the upstream tarball signature to the
-    build area (e.g. build-area/mailman3-core_1.1.0.orig.tar.gz.asc) to
-    enable cryptographic signature verification of the upstream tarball.
+        sbuild -As
 
 Import a new upstream version
 
