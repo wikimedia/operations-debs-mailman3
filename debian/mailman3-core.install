@@ -1,2 +1,2 @@
 debian/tmp/usr/lib/*
-debian/contrib/mailman.cfg /etc/mailman3/mailman.cfg
+debian/contrib/mailman.cfg /etc/mailman3/
