@@ -22,10 +22,10 @@ override_dh_auto_build:
 	dh_auto_build
 
 override_dh_auto_install:
+	install -d debian/mailman3-core/etc/mailman3/
+	install -d debian/mailman3-core/var/lib/mailman3/
+	install -d debian/mailman3-core/var/log/mailman3/
 	dh_auto_install
-	install -o list -m 0755 -d debian/mailman3-core/etc/mailman3/
-	install -o list -g list -m 0755 -d debian/mailman3-core/var/lib/mailman3/
-	install -o list -g list -m 0755 -d debian/mailman3-core/var/log/mailman3/
 	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
 
 override_dh_fixperms:
