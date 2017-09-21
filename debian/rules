@@ -6,6 +6,8 @@ include /usr/share/dpkg/default.mk
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+export PYBUILD_NAME = mailman-core
+
 MM3_BIN_DIR=/usr/lib/mailman3/bin/
 export PYBUILD_INSTALL_ARGS ?= \
 	--install-scripts=${MM3_BIN_DIR}/
