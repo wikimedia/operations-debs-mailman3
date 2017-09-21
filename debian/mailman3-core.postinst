@@ -4,8 +4,12 @@ set -e
 
 case "$1" in
     configure)
-        dpkg-statoverride --add list list 0755 /var/lib/mailman3
-        dpkg-statoverride --add list list 0755 /var/log/mailman3
+        for i in /var/lib/mailman3 /var/log/mailman3; do
+            # only do something when no setting exists
+            if ! dpkg-statoverride --list $i >/dev/null 2>&1; then
+                chown list:list $i
+            fi
+        done
     ;;
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;
