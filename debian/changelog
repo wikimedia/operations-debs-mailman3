@@ -2,4 +2,4 @@ mailman3-core (3.1.0-1) unstable; urgency=low
 
   * Initial release (Closes: #799281)
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 26 Jun 2017 17:06:00 +0200
+ -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 21 Sep 2017 11:38:00 +0200
