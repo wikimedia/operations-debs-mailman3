@@ -1,0 +1,29 @@
+From: Jonas Meurer <mejo@debian.org>
+Date: Thu, 21 Sep 2017 14:37:02 +0200
+Subject: Remove embedded remote images from README.rst
+
+---
+ README.rst |   12 ------------
+ 1 file changed, 12 deletions(-)
+
+--- a/README.rst
++++ b/README.rst
+@@ -2,18 +2,6 @@
+ Mailman - The GNU Mailing List Management System
+ ================================================
+ 
+-.. image:: https://gitlab.com/mailman/mailman/badges/master/build.svg
+-    :target: https://gitlab.com/mailman/mailman/commits/master
+-
+-.. image:: https://readthedocs.org/projects/mailman/badge
+-    :target: https://mailman.readthedocs.io
+-
+-.. image:: http://img.shields.io/pypi/v/mailman.svg
+-    :target: https://pypi.python.org/pypi/mailman
+-
+-.. image:: http://img.shields.io/pypi/dm/mailman.svg
+-    :target: https://pypi.python.org/pypi/mailman
+-
+ Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+ 
+ This is GNU Mailman, a mailing list management system distributed under the
