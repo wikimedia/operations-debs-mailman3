@@ -6,7 +6,8 @@ include /usr/share/dpkg/default.mk
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-export PYBUILD_NAME = mailman-core
+export PYBUILD_NAME = mailman3-core
+export PYBUILD_DESTDIR = debian/mailman3-core
 
 MM3_BIN_DIR=/usr/lib/mailman3/bin/
 export PYBUILD_INSTALL_ARGS ?= \
@@ -24,8 +25,8 @@ override_dh_auto_build:
 	dh_auto_build
 
 override_dh_auto_install:
-	find debian/tmp/usr -type d -name "tests" -print0 | xargs -0 rm -r
 	dh_auto_install
+	find debian/mailman3-core/usr -type d -name "tests" -print0 | xargs -0 rm -r
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst
