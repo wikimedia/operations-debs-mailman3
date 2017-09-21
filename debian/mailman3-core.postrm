@@ -1,3 +1,4 @@
+#!/bin/bash
 dpkg-statoverride --remove /etc/mailman3/mailman.cfg
 dpkg-statoverride --remove /var/lib/mailman3
 dpkg-statoverride --remove /var/log/mailman3
