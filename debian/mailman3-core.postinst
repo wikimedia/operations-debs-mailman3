@@ -7,6 +7,12 @@ case "$1" in
         dpkg-statoverride --add list list 0755 /var/lib/mailman3
         dpkg-statoverride --add list list 0755 /var/log/mailman3
     ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+    ;;
 esac
 
 # dh_installdeb will replace this with shell code automatically
