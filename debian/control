@@ -37,6 +37,7 @@ Depends: logrotate,
          ${shlibs:Depends},
          ${misc:Depends},
          ${python3:Depends}
+Suggests: mailman3-core-doc
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system distributed under the
  terms of the GNU General Public License (GPL) version 3 or later.  The name of
