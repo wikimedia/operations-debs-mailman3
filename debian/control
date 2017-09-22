@@ -1,8 +1,9 @@
 Source: mailman3-core
 Section: mail
 Priority: optional
-Maintainer: Pierre-Elliott Bécue <becue@crans.org>
-Uploaders: Jonas Meurer <mejo@debian.org>
+Maintainer: Mailman for Debian <pkg-mailman-hackers@lists.debian.org>
+Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
+    Jonas Meurer <mejo@debian.org>
 Build-Depends: debhelper (>= 10),
                python3-aiosmtpd (>=1.0),
                python3-alembic,
