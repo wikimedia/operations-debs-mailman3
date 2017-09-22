@@ -3,7 +3,7 @@ Section: mail
 Priority: optional
 Maintainer: Mailman for Debian <pkg-mailman-hackers@lists.debian.org>
 Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
-    Jonas Meurer <mejo@debian.org>
+           Jonas Meurer <mejo@debian.org>
 Build-Depends: debhelper (>= 10),
                python3-aiosmtpd (>=1.0),
                python3-alembic,
@@ -25,6 +25,7 @@ Build-Depends: debhelper (>= 10),
                python3-zope.event,
                python3-zope.interface
 Standards-Version: 4.1.0
+Testsuite: autopkgtest-pkg-python
 Homepage: http://www.list.org/
 X-Python3-Version: >= 3.5
 Vcs-Browser: https://anonscm.debian.org/git/pkg-mailman/mailman3-core.git
