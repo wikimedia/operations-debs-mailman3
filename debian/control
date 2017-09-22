@@ -1,7 +1,7 @@
 Source: mailman3-core
 Section: mail
 Priority: optional
-Maintainer: Mailman for Debian <pkg-mailman-hackers@lists.debian.org>
+Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
 Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
            Jonas Meurer <mejo@debian.org>
 Build-Depends: debhelper (>= 10),
