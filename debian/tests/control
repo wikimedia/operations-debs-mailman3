@@ -1,2 +1,3 @@
 Tests: mailman3-core-tests
-Depends: @
+Depends: @,
+ python3-nose2
