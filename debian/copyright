@@ -3,7 +3,7 @@ Upstream-Name: mailman3-core
 Source: https://gitlab.com/mailman/mailman
 
 Files: *
-Copyright: 1998-2017 The Mailman Developers
+Copyright: © 1998-2017 The Mailman Developers
 License: GPL-3
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ License: GPL-3
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 
 Files: debian/*
-Copyright: 2015-2017 Pierre-Elliott Bécue <becue@crans.org>, Jonas Meurer <mejo@debian.org>
+Copyright: © 2015-2017 Pierre-Elliott Bécue <becue@crans.org>
+           © 2017 Jonas Meurer <mejo@debian.org>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
