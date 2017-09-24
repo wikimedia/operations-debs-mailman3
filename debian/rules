@@ -16,16 +16,10 @@ export PYBUILD_INSTALL_ARGS ?= \
 %:
 	dh $@ --with python3,systemd,sphinxdoc --buildsystem=pybuild
 
-# Running the test suite at build time is not supported for now.
-# See upstream bug #400 for further information.
-#override_dh_auto_test:
-#ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-#	set -e; \
-#	for python in $(shell py3versions -r); do \
-#		MAILMAN_EXTRA_TESTING_CFG=./debian/contrib/mailman.cfg \
-#		PYTHONPATH="." $$python -m nose2 --verbose; \
-#	done
-#endif
+override_dh_auto_test:
+	# Running the test suite at build time is not supported for now.
+	# See upstream bug #400 for further information.
+	#PYTHONPATH="." python3 -m nose2 --verbose
 
 override_dh_auto_build:
 	# Builds sphinx doc
