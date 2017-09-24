@@ -40,5 +40,10 @@ override_dh_auto_install:
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst
 
+override_dh_fixperms:
+	dh_fixperms
+	chown list:list debian/mailman3-core/var/lib/mailman3 \
+	                debian/mailman3-core/var/log/mailman3
+
 get-orig-source:
 	uscan --verbose --rename
