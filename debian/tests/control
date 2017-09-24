@@ -1,3 +1,4 @@
 Tests: mailman3-core-tests
 Depends: @,
+ python3-flufl.testing,
  python3-nose2

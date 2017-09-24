@@ -3,4 +3,4 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-0 0 * * *	list	[ -x /usr/bin/mailman ] && if [ ! -d /run/systemd/system ]; then /usr/bin/mailman digests --send; fi
+0 0 * * *	list	if [ -x /usr/bin/mailman ]; then /usr/bin/mailman digests --send; fi
