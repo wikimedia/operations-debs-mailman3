@@ -37,12 +37,18 @@ Depends: logrotate,
          python3-falcon (>= 0.3rc1),
          ${misc:Depends},
          ${python3:Depends}
-Suggests: mailman3-core-doc
+Suggests: mailman3-core-doc,
+          python-mailmanclient,
+          python-django-mailman3,
+          postorius,
+          hyperkitty,
+          mailman3-hyperkitty-plugin,
 Description: Mailing list management system
- This is GNU Mailman, a mailing list management system distributed under the
- terms of the GNU General Public License (GPL) version 3 or later.  The name of
- this software is spelled "Mailman" with a leading capital 'M' but with a lower
- case second 'm'.  Any other spelling is incorrect.
+ This is GNU Mailman, a mailing list management system. This package provides
+ the core delivery engine of the system, which handles the mailing lists data,
+ receives messages, handles the moderation and processing of these messages and
+ delivers them to the mailing lists subscribers. It communicates with the
+ others components through a private administrative REST API.
 
 Package: mailman3-core-doc
 Section: doc
