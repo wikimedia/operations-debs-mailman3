@@ -1,9 +1,6 @@
 #!/usr/bin/make -f
 export DH_VERBOSE = 1
 
-DPKG_EXPORT_BUILDFLAGS = 1
-include /usr/share/dpkg/default.mk
-
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 export PYBUILD_NAME = mailman3-core
@@ -22,8 +19,6 @@ override_dh_auto_test:
 	#PYTHONPATH="." python3 -m nose2 --verbose
 
 override_dh_auto_build:
-	# Builds sphinx doc
-	#PYTHONPATH=. sphinx-build -N -q -E -c ./ -b html . debian/compiled_doc/temp
 	PYTHONPATH=. sphinx-build -b html -c ./ -E -N . build/sphinx/html
 	dh_auto_build
 
@@ -38,6 +33,3 @@ override_dh_fixperms:
 	dh_fixperms
 	chown list:list debian/mailman3-core/var/lib/mailman3 \
 	                debian/mailman3-core/var/log/mailman3
-
-get-orig-source:
-	uscan --verbose --rename
