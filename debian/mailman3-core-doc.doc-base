@@ -6,5 +6,5 @@ Abstract: This manual describes how to use Mailman3 core server
 Section: Network/Communication
 
 Format: HTML
-Index: /usr/share/doc/mailman3-core-doc/html/index.html
-Files: /usr/share/doc/mailman3-core-doc/html/*
+Index: /usr/share/doc/mailman3-core/html/index.html
+Files: /usr/share/doc/mailman3-core/html/*
