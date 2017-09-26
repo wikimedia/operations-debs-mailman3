@@ -35,7 +35,6 @@ Architecture: all
 Depends: logrotate,
          lsb-base (>= 3.0-6),
          python3-falcon (>= 0.3rc1),
-         ${shlibs:Depends},
          ${misc:Depends},
          ${python3:Depends}
 Suggests: mailman3-core-doc
