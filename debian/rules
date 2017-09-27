@@ -26,6 +26,11 @@ override_dh_auto_install:
 	dh_auto_install
 	#find debian/mailman3-core/usr -type d -name "tests" -print0 | xargs -0 rm -r
 
+override_dh_installdocs:
+	dh_installdocs
+	mv debian/mailman3-core-doc/usr/share/doc/mailman3-core-doc/html \
+	   debian/mailman3-core-doc/usr/share/doc/mailman3-core/html
+
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst
 
