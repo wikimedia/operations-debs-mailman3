@@ -37,12 +37,8 @@ Depends: logrotate,
          python3-falcon (>= 0.3rc1),
          ${misc:Depends},
          ${python3:Depends}
-Suggests: mailman3-core-doc,
-          python-mailmanclient,
-          python-django-mailman3,
-          postorius,
-          hyperkitty,
-          mailman3-hyperkitty-plugin,
+Recommends: default-mta | mail-transport-agent
+Suggests: mailman3-core-doc
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system. This package provides
  the core delivery engine of the system, which handles the mailing lists data,
