@@ -1,6 +1,12 @@
-From: Jonas Meurer <mejo@debian.org>
-Date: Wed, 20 Sep 2017 14:02:39 +0200
-Subject: Make sphinx-build ignore .pc directory
+Description: Make sphinx-build ignore .pc directory
+ The quilt patch management tool might create the '.pc' directory during
+ the package build process. In case that '.rst' files are patched by
+ quilt, they end up in '.pc' as well. A sphinxdoc recusively scans the
+ sources for '.rst' files, this causes unwanted behaviour. This patch
+ adds '.pc' to the list of excluded patterns.
+Forwarded: https://gitlab.com/mailman/mailman/issues/403
+Author: Jonas Meurer <mejo@debian.org>
+Last-Update: 2017-09-20
 
 ---
  conf.py |    2 +-

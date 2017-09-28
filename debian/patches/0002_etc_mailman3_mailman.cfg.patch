@@ -1,6 +1,10 @@
-From: Jonas Meurer <mejo@debian.org>
-Date: Tue, 19 Sep 2017 15:50:20 +0200
-Subject: Consider /etc/mailman3/mailman.cfg as config file
+Description: Consider /etc/mailman3/mailman.cfg as config file
+ We install the 'mailman.cfg' config file to '/etc/mailman3/'. Patching
+ the mailman sources to consider '/etc/mailman3/mailman.cfg' as config
+ file.
+Forwarded: https://gitlab.com/mailman/mailman/issues/399
+Author: Jonas Meurer <mejo@debian.org>
+Last-Update: 2017-09-19
 
 ---
  src/mailman/config/docs/config.rst   |    1 +
