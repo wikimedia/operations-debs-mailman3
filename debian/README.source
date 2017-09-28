@@ -1,9 +1,6 @@
 General maintenance
 
-    This package is maintained in Git and follows the Git packaging workflow
-    from the Debian Python Modules Team. For more information, see:
-    * https://wiki.debian.org/Python/GitPackaging
-    * https://python-modules.alioth.debian.org/policy.html#git-procedures
+    This package is maintained in Git and uses the git-buildpackage workflow.
 
 Building the package
 
@@ -17,9 +14,8 @@ Building the package
 
 Import a new upstream version
 
-    'git-dpm' is used to import new upstream versions into the Git repository:
+    'gbp import' is used to import new upstream versions into the repository:
 
-        git-dpm import-new-upstream --ptc --rebase-patched mailman3-core_1.1.0.orig.tar.gz
+        gbp import ../mailman3-core_1.1.0.orig.tar.gz
 
- -- Jonas Meurer <mejo@debian.org>  Wed, 20 Sep 2017 14:41:40 +0200
-
+ -- Jonas Meurer <mejo@debian.org>  Thu, 28 Sep 2017 14:22:10 +0200
