@@ -4,7 +4,7 @@ Description: Make sphinx-build ignore .pc directory
  quilt, they end up in '.pc' as well. A sphinxdoc recusively scans the
  sources for '.rst' files, this causes unwanted behaviour. This patch
  adds '.pc' to the list of excluded patterns.
-Forwarded: https://gitlab.com/mailman/mailman/issues/403
+Forwarded: https://gitlab.com/mailman/mailman/merge_requests/320
 Author: Jonas Meurer <mejo@debian.org>
 Last-Update: 2017-09-20
 
