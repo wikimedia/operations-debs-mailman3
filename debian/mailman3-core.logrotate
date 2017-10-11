@@ -1,0 +1,14 @@
+/var/log/mailman3/mailman.log {
+	daily
+	rotate 5
+	compress
+	delaycompress
+	missingok
+	notifempty
+	create 640 list list
+	postrotate
+		if /etc/init.d/mailman3-core status >/dev/null; then \
+		    /usr/bin/mailman reopen >/dev/null; \
+		fi;
+	endscript
+}

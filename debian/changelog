@@ -1,15 +1,16 @@
 mailman3-core (3.1.0-2) unstable; urgency=medium
 
- [Jonas Meurer <mejo@debian.org>]
+  [ Jonas Meurer ]
   * debian/README.source: Minor fixes
   * debian/copyright: Add paragraph about the diverting copyright of
     src/mailman/docs/STYLEGUIDE.rst
   * debian/gbp.conf: Added
+  * debian/mailman3-core.logrotate: Added logrotate script
 
- [Pierre-Elliott Bécue <becue@crans.org>
+  [ Pierre-Elliott Bécue ]
   * Standards-version bumped to 4.1.1
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 10 Oct 2017 13:56:20 +0200
+ -- Jonas Meurer <mejo@debian.org>  Wed, 11 Oct 2017 19:10:38 +0200
 
 mailman3-core (3.1.0-1) unstable; urgency=low
 
