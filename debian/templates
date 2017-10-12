@@ -10,4 +10,4 @@ _Description: Should DebConf add HyperKitty config to mailman.cfg?
  .
  You can also extract the configurations from the file
  hyperkitty_additionnal.cfg located in
- /usr/share/mailman3/mailman3-core_hyperkitty-snippet.cfg.
+ /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg.

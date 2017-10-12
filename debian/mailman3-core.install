@@ -1,2 +1,2 @@
 debian/contrib/mailman.cfg /etc/mailman3/
-debian/contrib/hyperkitty_additionnal.cfg /usr/share/mailman3/mailman3-core_hyperkitty-snippet.cfg
+debian/contrib/hyperkitty_additionnal.cfg /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg

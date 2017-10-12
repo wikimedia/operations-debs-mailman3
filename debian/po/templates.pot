@@ -45,5 +45,5 @@ msgstr ""
 #: ../mailman3-core.templates:1001
 msgid ""
 "You can also extract the configurations from the file hyperkitty_additionnal."
-"cfg located in /usr/share/mailman3/mailman3-core_hyperkitty-snippet.cfg."
+"cfg located in /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg."
 msgstr ""

@@ -13,6 +13,7 @@ mailman3-core (3.1.0-2) unstable; urgency=medium
   * Standards-version bumped to 4.1.1
   * Adds debconf configuration to include dynamically HyperKitty
     configs into /etc/mailman3/mailman.cfg
+  * Translates the templates file into french
 
  -- Jonas Meurer <mejo@debian.org>  Wed, 11 Oct 2017 21:22:24 +0200
 
