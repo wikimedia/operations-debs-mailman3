@@ -1,3 +1,4 @@
 etc/mailman3
+etc/mailman3/contrib
 var/lib/mailman3
 var/log/mailman3

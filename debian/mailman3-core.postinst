@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+db_get mailman3-core/config_hyperkitty
+if [ "$RET" = "true" ]; then
+    if ! grep "archiver.hyperkitty" /etc/mailman3/mailman.cfg > /dev/null; then
+        cat /etc/mailman3/contrib/hyperkitty_additionnal.cfg >> /etc/mailman3/mailman.cfg
+    fi;
+fi
