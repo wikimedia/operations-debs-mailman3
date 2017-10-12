@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-10-12 14:43+0200\n"
+"POT-Creation-Date: 2017-10-12 15:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,13 +19,13 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid "Should DebConf add HyperKitty config to mailman.cfg?"
 msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid ""
 "Mailman3 comes usually with HyperKitty as an archiver for its Mailing lists "
 "traffic. This implies adding some configuration into /etc/mailman3/mailman."
@@ -34,15 +34,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
-msgid ""
-"Select \"Yes\" if you wish to have these configurations installed into the "
-"mailman.cfg file right now."
-msgstr ""
-
-#. Type: boolean
-#. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid ""
 "You can also extract the configurations from the file hyperkitty_additionnal."
 "cfg located in /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg."

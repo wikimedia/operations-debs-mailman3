@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-10-12 14:43+0200\n"
+"POT-Creation-Date: 2017-10-12 15:40+0200\n"
 "PO-Revision-Date: 2017-10-12 14:43+0200\n"
 "Last-Translator: Pierre-Elliott Bécue <becue@crans.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -19,38 +19,28 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid "Should DebConf add HyperKitty config to mailman.cfg?"
 msgstr "Faut-il ajouter la configuration pour HyperKitty dans mailman.cfg ?"
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid ""
 "Mailman3 comes usually with HyperKitty as an archiver for its Mailing lists "
 "traffic. This implies adding some configuration into /etc/mailman3/mailman."
 "cfg file."
 msgstr ""
 "En général, Mailman3 est fourni avec HyperKitty qui sert de gestionnaire "
-"d'archives pour les listes de diffusion. Cela implique de rajouter un peu "
-"de configuration dans /etc/mailman3/mailman.cfg."
+"d'archives pour les listes de diffusion. Cela implique de rajouter un peu de "
+"configuration dans /etc/mailman3/mailman.cfg."
 
 #. Type: boolean
 #. Description
-#: ../mailman3-core.templates:1001
-msgid ""
-"Select \"Yes\" if you wish to have these configurations installed into the "
-"mailman.cfg file right now."
-msgstr ""
-"Veuillez répondre positivement à la question si vous souhaitez que cette "
-"configuration soit automatiquement ajoutée dans mailman.cfg maintenant."
-
-#. Type: boolean
-#. Description
-#: ../mailman3-core.templates:1001
+#: ../templates:1001
 msgid ""
 "You can also extract the configurations from the file hyperkitty_additionnal."
 "cfg located in /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg."
 msgstr ""
-"Vous pouvez aussi aller récupérer ces configurations dans "
-"/usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg."
+"Vous pouvez aussi aller récupérer ces configurations dans /usr/share/"
+"mailman3-core/mailman3-core_hyperkitty-snippet.cfg."
