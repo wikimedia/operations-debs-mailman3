@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -e
 
 . /usr/share/debconf/confmodule
 
@@ -8,3 +10,5 @@ if [ "$RET" = "true" ]; then
         cat /etc/mailman3/contrib/hyperkitty_additionnal.cfg >> /etc/mailman3/mailman.cfg
     fi;
 fi
+
+#DEBHELPER#
