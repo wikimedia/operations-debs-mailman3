@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-10-12 15:43+0200\n"
+"POT-Creation-Date: 2017-10-12 15:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-msgid "Should DebConf add HyperKitty config to mailman.cfg?"
+msgid "Add the Hyperkitty configuration to mailman.cfg?"
 msgstr ""
 
 #. Type: boolean

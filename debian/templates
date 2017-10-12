@@ -1,6 +1,6 @@
 Template: mailman3-core/config_hyperkitty
 Type: boolean
-_Description: Should DebConf add HyperKitty config to mailman.cfg?
+_Description: Add the Hyperkitty configuration to mailman.cfg?
  Mailman3 comes usually with HyperKitty as an archiver for its
  Mailing lists traffic. This implies adding some configuration
  into /etc/mailman3/mailman.cfg file.
