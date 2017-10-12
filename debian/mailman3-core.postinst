@@ -6,7 +6,7 @@ set -e
 
 db_get mailman3-core/config_hyperkitty
 if [ "$RET" = "true" ]; then
-    if 'if grep -q -E '^\s*#?\s*\[archiver\.hyperkitty\]\s*$'; then
+    if grep -q -E '^\s*#?\s*\[archiver\.hyperkitty\]\s*$'; then
         cat /usr/share/mailman3-core/mailman3-core_hyperkitty-snippet.cfg. >> /etc/mailman3/mailman.cfg
     fi;
 fi
