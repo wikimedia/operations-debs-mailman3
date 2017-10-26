@@ -3,13 +3,63 @@
 set -e
 
 . /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.pgsql
 
-db_get mailman3-core/config_hyperkitty
-if [ "$RET" = "true" ]; then
-    if grep -q -E '^\s*#?\s*\[archiver\.hyperkitty\]\s*$'; then
+dbc_go mailman3-core "$@"
+
+cleanup () {
+    [ "$mailmancfg_new" ] && rm -f "$mailmancfg_new"
+}
+
+create_config () {
+    trap cleanup EXIT
+    mailmancfg_new=`tempfile -m 0640`
+    cp -a /usr/share/mailman3-core/mailman.cfg.sample $mailmancfg_new
+
+    # set PostgreSQL settings from dbconfig-common in mailman.cfg
+    if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
+        dbuser="$(sed -ne "s/^dbc_dbuser='\(\S\+\)'/\1/p" \
+            /etc/dbconfig-common/mailman3-core.conf)"
+        dbpass="$(sed -ne "s/^dbc_dbpass='\(\S\+\)'/\1/p" \
+            /etc/dbconfig-common/mailman3-core.conf)"
+        dbserver="$(sed -ne "s/^dbc_dbserver='\(\S\+\)'/\1/p" \
+            /etc/dbconfig-common/mailman3-core.conf)"
+        dbname="$(sed -ne "s/^dbc_dbname='\(\S\+\)'/\1/p" \
+            /etc/dbconfig-common/mailman3-core.conf)"
+        sed -i -e "s#^\(\s*url: postgres://\).*\$#\1$dbuser:$dbpass@$dbserver/$dbname#" \
+               $mailmancfg_new
+    fi
+
+    db_get mailman3-core/config_hyperkitty
+    res="$RET"
+    if [ "$res" = "true" ]; then
         cat /usr/share/mailman3-core/mailman_cfg_hyperkitty_snippet.cfg \
-            >>/etc/mailman3/mailman.cfg
-    fi;
-fi
+            >>$mailmancfg_new
+    fi
+
+    # Register new config file
+    ucf --three-way --debconf-ok "$mailmancfg_new" /etc/mailman3/mailman.cfg
+    ucfr mailman3-suite /etc/mailman3/mailman.cfg
+    chmod 0640 /etc/mailman3/mailman.cfg
+    chown root:list /etc/mailman3/mailman.cfg
+    rm -f $mailmancfg_new
+}
+
+case "$1" in
+    configure)
+        create_config
+        db_stop
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
 
 #DEBHELPER#
+
+exit 0

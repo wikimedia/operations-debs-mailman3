@@ -1,21 +1,26 @@
 mailman3-core (3.1.0-2) unstable; urgency=medium
 
   [ Jonas Meurer ]
+  * Change default database backend for mailman3-core to PostgreSQL
+  * manage mailman.cfg config file with ucf, now that the content
+    is dynamically generated
+  * Change mailman.cfg permissions to 0640 root:list now that database
+    credentials live there
   * debian/README.source: Minor fixes
   * debian/copyright: Add paragraph about the diverting copyright of
     src/mailman/docs/STYLEGUIDE.rst
   * debian/gbp.conf: Added
   * debian/mailman3-core.logrotate: Added logrotate script
   * debian/contrib/mailman.cfg: Added commented out snippet for 
-    activating the Hyperkitty archiver.
+    activating the Hyperkitty archiver
 
   [ Pierre-Elliott Bécue ]
   * Standards-version bumped to 4.1.1
-  * Adds debconf configuration to include dynamically HyperKitty
-    configs into /etc/mailman3/mailman.cfg
-  * Translates the templates file into french
+  * Add debconf configuration to optionally include HyperKitty
+    configs into mailman.cfg
+  * Translate the templates file into french
 
- -- Jonas Meurer <mejo@debian.org>  Wed, 11 Oct 2017 21:22:24 +0200
+ -- Jonas Meurer <mejo@debian.org>  Thu, 26 Oct 2017 12:56:17 +0200
 
 mailman3-core (3.1.0-1) unstable; urgency=low
 

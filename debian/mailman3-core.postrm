@@ -2,9 +2,15 @@
 
 set -e
 
-if [ "$1" = "purge" -a -e /usr/share/debconf/confmodule ]; then
+if [ -f /usr/share/debconf/confmodule ]; then
     . /usr/share/debconf/confmodule
     db_purge
 fi
+if [ -f /usr/share/dbconfig-common/dpkg/postrm.pgsql ]; then
+    . /usr/share/dbconfig-common/dpkg/postrm.pgsql
+    dbc_go mailman3-core "$@"
+fi
 
 #DEBHELPER#
+
+exit 0
