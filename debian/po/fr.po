@@ -21,7 +21,7 @@ msgstr ""
 #. Description
 #: ../templates:1001
 msgid "Add the Hyperkitty configuration to mailman.cfg?"
-msgstr "Faut-il ajouter la configuration pour HyperKitty dans mailman.cfg?"
+msgstr "Faut-il ajouter la configuration pour HyperKitty dans mailman.cfg ?"
 
 #. Type: boolean
 #. Description
@@ -31,26 +31,16 @@ msgid ""
 "messages to the Hyperkitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
+"Mailman3 a besoin de configurations supplémentaires dans mailman.cfg "
+"pour pouvoir envoyer les messages à archiver vers Hyperkitty. Cette "
+"configuration peut être ajoutée automatiquement maintenant."
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid ""
-#| "You can also extract the configurations from the file /usr/share/mailman3-"
-#| "core/mailman3-core_hyperkitty-snippet.cfg."
 msgid ""
 "This adds the content of /usr/share/mailman3-core/mailman_cfg "
 "_hyperkitty_snippet.cfg to mailman.cfg."
 msgstr ""
-"Vous pouvez aussi aller récupérer ces configurations dans /usr/share/"
-"mailman-core/mailman_cfg_hyperkitty_snippet.cfg."
-
-#~ msgid ""
-#~ "Mailman3 comes usually with HyperKitty as an archiver for its Mailing "
-#~ "lists traffic. This implies adding some configuration into /etc/mailman3/"
-#~ "mailman.cfg file."
-#~ msgstr ""
-#~ "En général, Mailman3 est fourni avec HyperKitty qui sert de gestionnaire "
-#~ "d'archives pour les listes de diffusion. Cela implique de rajouter un peu "
-#~ "de configuration dans /etc/mailman3/mailman.cfg."
+"Cette configuration est extraite de /usr/share/mailman3-core/"
+"mailman_cfg_hyperkitty_snippet.cfg vers mailman.cfg."
