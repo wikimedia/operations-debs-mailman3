@@ -41,7 +41,7 @@ Depends: dbconfig-pgsql | dbconfig-no-thanks,
          ucf,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: default-mta | mail-transport-agent
+Recommends: default-mta | mail-transport-agent, lynx
 Suggests: mailman3-core-doc
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system. This package provides
