@@ -1,0 +1,22 @@
+Mailman3-core for Debian
+========================
+
+ This package ships the core Mailman3 daemon that receives and delivers
+list mail and provides a REST API for configuration.
+
+ For Mailman3 to work properly, you need to configure your mail transport
+agent (MTA) to deliver list mail to Mailman3.
+
+ In case of Postfix, add the following settings to `/etc/postfix/main.cf`:
+
+```
+# Mailman related settings
+owner_request_special = no
+transport_maps = hash:/var/lib/mailman3/data/postfix_lmtp
+local_recipient_maps = proxy:unix:passwd.byname $alias_maps hash:/var/lib/mailman3/data/postfix_lmtp
+relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} hash:/var/lib/mailman3/data/postfix_domains
+```
+
+ Afterwards, Postfix should relay mail to mailinglist domains to Mailman3.
+
+ -- Jonas Meurer <mejo@debian.org>, Fri, 10 Nov 2017 21:19:28 +0000
