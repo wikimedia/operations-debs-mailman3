@@ -39,7 +39,7 @@ create_config () {
 
     # Register new config file
     ucf --three-way --debconf-ok "$mailmancfg_new" /etc/mailman3/mailman.cfg
-    ucfr mailman3-suite /etc/mailman3/mailman.cfg
+    ucfr mailman3-core /etc/mailman3/mailman.cfg
     chmod 0640 /etc/mailman3/mailman.cfg
     chown root:list /etc/mailman3/mailman.cfg
     rm -f $mailmancfg_new
