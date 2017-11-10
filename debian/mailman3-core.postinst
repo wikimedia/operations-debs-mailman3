@@ -11,6 +11,12 @@ cleanup () {
     [ "$mailmancfg_new" ] && rm -f "$mailmancfg_new"
 }
 
+upgrade_fixes () {
+    if dpkg --compare-versions "$2" lt "3.1.0-3"; then
+        ucfr --force mailman3-core /etc/mailman3/mailman.cfg
+    fi
+}
+
 create_config () {
     trap cleanup EXIT
     mailmancfg_new=`tempfile -m 0640`
@@ -62,6 +68,7 @@ create_config () {
 
 case "$1" in
     configure)
+        [ -n "$2" ] && upgrade_fixes
         create_config
         db_stop
     ;;

@@ -2,11 +2,15 @@ mailman3-core (3.1.0-3) unstable; urgency=medium
 
   * debian/mailman3-core.postinst: Fix typo, give 'mailman3-core' as
     name to ucfr, not 'mailman3-suite'.
+    Unfortunately a hack is needed to fix this: check for old version
+    and give '--force' to ucfr if it's smaller than 3.1.0-3.
+  * debian/mailman3-core.postrm: Purge config files from ucf database
+    at package purge time.
   * debian/mailman3-core.postinst, debian/contrib/mailman.cfg.sample:
     Add webservice settings to the config file and set adminpass to a
     random string during postinst.
 
- -- Jonas Meurer <mejo@debian.org>  Fri, 10 Nov 2017 17:42:21 +0100
+ -- Jonas Meurer <mejo@debian.org>  Fri, 10 Nov 2017 18:15:12 +0100
 
 mailman3-core (3.1.0-2) unstable; urgency=medium
 
