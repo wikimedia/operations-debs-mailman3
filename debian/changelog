@@ -1,3 +1,9 @@
+mailman3-core (3.1.0-4) unstable; urgency=medium
+
+  * Fixes some sed wrongdoings in mailman3-core.postinst (Closes: #881622)
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 13 Nov 2017 17:19:51 +0100
+
 mailman3-core (3.1.0-3) unstable; urgency=medium
 
   * debian/mailman3-core.postinst: Fix typo, give 'mailman3-core' as
@@ -26,7 +32,7 @@ mailman3-core (3.1.0-2) unstable; urgency=medium
     src/mailman/docs/STYLEGUIDE.rst
   * debian/gbp.conf: Added
   * debian/mailman3-core.logrotate: Added logrotate script
-  * debian/contrib/mailman.cfg: Added commented out snippet for 
+  * debian/contrib/mailman.cfg: Added commented out snippet for
     activating the Hyperkitty archiver
   * debian/control: Recommend lynx as it is used to convert html to plain
     text. Thanks to Philip Frei for the bugreport. (Closes: #881113)
