@@ -17,6 +17,11 @@ upgrade_fixes () {
     fi
 }
 
+# All seds are using a vertical pipe "|" as a delimiter because of
+# the potential presence of a slash "/" into some variables, as those
+# filled with a base64 -w0. We thought about using a number sign "#",
+# but sometimes the delimiter follows a variable sign "$", and "$#"
+# might be interpreted by the shell.
 create_config () {
     trap cleanup EXIT
     mailmancfg_new=`tempfile -m 0640`
@@ -24,28 +29,28 @@ create_config () {
 
     # set PostgreSQL settings from dbconfig-common in mailman.cfg
     if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
-        dbuser="$(sed -ne "s#^dbc_dbuser='\(\S\+\)'#\1#p" \
+        dbuser="$(sed -ne "s|^dbc_dbuser='\(\S\+\)'|\1|p" \
             /etc/dbconfig-common/mailman3-core.conf)"
-        dbpass="$(sed -ne "s#^dbc_dbpass='\(\S\+\)'#\1#p" \
+        dbpass="$(sed -ne "s|^dbc_dbpass='\(\S\+\)'|\1|p" \
             /etc/dbconfig-common/mailman3-core.conf)"
-        dbserver="$(sed -ne "s#^dbc_dbserver='\(\S\+\)'#\1#p" \
+        dbserver="$(sed -ne "s|^dbc_dbserver='\(\S\+\)'|\1|p" \
             /etc/dbconfig-common/mailman3-core.conf)"
-        dbname="$(sed -ne "s#^dbc_dbname='\(\S\+\)'#\1#p" \
+        dbname="$(sed -ne "s|^dbc_dbname='\(\S\+\)'|\1|p" \
             /etc/dbconfig-common/mailman3-core.conf)"
-        sed -i -e "s#^\(\s*url: postgres://\).*\$#\1$dbuser:$dbpass@$dbserver/$dbname#" \
+        sed -i -e "s|^\(\s*url: postgres://\).*\$|\1$dbuser:$dbpass@$dbserver/$dbname|" \
                $mailmancfg_new
     fi
 
     # Get admin_pass from mailman.cfg if existent
     [ -f /etc/mailman3/mailman.cfg ] && {
-        admin_pass="$(sed -ne 's#^\s*admin_pass:\s*##p' /etc/mailman3/mailman.cfg)"
+        admin_pass="$(sed -ne 's|^\s*admin_pass:\s*||p' /etc/mailman3/mailman.cfg)"
     }
     # If this is the default password, forget it!
     [ "$admin_pass" = "restpass" ] && unset admin_pass
     # Generate a new one
     while [ -z "$admin_pass" ]; do
         admin_pass="$(dd if=/dev/urandom bs=1 count=200 2>/dev/null \
-            | base64 -w0 | sed -ne 's#\(.\{48\}\).*#\1#p')"
+            | base64 -w0 | sed -ne 's|\(.\{48\}\).*|\1|p')"
     done
 
     # Set new admin_pass in mailman.cfg
