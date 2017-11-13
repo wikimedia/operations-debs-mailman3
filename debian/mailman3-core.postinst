@@ -17,6 +17,20 @@ upgrade_fixes () {
     fi
 }
 
+proper_db_not_installed () {
+    cat << EOF
+
+The mailman3-core systemd service cannot start correctly.
+This is probably because you didn't configure the database
+appropriately. The service won't work untill you do so.
+
+If you actually DID install the db appropriately, please
+report the bug to the maintainers of mailman3-core package
+as we are probably guilty of your current miseries.
+
+EOF
+}
+
 # All seds are using a vertical pipe "|" as a delimiter because of
 # the potential presence of a slash "/" into some variables, as those
 # filled with a base64 -w0. We thought about using a number sign "#",

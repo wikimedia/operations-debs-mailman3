@@ -13,6 +13,9 @@ export PYBUILD_INSTALL_ARGS ?= \
 %:
 	dh $@ --with python3,systemd,sphinxdoc --buildsystem=pybuild
 
+override_dh_installinit:
+	dh_installinit --error-handler=proper_db_not_installed
+
 override_dh_auto_test:
 	# Running the test suite at build time is not supported for now.
 	# See upstream bug #400 for further information.
