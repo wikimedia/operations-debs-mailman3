@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-10-12 15:55+0200\n"
-"PO-Revision-Date: 2017-10-12 14:43+0200\n"
+"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"PO-Revision-Date: 2017-11-14 16:08+0100\n"
 "Last-Translator: Pierre-Elliott Bécue <becue@crans.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: \n"
@@ -31,9 +31,9 @@ msgid ""
 "messages to the Hyperkitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
-"Mailman3 a besoin de configurations supplémentaires dans mailman.cfg "
-"pour pouvoir envoyer les messages à archiver vers Hyperkitty. Cette "
-"configuration peut être ajoutée automatiquement maintenant."
+"Mailman3 a besoin de configurations supplémentaires dans mailman.cfg pour "
+"pouvoir envoyer les messages à archiver vers Hyperkitty. Cette configuration "
+"peut être ajoutée automatiquement maintenant."
 
 #. Type: boolean
 #. Description
@@ -44,3 +44,31 @@ msgid ""
 msgstr ""
 "Cette configuration est extraite de /usr/share/mailman3-core/"
 "mailman_cfg_hyperkitty_snippet.cfg vers mailman.cfg."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid "The service for mailman3-core failed!"
+msgstr "Le service pour mailman3-core a échoué."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"The mailman3-core service didn't start correctly. This is probably because "
+"you didn't configure the database appropriately. The service won't work "
+"until you do so."
+msgstr ""
+"Le service mailman3-core n'a pas pu démarrer correctement. Cela peut être dû "
+"au fait que vous n'avez pas configuré la base de données de façon adaptée. "
+"Le service ne pourra pas démarrer tant que vous ne l'aurez pas fait."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"If you actually DID install the db appropriately, please report the bug to "
+"the maintainers of mailman3-core package."
+msgstr ""
+"Si vous avez BIEN configuré la base de données correctement, veuillez "
+"signaler un bogue aux mainteneurs du paquet mailman3-core."

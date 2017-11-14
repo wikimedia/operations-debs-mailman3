@@ -8,17 +8,8 @@ set -e
 dbc_go mailman3-core "$@"
 
 init_service_failed () {
-    (cat >&2 << EOF
-
-The mailman3-core service didn't start correctly.
-This is probably because you didn't configure the database
-appropriately. The service won't work untill you do so.
-
-If you actually DID install the db appropriately, please
-report the bug to the maintainers of mailman3-core package.
-
-EOF
-)
+    db_input high mailman3-core/init_service_failed || true
+    db_go
 }
 
 case "$1" in
@@ -36,4 +27,5 @@ esac
 
 #DEBHELPER#
 
+db_stop
 exit 0
