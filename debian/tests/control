@@ -5,7 +5,7 @@
 #         python3-nose2
 #Restrictions: build-needed
 
-Test-Command: mailman create testlist@example.org
+Test-Command: mailman -C debian/contrib/mailman.test.cfg create testlist@example.org
 Depends: @,
          postfix
 Restrictions: needs-root
