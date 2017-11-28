@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"POT-Creation-Date: 2017-11-16 23:08+0100\n"
 "PO-Revision-Date: 2017-11-14 16:08+0100\n"
 "Last-Translator: Pierre-Elliott Bécue <becue@crans.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -72,3 +72,25 @@ msgid ""
 msgstr ""
 "Si vous avez BIEN configuré la base de données correctement, veuillez "
 "signaler un bogue aux mainteneurs du paquet mailman3-core."
+
+#. Type: select
+#. Description
+#: ../templates:3001
+msgid "Which database engine do you want to use for mailman3?"
+msgstr "Quel moteur de base de données voulez-vous utiliser pour mailman3 ?"
+
+#. Type: select
+#. Description
+#: ../templates:3001
+msgid ""
+"Mailman3 uses a database at runtime. You can chose between sqlite (the "
+"default), mysql, or postgresql. This configuration software can help you "
+"setting up the configuration of mailman3 for postgresql and mysql. Should "
+"you chose sqlite, then mailman3-core defaults will be enough for the mailman "
+"binary to start."
+msgstr ""
+"Mailman3 a besoin d'une base de données pour fonctionner. Vous pouvez choisir "
+"entre sqlite (valeur par défaut), mysql ou postgresql. Le logiciel de "
+"configuration peut vous aider à configurer mailman3 pour fonctionner avec une "
+"base mysql ou postgresql. Si vous choisissez sqlite, les valeurs par défaut "
+"dans le fichier de configuration sont suffisantes pour que mailman3 démarre."

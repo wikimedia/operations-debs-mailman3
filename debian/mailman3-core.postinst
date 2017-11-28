@@ -5,8 +5,6 @@ set -e
 . /usr/share/debconf/confmodule
 . /usr/share/dbconfig-common/dpkg/postinst.pgsql
 
-dbc_go mailman3-core "$@"
-
 cleanup () {
     [ "$mailmancfg_new" ] && rm -f "$mailmancfg_new"
 }
@@ -32,18 +30,34 @@ create_config () {
     mailmancfg_new=`tempfile -m 0640`
     cp -a /usr/share/mailman3-core/mailman.cfg.sample $mailmancfg_new
 
+    db_get mailman3-core/choose_db
+    MM3_DB = "${RET}"
+
     # set PostgreSQL settings from dbconfig-common in mailman.cfg
-    if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
-        dbuser="$(sed -ne "s|^dbc_dbuser='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbpass="$(sed -ne "s|^dbc_dbpass='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbserver="$(sed -ne "s|^dbc_dbserver='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbname="$(sed -ne "s|^dbc_dbname='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        sed -i -e "s|^\(\s*url: postgres://\).*\$|\1$dbuser:$dbpass@$dbserver/$dbname|" \
-               $mailmancfg_new
+    if [ ! "${MM3_DB}" = "sqlite" ]; then
+        dbc_go mailman3-core "$@"
+        if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
+            dbuser="$(sed -ne "s|^dbc_dbuser='\(\S\+\)'|\1|p" \
+                /etc/dbconfig-common/mailman3-core.conf)"
+            dbpass="$(sed -ne "s|^dbc_dbpass='\(\S\+\)'|\1|p" \
+                /etc/dbconfig-common/mailman3-core.conf)"
+            dbserver="$(sed -ne "s|^dbc_dbserver='\(\S\+\)'|\1|p" \
+                /etc/dbconfig-common/mailman3-core.conf)"
+            dbname="$(sed -ne "s|^dbc_dbname='\(\S\+\)'|\1|p" \
+                /etc/dbconfig-common/mailman3-core.conf)"
+        fi
+    fi
+
+    if [ "${MM3_DB}" = "mysql" ]; then
+        sed -i -e "s|^\s*class: mailman.database.sqlite.SQLiteDatabase$|class: mailman.database.mysql.MySQLDatabase|" \
+            $mailmancfg_new
+        sed -i -e "s|^\s*url: sqlite:///.*$|url: mysql+pymysql://$dbuser:$dbpass@$dbserver/$dbname?charset=utf8&use_unicode=1|" \
+            $mailmancfg_new
+    elif [ "${MM3_DB}" = "postgresql" ]; then
+        sed -i -e "s|^\s*class: mailman.database.sqlite.SQLiteDatabase$|class: mailman.database.mysql.PostgreSQLDatabase|" \
+            $mailmancfg_new
+        sed -i -e "s|^\s*url: sqlite:///.*$|url: postgres://$dbuser:$dbpass@$dbserver/$dbname|" \
+            $mailmancfg_new
     fi
 
     # Get admin_pass from mailman.cfg if existent

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mailman3-core\n"
 "Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"POT-Creation-Date: 2017-11-16 23:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,4 +61,21 @@ msgstr ""
 msgid ""
 "If you actually DID install the db appropriately, please report the bug to "
 "the maintainers of mailman3-core package."
+msgstr ""
+
+#. Type: select
+#. Description
+#: ../templates:3001
+msgid "Which database engine do you want to use for mailman3?"
+msgstr ""
+
+#. Type: select
+#. Description
+#: ../templates:3001
+msgid ""
+"Mailman3 uses a database at runtime. You can chose between sqlite (the "
+"default), mysql, or postgresql. This configuration software can help you "
+"setting up the configuration of mailman3 for postgresql and mysql. Should "
+"you chose sqlite, then mailman3-core defaults will be enough for the mailman "
+"binary to start."
 msgstr ""

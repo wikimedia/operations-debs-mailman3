@@ -38,6 +38,7 @@ Depends: dbconfig-pgsql | dbconfig-no-thanks,
          lsb-base (>= 3.0-6),
          python3-falcon (>= 0.3rc1),
          python3-psycopg2,
+         python3-pymysql,
          ucf,
          ${misc:Depends},
          ${python3:Depends}

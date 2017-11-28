@@ -159,16 +159,18 @@ lock_file: $lock_dir/master.lck
 
 [database]
 # The class implementing the IDatabase.
-#class: mailman.database.sqlite.SQLiteDatabase
-class: mailman.database.postgresql.PostgreSQLDatabase
+class: mailman.database.sqlite.SQLiteDatabase
+#class: mailman.database.mysql.MySQLDatabase
+#class: mailman.database.postgresql.PostgreSQLDatabase
 
 # Use this to set the Storm database engine URL.  You generally have one
 # primary database connection for all of Mailman.  List data and most rosters
 # will store their data in this database, although external rosters may access
 # other databases in their own way.  This string supports standard
 # 'configuration' substitutions.
-#url: sqlite:///$DATA_DIR/mailman.db
-url: postgres://mailman3:mmpass@localhost/mailman3
+url: sqlite:///$DATA_DIR/mailman.db
+#url: mysql+pymysql://mailman3:mmpass@localhost/mailman3?charset=utf8&use_unicode=1
+#url: postgres://mailman3:mmpass@localhost/mailman3
 debug: no
 
 

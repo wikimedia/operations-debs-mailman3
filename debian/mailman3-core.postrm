@@ -4,11 +4,22 @@ set -e
 
 if [ -f /usr/share/debconf/confmodule ]; then
     . /usr/share/debconf/confmodule
+    db_get mailman3-core/choose_db
+    MM3_DB="${RET}"
     db_purge
 fi
-if [ -f /usr/share/dbconfig-common/dpkg/postrm.pgsql ]; then
-    . /usr/share/dbconfig-common/dpkg/postrm.pgsql
-    dbc_go mailman3-core "$@"
+
+
+if [ "${MM3_DB}" = "postgresql" ]; then
+    if [ -f /usr/share/dbconfig-common/dpkg/postrm.pgsql ]; then
+        . /usr/share/dbconfig-common/dpkg/postrm.pgsql
+        dbc_go mailman3-core "$@"
+    fi
+elif [ "${MM3_DB}" = "mysql" ]; then
+    if [ -f /usr/share/dbconfig-common/dpkg/postrm.mysql ]; then
+        . /usr/share/dbconfig-common/dpkg/postrm.mysql
+        dbc_go mailman3-core "$@"
+    fi
 fi
 
 case "$1" in
