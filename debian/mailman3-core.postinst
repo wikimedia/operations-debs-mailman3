@@ -48,15 +48,32 @@ create_config () {
         fi
     fi
 
-    if [ "${MM3_DB}" = "mysql" ]; then
-        sed -i -e "s|^\s*class: mailman.database.sqlite.SQLiteDatabase$|class: mailman.database.mysql.MySQLDatabase|" \
+    # If not postgresql, comment out the postgresql lines which are default.
+    if [ ! "${MM3_DB}" = "postgresql" ]; then
+        sed -i -e 's|^\s*class: mailman.database.postgresql.PostgreSQLDatabase$|#&|' \
             $mailmancfg_new
-        sed -i -e "s|^\s*url: sqlite:///.*$|url: mysql+pymysql://$dbuser:$dbpass@$dbserver/$dbname?charset=utf8&use_unicode=1|" \
+        sed -i -e 's|^\s*url: postgresql://.*$|#&|' \
+            $mailmancfg_new
+    fi
+
+    if [ "${MM3_DB}" = "mysql" ]; then
+        # Replace the potentially commented out line with mysql class by an
+        # uncommented one.
+        sed -i -e 's|^#?\s*class: mailman.database.mysql.MySQLDatabase$|class: mailman.database.mysql.MySQLDatabase|' \
+            $mailmancfg_new
+        sed -i -e "s|^#?\s*url: mysql+pymysql://.*$|url: mysql+pymysql://$dbuser:$dbpass@$dbserver/$dbname?charset=utf8&use_unicode=1|" \
+            $mailmancfg_new
+    elif [ "${MM3_DB}" = "sqlite" ]; then
+        # Replace the potentially commented out line with mysql class by an
+        # uncommented one.
+        sed -i -e 's|^#?\s*class: mailman.database.sqlite.SQLiteDatabase$|class: mailman.database.sqlite.SQLiteDatabase|' \
+            $mailmancfg_new
+        sed -i -e 's|^#?\s*url: sqlite:///.*$|url: sqlite:///$DATA_DIR/mailman.db|' \
             $mailmancfg_new
     elif [ "${MM3_DB}" = "postgresql" ]; then
-        sed -i -e "s|^\s*class: mailman.database.sqlite.SQLiteDatabase$|class: mailman.database.mysql.PostgreSQLDatabase|" \
+        sed -i -e "s|^#?\s*class: mailman.database.postgresql.PostgreSQLDatabase$|class: mailman.database.postgresql.PostgreSQLDatabase|" \
             $mailmancfg_new
-        sed -i -e "s|^\s*url: sqlite:///.*$|url: postgres://$dbuser:$dbpass@$dbserver/$dbname|" \
+        sed -i -e "s|^#?\s*url: postgres://.*$|url: postgres://$dbuser:$dbpass@$dbserver/$dbname|" \
             $mailmancfg_new
     fi
 
