@@ -11,6 +11,7 @@ mailman3-core (3.1.0-7) unstable; urgency=medium
     in order to have only directories created with this function set with
     appropriate permissions. (Closes: #883464)
   * Release 3.1.0-7
+  * Deactivate the second test in d/tests/control as it doesn't work.
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 05 Dec 2017 21:54:15 +0100
 
