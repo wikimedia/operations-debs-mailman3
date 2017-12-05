@@ -6,12 +6,7 @@ mailman3-core (3.1.0-7) UNRELEASED; urgency=medium
   [Lev Lamberov]
   * Add Russian translation (Closes: #883261)
 
-  [Pierre-Elliott Bécue]
-  * Fixes mailman.utilities.filesystem:makedirs behaviour via a quilt patch,
-    in order to have only directories created with this function set with
-    appropriate permissions. (Closes: #883464)
-
- -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 04 Dec 2017 15:15:15 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Fri, 01 Dec 2017 16:05:42 +0100
 
 mailman3-core (3.1.0-6) unstable; urgency=medium
 
