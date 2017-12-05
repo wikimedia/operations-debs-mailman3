@@ -6,10 +6,9 @@ Description: Changes src.mailman.utilities.filesystem:makedirs behaviour
  directory and the default permission was some kind of remaining behaviour from
  mailman 2, this patch has been submitted to upstream, and is here in the mean
  time to allow a proper behaviour.
-Author: =?utf-8?q?Pierre-Elliott_B=C3=A9cue?= <becue@crans.org>
+Author: Pierre-Elliott Bécue <becue@crans.org>
 Bug: https://gitlab.com/mailman/mailman/issues/439
 Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=883464
-Reviewed-by: <name and email of a reviewer, optional>
 Last-Update: 2017-12-05
 ---
  src/mailman/utilities/filesystem.py | 39 ++++++++++++++++++++++++++++++++-----
