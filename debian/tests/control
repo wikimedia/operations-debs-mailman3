@@ -10,7 +10,6 @@ Depends: @,
          postfix
 Restrictions: needs-root
 
-#Test-Command: mkdir /run/mailman3/ && mailman -C "$(pwd -P)/debian/contrib/mailman.test.cfg" start && sleep 3 && curl -s --user restadmin:restpass http://localhost:8001/3.1/system/versions
+#Test-Command: curl -s --user restadmin:restpass http://localhost:8001/3.1/system/versions
 #Depends: @,
 #         curl
-#Restrictions: needs-root

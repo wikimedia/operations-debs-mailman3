@@ -13,7 +13,7 @@ mailman3-core (3.1.0-7) unstable; urgency=medium
   * Release 3.1.0-7
   * Deactivate the second test in d/tests/control as it doesn't work.
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 05 Dec 2017 21:54:15 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 06 Dec 2017 18:05:25 +0100
 
 mailman3-core (3.1.0-6) unstable; urgency=medium
 
