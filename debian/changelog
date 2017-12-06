@@ -1,3 +1,9 @@
+mailman3-core (3.1.0-8) UNRELEASED; urgency=medium
+
+  * Bump standards version to 4.1.2
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 07 Dec 2017 21:51:21 +0100
+
 mailman3-core (3.1.0-7) unstable; urgency=medium
 
   [ Frans Spiesschaert ]
@@ -10,10 +16,9 @@ mailman3-core (3.1.0-7) unstable; urgency=medium
   * Fixes mailman.utilities.filesystem:makedirs behaviour via a quilt patch,
     in order to have only directories created with this function set with
     appropriate permissions. (Closes: #883464)
-  * Release 3.1.0-7
   * Deactivate the second test in d/tests/control as it doesn't work.
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 06 Dec 2017 18:05:25 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 06 Dec 2017 22:51:10 +0100
 
 mailman3-core (3.1.0-6) unstable; urgency=medium
 
