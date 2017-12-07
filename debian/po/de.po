@@ -1,0 +1,73 @@
+# Translation of the mailman3-core debconf template to German.
+# Copyright (C) 2017 Chris Leick <c.leick@vollbio.de>
+# This file is distributed under the same license as the mailman3-core package.
+# Chris Leick <c.leick@vollbio.de>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mailman3-core 3.1.0-6\n"
+"Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
+"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"PO-Revision-Date: 2017-11-27 18:08:07+0200\n"
+"Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid "Add the Hyperkitty configuration to mailman.cfg?"
+msgstr "Hyperkitty-Konfiguration zur mailman.cfg hinzufügen?"
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid ""
+"Mailman3 needs additional configuration in mailman.cfg in order to send "
+"messages to the Hyperkitty archiver. This configuration can be added "
+"automatically now."
+msgstr ""
+"Mailman3 benötigt zusätzliche Konfiguration in »mailman.cfg«, um Nachrichten "
+"an das Hyperkitty-Archvierungsprogramm zu senden. Diese Konfiguration kann "
+"nun automatisch hinzugefügt werden."
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid ""
+"This adds the content of /usr/share/mailman3-core/mailman_cfg "
+"_hyperkitty_snippet.cfg to mailman.cfg."
+msgstr ""
+"Dies fügt den Inhalt von /usr/share/mailman3-core/mailman_cfg "
+"_hyperkitty_snippet.cfg zu mailman.cfg hinzu."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid "The service for mailman3-core failed!"
+msgstr "Der Dienst für Mailman3-Core schlug fehl."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"The mailman3-core service didn't start correctly. This is probably because "
+"you didn't configure the database appropriately. The service won't work "
+"until you do so."
+msgstr ""
+"Der Mailman3-Core-Dienst startete nicht korrekt. Dies liegt wahrscheinlich "
+"daran, dass Sie die Datenbank nicht entsprechend konfiguriert haben. Der "
+"Dienst wird nicht funktionieren, bis Sie dies getan haben."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"If you actually DID install the db appropriately, please report the bug to "
+"the maintainers of mailman3-core package."
+msgstr ""
+"Falls Sie die Datenbank entsprechend konfiguriert HABEN, senden Sie bitte "
+"einen Fehlerbericht auf Englisch an die Betreuer des Mailman3-Core-Pakets."

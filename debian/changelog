@@ -1,8 +1,12 @@
 mailman3-core (3.1.0-8) UNRELEASED; urgency=medium
 
+  [ Pierre-Elliott Bécue ]
   * Bump standards version to 4.1.2
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 07 Dec 2017 21:51:21 +0100
+  [ Chris Leick ]
+  * Add German translation for debcof (Closes: #883823)
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 07 Dec 2017 23:00:10 +0100
 
 mailman3-core (3.1.0-7) unstable; urgency=medium
 
