@@ -19,4 +19,4 @@ relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} hash:/va
 
  Afterwards, Postfix should relay mail to mailinglist domains to Mailman3.
 
- -- Jonas Meurer <mejo@debian.org>, Fri, 10 Nov 2017 21:19:28 +0000
+ -- Jonas Meurer <jonas@freesources.org>, Fri, 10 Nov 2017 21:19:28 +0000

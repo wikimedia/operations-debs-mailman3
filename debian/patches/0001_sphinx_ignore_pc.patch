@@ -5,7 +5,7 @@ Description: Make sphinx-build ignore .pc directory
  sources for '.rst' files, this causes unwanted behaviour. This patch
  adds '.pc' to the list of excluded patterns.
 Forwarded: https://gitlab.com/mailman/mailman/merge_requests/320
-Author: Jonas Meurer <mejo@debian.org>
+Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-20
 
 ---

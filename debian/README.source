@@ -18,4 +18,4 @@ Import a new upstream version
 
         gbp import-orig --pristine-tar ../mailman3-core_1.1.0.orig.tar.gz
 
- -- Jonas Meurer <mejo@debian.org>  Thu, 28 Sep 2017 14:22:10 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 28 Sep 2017 14:22:10 +0200

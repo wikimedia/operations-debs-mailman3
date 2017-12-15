@@ -4,7 +4,7 @@ Description: Remove embedded remote images from README.rst
  users (like shields.io).
  .
 Forwarded: not-needed
-Author: Jonas Meurer <mejo@debian.org>
+Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-21
 
 ---

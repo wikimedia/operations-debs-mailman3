@@ -3,7 +3,7 @@ Description: Consider /etc/mailman3/mailman.cfg as config file
  the mailman sources to consider '/etc/mailman3/mailman.cfg' as config
  file.
 Forwarded: https://gitlab.com/mailman/mailman/merge_requests/319
-Author: Jonas Meurer <mejo@debian.org>
+Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-19
 
 ---
