@@ -8,9 +8,11 @@ Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-21
 
 ---
- README.rst |   12 ------------
+ README.rst | 12 ------------
  1 file changed, 12 deletions(-)
 
+diff --git a/README.rst b/README.rst
+index e58d182..92ace8b 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -2,18 +2,6 @@

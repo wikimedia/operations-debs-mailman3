@@ -1,4 +1,3 @@
 0001_sphinx_ignore_pc.patch
-0002_etc_mailman3_mailman.cfg.patch
-0003_README_remove_embedded_images.patch
-0004_change_mkdirs_behaviour.patch
+0002_README_remove_embedded_images.patch
+0003_change_mkdirs_behaviour.patch

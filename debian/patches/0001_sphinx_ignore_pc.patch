@@ -9,9 +9,11 @@ Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-20
 
 ---
- conf.py |    2 +-
+ conf.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/conf.py b/conf.py
+index 46790c1..8d217c1 100644
 --- a/conf.py
 +++ b/conf.py
 @@ -68,7 +68,7 @@ release = VERSION
