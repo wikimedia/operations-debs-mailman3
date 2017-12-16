@@ -6,6 +6,8 @@ mailman3-core (3.1.1-1) unstable; urgency=medium
   * d/patches:
     - patch for /etc/mailman3/mailman.cfg merged upstream, not needed anymore.
     - Reorders and merge patches with upstream new code.
+  * d/control:
+    - Update dependencies
 
   [ Chris Leick ]
   * Add German translation for debcof (Closes: #883823)
@@ -13,7 +15,7 @@ mailman3-core (3.1.1-1) unstable; urgency=medium
   [ Rui Branco ]
   * Add Portuguese translation for debconf (Closes: #884172)
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 12 Dec 2017 13:18:40 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 16 Dec 2017 16:59:09 +0100
 
 mailman3-core (3.1.0-7) unstable; urgency=medium
 
