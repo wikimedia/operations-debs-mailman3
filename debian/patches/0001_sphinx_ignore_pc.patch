@@ -7,6 +7,9 @@ Description: Make sphinx-build ignore .pc directory
 Forwarded: https://gitlab.com/mailman/mailman/merge_requests/320
 Author: Jonas Meurer <jonas@freesources.org>
 Last-Update: 2017-09-20
+From: Jonas Meurer <jonas@freesources.org>
+Date: Wed, 20 Sep 2017 16:15:39 +0200
+Subject: _sphinx_ignore_pc
 
 ---
  conf.py | 2 +-

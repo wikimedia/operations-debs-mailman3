@@ -10,6 +10,9 @@ Author: Pierre-Elliott Bécue <becue@crans.org>
 Bug: https://gitlab.com/mailman/mailman/issues/439
 Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=883464
 Last-Update: 2017-12-05
+From: Jonas Meurer <jonas@freesources.org>
+Date: Mon, 4 Dec 2017 15:15:50 +0100
+Subject: _change_mkdirs_behaviour
 
  Gbp-Pq: Name 0003_change_mkdirs_behaviour.patch
 ---
