@@ -85,6 +85,7 @@ src/mailman/chains/accept.py
 src/mailman/chains/base.py
 src/mailman/chains/builtin.py
 src/mailman/chains/discard.py
+src/mailman/chains/dmarc.py
 src/mailman/chains/headers.py
 src/mailman/chains/hold.py
 src/mailman/chains/moderation.py
@@ -97,6 +98,7 @@ src/mailman/chains/tests/__init__.py
 src/mailman/chains/tests/issue144.eml
 src/mailman/chains/tests/test_accept.py
 src/mailman/chains/tests/test_base.py
+src/mailman/chains/tests/test_dmarc.py
 src/mailman/chains/tests/test_headers.py
 src/mailman/chains/tests/test_hold.py
 src/mailman/chains/tests/test_owner.py
@@ -510,6 +512,7 @@ src/mailman/rules/max_recipients.py
 src/mailman/rules/max_size.py
 src/mailman/rules/moderation.py
 src/mailman/rules/news_moderation.py
+src/mailman/rules/no_senders.py
 src/mailman/rules/no_subject.py
 src/mailman/rules/suspicious.py
 src/mailman/rules/truth.py
@@ -532,10 +535,18 @@ src/mailman/rules/docs/rules.rst
 src/mailman/rules/docs/suspicious.rst
 src/mailman/rules/docs/truth.rst
 src/mailman/rules/tests/__init__.py
+src/mailman/rules/tests/test_administrivia.py
 src/mailman/rules/tests/test_approved.py
 src/mailman/rules/tests/test_banned_address.py
 src/mailman/rules/tests/test_dmarc.py
+src/mailman/rules/tests/test_emergency.py
+src/mailman/rules/tests/test_implicit_dest.py
+src/mailman/rules/tests/test_loop.py
+src/mailman/rules/tests/test_max_recipients.py
+src/mailman/rules/tests/test_max_size.py
 src/mailman/rules/tests/test_moderation.py
+src/mailman/rules/tests/test_news_moderation.py
+src/mailman/rules/tests/test_no_senders.py
 src/mailman/rules/tests/test_no_subject.py
 src/mailman/rules/tests/test_suspicious.py
 src/mailman/rules/tests/data/__init__.py
@@ -606,6 +617,7 @@ src/mailman/templates/en/list:user:notice:no-more-today.txt
 src/mailman/templates/en/list:user:notice:post.txt
 src/mailman/templates/en/list:user:notice:probe.txt
 src/mailman/templates/en/list:user:notice:refuse.txt
+src/mailman/templates/en/list:user:notice:rejected.txt
 src/mailman/templates/en/list:user:notice:welcome.txt
 src/mailman/testing/__init__.py
 src/mailman/testing/config-with-instances.pck
