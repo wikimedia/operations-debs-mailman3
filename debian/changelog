@@ -1,6 +1,8 @@
 mailman3-core (3.1.1-2) UNRELEASED; urgency=medium
 
   * Add a d/source/local-options file to unapply the patches after the build.
+  * d/control:
+    - Bump Standards-Version to 4.1.3
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 02 Jan 2018 19:19:48 +0100
 
