@@ -18,8 +18,12 @@ mailman3-core (3.1.1-2) unstable; urgency=medium
     * Move SQLite3 database file to '/var/lib/mailman3/data/mailman.db',
       manage it with dbconfig.
     * Rename default database and database user to 'mailman3'.
+  * d/tests/control: Set 'isolation-container' and 'needs-recommends' for
+    tests that require a running mailman3 daemon.
+  * d/tests/mailman3-api: Get setting from mailman3.cfg before running the
+    API test.
 
- -- Jonas Meurer <jonas@freesources.org>  Mon, 08 Jan 2018 17:27:14 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 08 Jan 2018 17:37:05 +0100
 
 mailman3-core (3.1.1-1) unstable; urgency=medium
 

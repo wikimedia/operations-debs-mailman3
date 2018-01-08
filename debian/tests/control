@@ -1,15 +1,14 @@
-# Not working yet, see upstream issue #400
-#Test-Command: python3 -m nose2 -v
-#Depends: @,
-#         python3-flufl.testing,
+# Unit tests not working yet, see upstream issue #400
+#Test-Command: python3 -m nose2
+#Depends: python3-flufl.testing,
 #         python3-nose2
-#Restrictions: build-needed
 
-Test-Command: mailman -C debian/contrib/mailman.test.cfg create testlist@example.org
+Test-Command: mailman create testlist@example.org
 Depends: @,
          postfix
-Restrictions: needs-root
+Restrictions: isolation-container, needs-root, needs-recommends
 
-#Test-Command: curl -s --user restadmin:restpass http://localhost:8001/3.1/system/versions
-#Depends: @,
-#         curl
+Tests: mailman3-api
+Depends: @,
+         curl
+Restrictions: isolation-container, needs-root, needs-recommends
