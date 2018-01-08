@@ -5,8 +5,6 @@ set -e
 . /usr/share/debconf/confmodule
 . /usr/share/dbconfig-common/dpkg/prerm.pgsql
 
-dbc_go mailman3-core "$@"
-
 init_service_failed () {
     db_input high mailman3-core/init_service_failed || true
     db_go
@@ -26,6 +24,9 @@ case "$1" in
 esac
 
 #DEBHELPER#
+
+# database removal has to happen after service is stopped
+dbc_go mailman3-core "$@"
 
 db_stop
 exit 0

@@ -1,10 +1,16 @@
-mailman3-core (3.1.1-2) UNRELEASED; urgency=medium
+mailman3-core (3.1.1-2) unstable; urgency=medium
 
+  [ Pierre-Elliott Bécue ]
   * Add a d/source/local-options file to unapply the patches after the build.
   * d/control:
     - Bump Standards-Version to 4.1.3
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 02 Jan 2018 19:19:48 +0100
+  [ Jonas Meurer ]
+  * d/mailman3-core.prerm: Move 'dbc_go' behind the '#DEBHELPER' section.
+    Database removal has to happen after service is stopped to prevent
+    race conditions.
+
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 08 Jan 2018 14:03:24 +0100
 
 mailman3-core (3.1.1-1) unstable; urgency=medium
 
