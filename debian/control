@@ -33,15 +33,17 @@ Vcs-Git: https://anonscm.debian.org/git/pkg-mailman/mailman3-core.git
 
 Package: mailman3-core
 Architecture: all
-Depends: dbconfig-pgsql | dbconfig-no-thanks,
+Depends: dbconfig-pgsql | dbconfig-mysql | dbconfig-sqlite3 | dbconfig-no-thanks,
          logrotate,
          lsb-base (>= 3.0-6),
          python3-falcon (>= 0.3rc1),
-         python3-psycopg2,
+         python3-psycopg2 | python3-pymysql,
          ucf,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: default-mta | mail-transport-agent, lynx
+Recommends: default-mta | mail-transport-agent,
+            lynx,
+            postgresql | default-mysql-server
 Suggests: mailman3-core-doc
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system. This package provides

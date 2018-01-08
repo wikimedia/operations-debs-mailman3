@@ -6,8 +6,8 @@ if [ -f /usr/share/debconf/confmodule ]; then
     . /usr/share/debconf/confmodule
     db_purge
 fi
-if [ -f /usr/share/dbconfig-common/dpkg/postrm.pgsql ]; then
-    . /usr/share/dbconfig-common/dpkg/postrm.pgsql
+if [ -f /usr/share/dbconfig-common/dpkg/postrm ]; then
+    . /usr/share/dbconfig-common/dpkg/postrm
     dbc_go mailman3-core "$@"
 fi
 

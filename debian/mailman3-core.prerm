@@ -3,7 +3,7 @@
 set -e
 
 . /usr/share/debconf/confmodule
-. /usr/share/dbconfig-common/dpkg/prerm.pgsql
+. /usr/share/dbconfig-common/dpkg/prerm
 
 init_service_failed () {
     db_input high mailman3-core/init_service_failed || true

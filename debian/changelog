@@ -4,13 +4,22 @@ mailman3-core (3.1.1-2) unstable; urgency=medium
   * Add a d/source/local-options file to unapply the patches after the build.
   * d/control:
     - Bump Standards-Version to 4.1.3
+  * Add basic multi database backend support to the maintainer scripts
+    with dbconfig.
 
   [ Jonas Meurer ]
-  * d/mailman3-core.prerm: Move 'dbc_go' behind the '#DEBHELPER' section.
-    Database removal has to happen after service is stopped to prevent
-    race conditions.
+  * Further improve the multi database backend support in maintainer
+    scripts:
+    * Change default database backend in the configuration skeleton to
+      SQLite3. This ensures a working setup without dbconfig.
+    * PostgreSQL (the upstream recommendation) stays the default at debconf
+      database backend selection. This also applies for non-interactive
+      installations.
+    * Move SQLite3 database file to '/var/lib/mailman3/data/mailman.db',
+      manage it with dbconfig.
+    * Rename default database and database user to 'mailman3'.
 
- -- Jonas Meurer <jonas@freesources.org>  Mon, 08 Jan 2018 14:03:24 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 08 Jan 2018 17:27:14 +0100
 
 mailman3-core (3.1.1-1) unstable; urgency=medium
 

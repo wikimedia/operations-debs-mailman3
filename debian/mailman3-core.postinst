@@ -3,7 +3,11 @@
 set -e
 
 . /usr/share/debconf/confmodule
-. /usr/share/dbconfig-common/dpkg/postinst.pgsql
+. /usr/share/dbconfig-common/dpkg/postinst
+
+# Set permissions for sqlite3 file
+dbc_dbfile_owner="list:list"
+dbc_dbfile_perms="0660"
 
 dbc_go mailman3-core "$@"
 
@@ -32,19 +36,43 @@ create_config () {
     mailmancfg_new=`tempfile -m 0640`
     cp -a /usr/share/mailman3-core/mailman.cfg.sample $mailmancfg_new
 
-    # set PostgreSQL settings from dbconfig-common in mailman.cfg
+    # get database settings from dbconfig-common
     if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
-        dbuser="$(sed -ne "s|^dbc_dbuser='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbpass="$(sed -ne "s|^dbc_dbpass='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbserver="$(sed -ne "s|^dbc_dbserver='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        dbname="$(sed -ne "s|^dbc_dbname='\(\S\+\)'|\1|p" \
-            /etc/dbconfig-common/mailman3-core.conf)"
-        sed -i -e "s|^\(\s*url: postgres://\).*\$|\1$dbuser:$dbpass@$dbserver/$dbname|" \
-               $mailmancfg_new
+        . /etc/dbconfig-common/mailman3-core.conf
+
+        # Comment out default database settings if dbconfig is used
+        sed -i -e 's|^\s*class: mailman\.database\..*$|#&|' \
+            $mailmancfg_new
+        sed -i -e 's|^\s*url: [a-z+]\+://.*$|#&|' \
+            $mailmancfg_new
     fi
+
+    case "$dbc_dbtype" in
+        pgsql)
+            sed -i -e 's|^#\?\s*\(class: mailman\.database\.postgresql\.PostgreSQLDatabase\)$|\1|' \
+                $mailmancfg_new
+            sed -i -e "s|^#\?\s*url: postgres://.*$|url: postgres://$dbc_dbuser:$dbc_dbpass@$dbc_dbserver/$dbc_dbname|" \
+                $mailmancfg_new
+            ;;
+        mysql)
+            sed -i -e 's|^#\?\s*\(class: mailman\.database\.mysql\.MySQLDatabase\)|\1|' \
+                $mailmancfg_new
+            sed -i -e "s|^#\?\s*url: mysql+pymysql://.*$|url: mysql+pymysql://$dbc_dbuser:$dbc_dbpass@$dbc_dbserver/$dbc_dbname?charset=utf8\&use_unicode=1|" \
+                $mailmancfg_new
+            ;;
+        sqlite3)
+            sed -i -e 's|^#\?\s*\(class: mailman\.database\.sqlite\.SQLiteDatabase\)$|\1|' \
+                $mailmancfg_new
+            sed -i -e 's|^#\?\s*url: sqlite:///.*$|url: sqlite:///$DATA_DIR/mailman.db|' \
+                $mailmancfg_new
+            ;;
+        "")
+            ;;
+        *)
+            echo "Unsupported database type $dbc_type."
+            exit 1
+            ;;
+    esac
 
     # Get admin_pass from mailman.cfg if existent
     [ -f /etc/mailman3/mailman.cfg ] && {
