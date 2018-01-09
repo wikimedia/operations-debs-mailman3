@@ -43,7 +43,7 @@ Depends: dbconfig-pgsql | dbconfig-mysql | dbconfig-sqlite3 | dbconfig-no-thanks
          ${python3:Depends}
 Recommends: default-mta | mail-transport-agent,
             lynx,
-            postgresql | default-mysql-server
+            postgresql | default-mysql-server | virtual-mysql-server
 Suggests: mailman3-core-doc
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system. This package provides
