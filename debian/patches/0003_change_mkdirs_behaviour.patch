@@ -9,17 +9,17 @@ Description: Changes src.mailman.utilities.filesystem:makedirs behaviour
 Author: Pierre-Elliott Bécue <becue@crans.org>
 Bug: https://gitlab.com/mailman/mailman/issues/439
 Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=883464
-Last-Update: 2017-12-05
+Last-Update: 2018-01-09
 From: Pierre-Elliott Bécue <becue@crans.org>
 Date: Mon, 4 Dec 2017 15:15:50 +0100
 Subject: _change_mkdirs_behaviour
 
 ---
- src/mailman/utilities/filesystem.py | 39 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 34 insertions(+), 5 deletions(-)
+ src/mailman/utilities/filesystem.py | 40 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
 
 diff --git a/src/mailman/utilities/filesystem.py b/src/mailman/utilities/filesystem.py
-index 19862ab..fc711b7 100644
+index 19862ab..56bd34e 100644
 --- a/src/mailman/utilities/filesystem.py
 +++ b/src/mailman/utilities/filesystem.py
 @@ -43,7 +43,7 @@ class umask:
@@ -58,17 +58,17 @@ index 19862ab..fc711b7 100644
          with suppress(OSError):
              os.chmod(dirpath, mode)
  
-@@ -69,3 +78,23 @@ def makedirs(path, mode=0o2775):
+@@ -69,3 +78,24 @@ def makedirs(path, mode=0o2775):
  def safe_remove(path):
      with suppress(FileNotFoundError):
          os.remove(path)
 +
 +
 +def first_inexistent_directory(path):
-+    """Splits iteratively a path until it gives the first non-existent directory in the tree.
++    """Return the first non-existent directory in given path.
 +
-+    That is, if /home/user/foo/bar/baz is given to the function, and /home/user/foo/bar
-+    doesn't exist but /home/user/foo exists, returns /home/user/foo/bar.
++    If /foo/bar/baz is given, and /foo/bar doesn't exist but
++    /foo exists, return /foo/bar.
 +    """
 +    directory = path
 +    rhs = None
@@ -80,5 +80,6 @@ index 19862ab..fc711b7 100644
 +            else:
 +                return os.path.join(directory, rhs)
 +        elif os.path.exists(directory):
-+            raise FileExistsError("The path %s exists but is not a directory.", directory)
++            raise FileExistsError("The path %s exists but is not a directory.",
++                                  directory)
 +        directory, rhs = os.path.split(directory)
