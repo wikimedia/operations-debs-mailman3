@@ -25,6 +25,7 @@ Build-Depends: debhelper (>= 10),
                python3-zope.configuration,
                python3-zope.event,
                python3-zope.interface
+Rules-Requires-Root: binary-targets
 Standards-Version: 4.1.3
 Homepage: http://www.list.org/
 X-Python3-Version: >= 3.5
