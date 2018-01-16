@@ -6,9 +6,9 @@
 Test-Command: mailman create testlist@example.org
 Depends: @,
          postfix
-Restrictions: isolation-container, needs-root, needs-recommends
+Restrictions: isolation-container, needs-root
 
 Tests: mailman3-api
 Depends: @,
          curl
-Restrictions: isolation-container, needs-root, needs-recommends
+Restrictions: isolation-container, needs-root

@@ -13,8 +13,9 @@ mailman3-core (3.1.1-4) unstable; urgency=medium
       sqlite3 as default database backend. We don't want to pull in needless
       extra database servers.
     - Set Rules-Requires-Root: binary-targets
+  * d/tests/control: remove 'needs-recommends' now that we use sqlite3
 
- -- Jonas Meurer <jonas@freesources.org>  Tue, 16 Jan 2018 15:07:03 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 16 Jan 2018 15:55:06 +0100
 
 mailman3-core (3.1.1-3) unstable; urgency=medium
 
