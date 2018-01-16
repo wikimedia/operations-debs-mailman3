@@ -33,7 +33,7 @@ Vcs-Git: https://anonscm.debian.org/git/pkg-mailman/mailman3-core.git
 
 Package: mailman3-core
 Architecture: all
-Depends: dbconfig-pgsql | dbconfig-mysql | dbconfig-sqlite3 | dbconfig-no-thanks,
+Depends: dbconfig-sqlite3 | dbconfig-pgsql | dbconfig-mysql | dbconfig-no-thanks,
          logrotate,
          lsb-base (>= 3.0-6),
          python3-falcon (>= 0.3rc1),
@@ -42,22 +42,26 @@ Depends: dbconfig-pgsql | dbconfig-mysql | dbconfig-sqlite3 | dbconfig-no-thanks
          ${misc:Depends},
          ${python3:Depends}
 Recommends: default-mta | mail-transport-agent,
-            lynx,
-            postgresql | default-mysql-server | virtual-mysql-server
-Suggests: mailman3-core-doc
+            lynx
+Suggests: mailman3-core-doc,
+          postgresql | default-mysql-server | virtual-mysql-server
 Description: Mailing list management system
  This is GNU Mailman, a mailing list management system. This package provides
  the core delivery engine of the system, which handles the mailing lists data,
  receives messages, handles the moderation and processing of these messages and
  delivers them to the mailing lists subscribers. It communicates with the
  others components through a private administrative REST API.
+ .
+ Default database backend is SQLite3 in order to not break automated
+ installations. For productive setups, PostgreSQL or MySQL are much better
+ options though. See README.Debian for further information.
 
 Package: mailman3-core-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}, ${sphinxdoc:Depends}
 Description: Mailing list management system documentation
- This package contains the full compiled documentation of Mailman3
- server. It is built using sphinx and voluntarily separated from
- mailman3-core lib/binaries as it is not required to have a properly
- working server.
+ This is GNU Mailman, a mailing list management system. This package contains
+ the full compiled documentation of Mailman3 server. It is built using sphinx
+ and voluntarily separated from mailman3-core lib/binaries as it is not
+ required to have a properly working server.

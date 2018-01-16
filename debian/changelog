@@ -1,3 +1,20 @@
+mailman3-core (3.1.1-4) unstable; urgency=medium
+
+  * d/mailman3-core.config:
+    - Change default database backend to 'sqlite3'. Required to fix non-
+      interactive installations without recommends (e.g. piuparts).
+  * d/README.Debian:
+    - Add a section about selection of the database backend.
+  * d/control:
+    - Update description of mailman3-core package to reflect the fact
+      that several database backends are supported and 'sqlite3' is the
+      default.
+    - Degrade recommends on postgresql|mysql to suggests now that we use
+      sqlite3 as default database backend. We don't want to pull in needless
+      extra database servers.
+
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 16 Jan 2018 14:57:51 +0100
+
 mailman3-core (3.1.1-3) unstable; urgency=medium
 
   * d/control: Add 'virtual-mysql-server' as another alternative recommends.

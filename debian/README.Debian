@@ -19,4 +19,19 @@ relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} hash:/va
 
  Afterwards, Postfix should relay mail to mailinglist domains to Mailman3.
 
- -- Jonas Meurer <jonas@freesources.org>, Fri, 10 Nov 2017 21:19:28 +0000
+
+Database backend
+================
+
+ The default configured database backend is SQLite3. This is necessary to
+not break automated (non-interactive) installations without installing
+recommends.
+
+ For productive setups, SQLite3 is *not* recommended as database backend.
+PostgreSQL or MySQL should be used instead. The database configuration can
+be automated by installing 'dbconfig-pgsql' or 'dbconfig-mysql' and running
+'dpkg-reconfigure mailman3-core'. A respective local or remote database
+server has to be available in this case.
+
+
+ -- Jonas Meurer <jonas@freesources.org>, Tue, 16 Jan 2018 15:01:44 +0100
