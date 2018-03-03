@@ -7,7 +7,13 @@ list mail and provides a REST API for configuration.
  For Mailman3 to work properly, you need to configure your mail transport
 agent (MTA) to deliver list mail to Mailman3.
 
- In case of Postfix, add the following settings to `/etc/postfix/main.cf`:
+
+Postfix as mail transport agent (MTA)
+=====================================
+
+ Mailman3-core is already configured to use Postfix as MTA per default.
+Only postfix itself has to be configured to hand over mailinglist mail to
+Mailman3. To to so, add the following settings to `/etc/postfix/main.cf`:
 
 ```
 # Mailman related settings
@@ -18,6 +24,25 @@ relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} hash:/va
 ```
 
  Afterwards, Postfix should relay mail to mailinglist domains to Mailman3.
+
+
+Exim4 as mail transport agent (MTA)
+===================================
+
+ In order to make Mailman3-core talk to Exim4 instead of Postfix, change
+the following settings in '/etc/mailman3/mailman.cfg':
+
+```
+[mta]
+incoming: mailman.mta.exim4.LMTP
+configuration: python:mailman.config.exim4
+```
+
+ Additionally, Exim4 needs to be configured to hand over mailinglist mail
+to Exim4. To do so, follow the instructions from the official Mailman3
+documentation:
+
+https://mailman.readthedocs.io/en/latest/src/mailman/docs/mta.html#exim4-configuration
 
 
 Database backend
