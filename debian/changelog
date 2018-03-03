@@ -9,11 +9,12 @@ mailman3-core (3.1.1-5) unstable; urgency=medium
     - Add some settings from '[mta]' section to make configuration for
       non-default MTAs easier. Add commented out settings for Exim4.
       (Closes: #891881)
-
   * d/README.Debian:
     - Add paragraphs for Postfix and Exim4 as mail transport agent (MTA).
+  * d/control:
+    - Update Vcs-* fields to point to new repository on salsa.debian.org.
 
- -- Jonas Meurer <jonas@freesources.org>  Sat, 03 Mar 2018 12:18:12 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sat, 03 Mar 2018 18:26:08 +0100
 
 mailman3-core (3.1.1-4) unstable; urgency=medium
 
