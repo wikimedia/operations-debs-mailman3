@@ -8,7 +8,6 @@ mailman3-core (3.1.1-5) unstable; urgency=medium
   * d/contrib/mailman.cfg.sample:
     - Add some settings from '[mta]' section to make configuration for
       non-default MTAs easier. Add commented out settings for Exim4.
-      (Closes: #891881)
   * d/README.Debian:
     - Add paragraphs for Postfix and Exim4 as mail transport agent (MTA).
   * d/control:
