@@ -70,3 +70,17 @@ Description: Mailing list management system documentation
  contains the full compiled documentation of Mailman3 server. It is built using
  sphinx and voluntarily separated from mailman3 lib/binaries as it is not
  required to have a properly working server.
+
+Package: mailman3-full
+Architecture: all
+Depends: mailman3,
+         mailman3-web,
+         python3-mailman-hyperkitty,
+         ${misc:Depends}
+Description: Full Mailman3 mailing list management suite (metapackage)
+ This is GNU Mailman, a mailing list management system. This metapackage
+ depends on all components of the full Mailman3 suite:
+ .
+  * mailman3: The core Mailman3 delivery engine
+  * mailman3-web: Django project integrating Mailman3 postorius and hyperkitty
+  * python3-mailman-hyperkitty: Mailman3 server plugin for Hyperkitty archiver

@@ -24,8 +24,11 @@ mailman3 (3.1.1-6) unstable; urgency=medium
     - Fix upstream name: it's 'mailman', not 'mailman3-core'.
   * d/source/local-options:
     - Removed, didn't work out as expected.
+  * d/control:
+    - Add 'mailman3-full' metapackage that depends on all components of
+      the mailman3 suite.
 
- -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 10:51:02 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 11:42:14 +0100
 
 mailman3-core (3.1.1-5) unstable; urgency=medium
 
