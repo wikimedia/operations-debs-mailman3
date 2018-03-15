@@ -16,7 +16,9 @@ cleanup () {
 }
 
 upgrade_fixes () {
-    if dpkg --compare-versions "$2" lt "3.1.0-3"; then
+    version="$(zcat /usr/share/doc/$DPKG_MAINTSCRIPT_PACKAGE/changelog* \
+            | dpkg-parsechangelog -l- -SVersion)"
+    if dpkg --compare-versions "$version" le "3.1.1-6"; then
         ucfr --force mailman3 /etc/mailman3/mailman.cfg
     fi
 }
@@ -106,7 +108,7 @@ create_config () {
 
 case "$1" in
     configure)
-        [ -n "$2" ] && upgrade_fixes
+        upgrade_fixes
         create_config
     ;;
 
