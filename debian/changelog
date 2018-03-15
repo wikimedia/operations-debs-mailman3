@@ -20,15 +20,17 @@ mailman3 (3.1.1-6) unstable; urgency=medium
   * d/changelog, d/control, d/mailman3-core*, d/po/*.po, d/README.Debian,
     d/README.source, d/rules, d/templates:
     - Rename source and binary package 'mailman3-core' to 'mailman3'.
+  * d/control:
+    - Add appropriate Replaces/Breaks fields and versioned Provides fields
+      to renamed binary packages.
+    - Add 'mailman3-full' metapackage that depends on all components of
+      the mailman3 suite.
   * d/copyright:
     - Fix upstream name: it's 'mailman', not 'mailman3-core'.
   * d/source/local-options:
     - Removed, didn't work out as expected.
-  * d/control:
-    - Add 'mailman3-full' metapackage that depends on all components of
-      the mailman3 suite.
 
- -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 11:42:14 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 11:56:56 +0100
 
 mailman3-core (3.1.1-5) unstable; urgency=medium
 

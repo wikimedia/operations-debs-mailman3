@@ -46,6 +46,9 @@ Recommends: default-mta | mail-transport-agent,
             lynx
 Suggests: mailman3-doc,
           postgresql | default-mysql-server | virtual-mysql-server
+Replaces: mailman3-core
+Breaks: mailman3-core
+Provides: mailman3-core (= 3.1.1-5)
 Description: Mailing list management system
  This is GNU Mailman version 3, a mailing list management system. This package
  provides the core delivery engine of the system, which handles the mailing
@@ -65,6 +68,9 @@ Section: doc
 Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Replaces: mailman3-core-doc
+Breaks: mailman3-core-doc
+Provides: mailman3-core-doc (= 3.1.1-5)
 Description: Mailing list management system documentation
  This is GNU Mailman version 3, a mailing list management system. This package
  contains the full compiled documentation of Mailman3 server. It is built using
