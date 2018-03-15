@@ -19,6 +19,18 @@ case "$1" in
     ;;
 
     purge)
+        if [ -f /usr/share/debconf/confmodule ]; then
+            db_purge
+        fi
+
+        for dir in archives cache data ext lists locks messages queue templates; do
+            rm -rf /var/lib/mailman3/$dir
+        done
+
+        for log in bounce debug mailman smtp; do
+            rm -f /var/log/mailman3/$log.log*
+        done
+
         for ext in .ucf-new .ucf-old .ucf-dist ""; do
             rm -f "/etc/mailman3/mailman.cfg$ext"
         done

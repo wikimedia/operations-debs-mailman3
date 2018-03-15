@@ -25,6 +25,8 @@ mailman3 (3.1.1-6) unstable; urgency=medium
       to renamed binary packages.
     - Add 'mailman3-full' metapackage that depends on all components of
       the mailman3 suite.
+  * d/mailman3.postrm:
+    - Remove cruft from mailman3 package at purge: archives, cache, data, logs
   * d/copyright:
     - Fix upstream name: it's 'mailman', not 'mailman3-core'.
   * d/source/local-options:
