@@ -11,7 +11,7 @@ export PYBUILD_INSTALL_ARGS ?= \
 	--install-scripts=${MM3_BIN_DIR}/
 
 %:
-	dh $@ --with python3,systemd,sphinxdoc --buildsystem=pybuild
+	dh $@ --with python3,sphinxdoc --buildsystem=pybuild
 
 override_dh_installinit:
 	dh_installinit --error-handler=init_service_failed
@@ -28,11 +28,6 @@ override_dh_auto_build:
 override_dh_auto_install:
 	dh_auto_install
 	#find debian/mailman3/usr -type d -name "tests" -print0 | xargs -0 rm -r
-
-override_dh_installdocs:
-	dh_installdocs
-	mv debian/mailman3-doc/usr/share/doc/mailman3-doc/html \
-	   debian/mailman3-doc/usr/share/doc/mailman3/html
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst

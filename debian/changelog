@@ -1,5 +1,6 @@
 mailman3 (3.1.1-6) unstable; urgency=medium
 
+  [ Jonas Meurer ]
   * Rename binary and source packages 'mailman3-core' to 'mailman3' to
     avoid further confusion, add new metapackage 'mailman3-full'.
 
@@ -35,7 +36,11 @@ mailman3 (3.1.1-6) unstable; urgency=medium
   * d/source/local-options:
     - Removed, didn't work out as expected.
 
- -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 12:21:40 +0100
+  [ Pierre-Elliott Bécue ]
+  * d/control: Bump debhelper build-dependency to 11
+  * d/compat: Raise to 11
+
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 16:39:44 +0100
 
 mailman3-core (3.1.1-5) unstable; urgency=medium
 
