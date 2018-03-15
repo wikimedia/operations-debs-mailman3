@@ -1,4 +1,4 @@
-Source: mailman3-core
+Source: mailman3
 Section: mail
 Priority: optional
 Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
@@ -29,10 +29,10 @@ Rules-Requires-Root: binary-targets
 Standards-Version: 4.1.3
 Homepage: http://www.list.org/
 X-Python3-Version: >= 3.5
-Vcs-Browser: https://salsa.debian.org/mailman-team/mailman3-core
-Vcs-Git: https://salsa.debian.org/mailman-team/mailman3-core.git
+Vcs-Browser: https://salsa.debian.org/mailman-team/mailman3
+Vcs-Git: https://salsa.debian.org/mailman-team/mailman3.git
 
-Package: mailman3-core
+Package: mailman3
 Architecture: all
 Depends: dbconfig-sqlite3 | dbconfig-pgsql | dbconfig-mysql | dbconfig-no-thanks,
          logrotate,
@@ -44,26 +44,29 @@ Depends: dbconfig-sqlite3 | dbconfig-pgsql | dbconfig-mysql | dbconfig-no-thanks
          ${python3:Depends}
 Recommends: default-mta | mail-transport-agent,
             lynx
-Suggests: mailman3-core-doc,
+Suggests: mailman3-doc,
           postgresql | default-mysql-server | virtual-mysql-server
 Description: Mailing list management system
- This is GNU Mailman, a mailing list management system. This package provides
- the core delivery engine of the system, which handles the mailing lists data,
- receives messages, handles the moderation and processing of these messages and
- delivers them to the mailing lists subscribers. It communicates with the
- others components through a private administrative REST API.
+ This is GNU Mailman version 3, a mailing list management system. This package
+ provides the core delivery engine of the system, which handles the mailing
+ lists data, receives messages, handles the moderation and processing of these
+ messages and delivers them to the mailing lists subscribers. It communicates
+ with the other components through a private administrative REST API.
  .
  Default database backend is SQLite3 in order to not break automated
  installations. For productive setups, PostgreSQL or MySQL are much better
  options though. See README.Debian for further information.
+ .
+ In order to get the full Mailman3 system, the metapackage 'mailman3-full'
+ should be installed.
 
-Package: mailman3-core-doc
+Package: mailman3-doc
 Section: doc
 Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${sphinxdoc:Depends}
 Description: Mailing list management system documentation
- This is GNU Mailman, a mailing list management system. This package contains
- the full compiled documentation of Mailman3 server. It is built using sphinx
- and voluntarily separated from mailman3-core lib/binaries as it is not
+ This is GNU Mailman version 3, a mailing list management system. This package
+ contains the full compiled documentation of Mailman3 server. It is built using
+ sphinx and voluntarily separated from mailman3 lib/binaries as it is not
  required to have a properly working server.

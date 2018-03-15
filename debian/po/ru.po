@@ -1,13 +1,13 @@
-# Russian translation of mailman3-core debconf templates.
+# Russian translation of mailman3 debconf templates.
 # Copyright (C) 2017 Lev Lamberov <dogsleg@debian.org>
-# This file is distributed under the same license as the mailman3-core package.
+# This file is distributed under the same license as the mailman3 package.
 # Lev Lamberov <dogsleg@debian.org>, 2017.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: mailman3-core\n"
-"Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"Project-Id-Version: mailman3\n"
+"Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
+"POT-Creation-Date: 2018-03-15 10:57+0100\n"
 "PO-Revision-Date: 2017-12-01 17:36+0500\n"
 "Last-Translator: Lev Lamberov <dogsleg@debian.org>\n"
 "Language-Team: \n"
@@ -22,15 +22,22 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-msgid "Add the Hyperkitty configuration to mailman.cfg?"
+#, fuzzy
+#| msgid "Add the Hyperkitty configuration to mailman.cfg?"
+msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr "Добавить настройки Hyperkitty в mailman.cfg?"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
+#, fuzzy
+#| msgid ""
+#| "Mailman3 needs additional configuration in mailman.cfg in order to send "
+#| "messages to the Hyperkitty archiver. This configuration can be added "
+#| "automatically now."
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
-"messages to the Hyperkitty archiver. This configuration can be added "
+"messages to the HyperKitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
 "Для mailman3 требуются дополнительные настройки в mailman.cfg, чтобы "
@@ -40,37 +47,52 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
+#, fuzzy
+#| msgid ""
+#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
+#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
-"This adds the content of /usr/share/mailman3-core/mailman_cfg "
-"_hyperkitty_snippet.cfg to mailman.cfg."
+"The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
+"be added to /etc/mailman3/mailman.cfg."
 msgstr ""
-"Это приведёт к добавлению содержимого /usr/share/mailman3-core/mailman_cfg "
+"Это приведёт к добавлению содержимого /usr/share/mailman3/mailman_cfg "
 "_hyperkitty_snippet.cfg в mailman.cfg."
 
 #. Type: error
 #. Description
 #: ../templates:2001
-msgid "The service for mailman3-core failed!"
-msgstr "Служба mailman3-core была завершена неудачно!"
+#, fuzzy
+#| msgid "The service for mailman3-core failed!"
+msgid "The service for mailman3 failed!"
+msgstr "Служба mailman3 была завершена неудачно!"
 
 #. Type: error
 #. Description
 #: ../templates:2001
+#, fuzzy
+#| msgid ""
+#| "The mailman3-core service didn't start correctly. This is probably "
+#| "because you didn't configure the database appropriately. The service "
+#| "won't work until you do so."
 msgid ""
-"The mailman3-core service didn't start correctly. This is probably because "
-"you didn't configure the database appropriately. The service won't work "
-"until you do so."
+"The mailman3 service didn't start correctly. This is probably because you "
+"didn't configure the database appropriately. The service won't work until "
+"you do so."
 msgstr ""
-"Служба mailman3-core не была запущена правильно. Вероятно, это связано с "
+"Служба mailman3 не была запущена правильно. Вероятно, это связано с "
 "тем, что вы не настроили базу данных. Служба не будет работать до тех пор, "
 "пока вы этого не сделаете."
 
 #. Type: error
 #. Description
 #: ../templates:2001
+#, fuzzy
+#| msgid ""
+#| "If you actually DID install the db appropriately, please report the bug "
+#| "to the maintainers of mailman3-core package."
 msgid ""
-"If you actually DID install the db appropriately, please report the bug to "
-"the maintainers of mailman3-core package."
+"If you actually DID install the database appropriately, please report the "
+"bug to the maintainers of the mailman3 package."
 msgstr ""
 "Если же вы действительно ВЫПОЛНИЛИ установку базы данных правильным образом, "
-"то сообщите об ошибке сопровождающим пакета mailman3-core."
+"то сообщите об ошибке сопровождающим пакета mailman3."

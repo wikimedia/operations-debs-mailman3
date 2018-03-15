@@ -1,11 +1,11 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          mailman3-core
+# Provides:          mailman3
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Mailman3 Core program
+# Short-Description: Mailman3 server
 # Description:       Starts and stops the Mailman3 server, used to
 #                    manage mailing lists, queues, and all client queries
 ### END INIT INFO
@@ -14,8 +14,8 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Mailman3 Core program"
-NAME=mailman3-core
+DESC="Mailman3 program"
+NAME=mailman3
 DAEMON=/usr/bin/mailman
 DAEMON_ARGS="-C /etc/mailman3/mailman.cfg start"
 PIDDIR=/run/mailman3

@@ -1,3 +1,32 @@
+mailman3 (3.1.1-6) unstable; urgency=medium
+
+  * Rename binary and source packages 'mailman3-core' to 'mailman3' to
+    avoid further confusion, add new metapackage 'mailman3-full'.
+
+    A bit more background:
+    - The naming of our mailman3 packages caused some confusion. So we
+      decided on the following:
+      1. binary package 'mailman3-suite' will become 'mailman3-web' to make
+         the purpose more obvious.
+      2. binary and source package 'mailman3-core' will become 'mailman3'.
+         This is closer to the upstream name.
+      3. binary metapackage 'mailman3' will become 'mailman3-full' and moves
+         to the source package 'mailman3-core'/'mailman3'.
+
+    This upload of source package 'mailman3' takes care of part 2 and 3.
+
+  * d/NEWS:
+    - Document the renaming of the package names.
+  * d/changelog, d/control, d/mailman3-core*, d/po/*.po, d/README.Debian,
+    d/README.source, d/rules, d/templates:
+    - Rename source and binary package 'mailman3-core' to 'mailman3'.
+  * d/copyright:
+    - Fix upstream name: it's 'mailman', not 'mailman3-core'.
+  * d/source/local-options:
+    - Removed, didn't work out as expected.
+
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 10:51:02 +0100
+
 mailman3-core (3.1.1-5) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]

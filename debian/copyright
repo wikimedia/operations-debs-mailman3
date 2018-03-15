@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: mailman3-core
+Upstream-Name: mailman
 Source: https://gitlab.com/mailman/mailman
 
 Files: *

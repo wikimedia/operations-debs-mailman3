@@ -1,8 +1,8 @@
-Mailman3-core for Debian
-========================
+Mailman3 for Debian
+===================
 
- This package ships the core Mailman3 daemon that receives and delivers
-list mail and provides a REST API for configuration.
+ This package ships the Mailman3 daemon that receives and delivers list mail
+and provides a REST API for configuration.
 
  For Mailman3 to work properly, you need to configure your mail transport
 agent (MTA) to deliver list mail to Mailman3.
@@ -11,9 +11,9 @@ agent (MTA) to deliver list mail to Mailman3.
 Postfix as mail transport agent (MTA)
 =====================================
 
- Mailman3-core is already configured to use Postfix as MTA per default.
-Only postfix itself has to be configured to hand over mailinglist mail to
-Mailman3. To to so, add the following settings to `/etc/postfix/main.cf`:
+ Mailman3 is already configured to use Postfix as MTA per default. Only
+postfix itself has to be configured to hand over mailinglist mail to Mailman3.
+To to so, add the following settings to `/etc/postfix/main.cf`:
 
 ```
 # Mailman related settings
@@ -29,8 +29,8 @@ relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} hash:/va
 Exim4 as mail transport agent (MTA)
 ===================================
 
- In order to make Mailman3-core talk to Exim4 instead of Postfix, change
-the following settings in '/etc/mailman3/mailman.cfg':
+ In order to make Mailman3 talk to Exim4 instead of Postfix, change the
+following settings in '/etc/mailman3/mailman.cfg':
 
 ```
 [mta]
@@ -55,8 +55,8 @@ recommends.
  For productive setups, SQLite3 is *not* recommended as database backend.
 PostgreSQL or MySQL should be used instead. The database configuration can
 be automated by installing 'dbconfig-pgsql' or 'dbconfig-mysql' and running
-'dpkg-reconfigure mailman3-core'. A respective local or remote database
-server has to be available in this case.
+'dpkg-reconfigure mailman3'. A respective local or remote database server
+has to be available in this case.
 
 
  -- Jonas Meurer <jonas@freesources.org>, Tue, 16 Jan 2018 15:01:44 +0100

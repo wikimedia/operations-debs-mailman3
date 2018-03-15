@@ -7,7 +7,7 @@
 	notifempty
 	create 640 list list
 	postrotate
-		if /etc/init.d/mailman3-core status >/dev/null; then \
+		if /etc/init.d/mailman3 status >/dev/null; then \
 		    /usr/bin/mailman reopen >/dev/null; \
 		fi;
 	endscript

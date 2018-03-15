@@ -3,8 +3,8 @@ export DH_VERBOSE = 1
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-export PYBUILD_NAME = mailman3-core
-export PYBUILD_DESTDIR = debian/mailman3-core
+export PYBUILD_NAME = mailman3
+export PYBUILD_DESTDIR = debian/mailman3
 
 MM3_BIN_DIR=/usr/lib/mailman3/bin/
 export PYBUILD_INSTALL_ARGS ?= \
@@ -27,17 +27,17 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_auto_install
-	#find debian/mailman3-core/usr -type d -name "tests" -print0 | xargs -0 rm -r
+	#find debian/mailman3/usr -type d -name "tests" -print0 | xargs -0 rm -r
 
 override_dh_installdocs:
 	dh_installdocs
-	mv debian/mailman3-core-doc/usr/share/doc/mailman3-core-doc/html \
-	   debian/mailman3-core-doc/usr/share/doc/mailman3-core/html
+	mv debian/mailman3-doc/usr/share/doc/mailman3-doc/html \
+	   debian/mailman3-doc/usr/share/doc/mailman3/html
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/mailman/docs/NEWS.rst
 
 override_dh_fixperms:
 	dh_fixperms
-	chown list:list debian/mailman3-core/var/lib/mailman3 \
-	                debian/mailman3-core/var/log/mailman3
+	chown list:list debian/mailman3/var/lib/mailman3 \
+	                debian/mailman3/var/log/mailman3

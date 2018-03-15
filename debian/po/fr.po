@@ -1,14 +1,14 @@
-# French translation for mailman3-core debconf templates.
+# French translation for mailman3 debconf templates.
 # Copyright (C) 2017 Pierre-Elliott Bécue <becue@crans.org>
-# This file is distributed under the same license as the mailman3-core package.
+# This file is distributed under the same license as the mailman3 package.
 # Pierre-Elliott Bécue <becue@crans.org>, 2017.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: mailman3-core\n"
-"Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"Project-Id-Version: mailman3\n"
+"Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
+"POT-Creation-Date: 2018-03-15 10:57+0100\n"
 "PO-Revision-Date: 2017-11-14 16:08+0100\n"
 "Last-Translator: Pierre-Elliott Bécue <becue@crans.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-msgid "Add the Hyperkitty configuration to mailman.cfg?"
+msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr "Faut-il ajouter la configuration pour HyperKitty dans mailman.cfg ?"
 
 #. Type: boolean
@@ -28,47 +28,62 @@ msgstr "Faut-il ajouter la configuration pour HyperKitty dans mailman.cfg ?"
 #: ../templates:1001
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
-"messages to the Hyperkitty archiver. This configuration can be added "
+"messages to the HyperKitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
 "Mailman3 a besoin de configurations supplémentaires dans mailman.cfg pour "
-"pouvoir envoyer les messages à archiver vers Hyperkitty. Cette configuration "
+"pouvoir envoyer les messages à archiver vers HyperKitty. Cette configuration "
 "peut être ajoutée automatiquement maintenant."
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
+#, fuzzy
+#| msgid ""
+#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
+#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
-"This adds the content of /usr/share/mailman3-core/mailman_cfg "
-"_hyperkitty_snippet.cfg to mailman.cfg."
+"The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
+"be added to /etc/mailman3/mailman.cfg."
 msgstr ""
-"Cette configuration est extraite de /usr/share/mailman3-core/"
+"Cette configuration est extraite de /usr/share/mailman3/"
 "mailman_cfg_hyperkitty_snippet.cfg vers mailman.cfg."
 
 #. Type: error
 #. Description
 #: ../templates:2001
-msgid "The service for mailman3-core failed!"
-msgstr "Le service pour mailman3-core a échoué."
+#, fuzzy
+#| msgid "The service for mailman3 failed!"
+msgid "The service for mailman3 failed!"
+msgstr "Le service pour mailman3 a échoué."
 
 #. Type: error
 #. Description
 #: ../templates:2001
+#, fuzzy
+#| msgid ""
+#| "The mailman3-core service didn't start correctly. This is probably "
+#| "because you didn't configure the database appropriately. The service "
+#| "won't work until you do so."
 msgid ""
-"The mailman3-core service didn't start correctly. This is probably because "
-"you didn't configure the database appropriately. The service won't work "
-"until you do so."
+"The mailman3 service didn't start correctly. This is probably because you "
+"didn't configure the database appropriately. The service won't work until "
+"you do so."
 msgstr ""
-"Le service mailman3-core n'a pas pu démarrer correctement. Cela peut être dû "
+"Le service mailman3 n'a pas pu démarrer correctement. Cela peut être dû "
 "au fait que vous n'avez pas configuré la base de données de façon adaptée. "
 "Le service ne pourra pas démarrer tant que vous ne l'aurez pas fait."
 
 #. Type: error
 #. Description
 #: ../templates:2001
+#, fuzzy
+#| msgid ""
+#| "If you actually DID install the db appropriately, please report the bug "
+#| "to the maintainers of mailman3-core package."
 msgid ""
-"If you actually DID install the db appropriately, please report the bug to "
-"the maintainers of mailman3-core package."
+"If you actually DID install the database appropriately, please report the "
+"bug to the maintainers of the mailman3 package."
 msgstr ""
 "Si vous avez BIEN configuré la base de données correctement, veuillez "
-"signaler un bogue aux mainteneurs du paquet mailman3-core."
+"signaler un bogue aux mainteneurs du paquet mailman3."
