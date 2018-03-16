@@ -1,3 +1,12 @@
+mailman3 (3.1.1-7) unstable; urgency=medium
+
+  * d/mailman3.postinst:
+    - Don't use dpkg-parsechangelog to determine the version that is being
+      installed (would require a dependency on dpkg-dev). Instead, use
+      'dpkg -s'.
+
+ -- Jonas Meurer <jonas@freesources.org>  Fri, 16 Mar 2018 09:50:32 +0100
+
 mailman3 (3.1.1-6) unstable; urgency=medium
 
   [ Jonas Meurer ]

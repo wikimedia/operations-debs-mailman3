@@ -16,9 +16,8 @@ cleanup () {
 }
 
 upgrade_fixes () {
-    version="$(zcat /usr/share/doc/$DPKG_MAINTSCRIPT_PACKAGE/changelog* \
-            | dpkg-parsechangelog -l- -SVersion)"
-    if dpkg --compare-versions "$version" le "3.1.1-6"; then
+    version="$(dpkg -s $DPKG_MAINTSCRIPT_PACKAGE | sed -n 's/^Version: //p')"
+    if dpkg --compare-versions "$version" le "3.1.1-7"; then
         ucfr --force mailman3 /etc/mailman3/mailman.cfg
     fi
 }
