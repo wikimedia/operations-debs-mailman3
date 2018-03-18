@@ -1,5 +1,6 @@
 mailman3 (3.1.1-8) unstable; urgency=medium
 
+  [ Pierre-Elliott Bécue ]
   * d/mailman3.init:
     - start-stop-daemon was called to stop mailman3 on an inappropriate
       program name as it is an interpreted language. (the name actually is
@@ -7,7 +8,11 @@ mailman3 (3.1.1-8) unstable; urgency=medium
       to assume that if pid + user are good, we are killing the good program.
       (Closes: #891881)
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 17 Mar 2018 18:43:02 +0100
+  [ Jonas Meurer ]
+  * d/mailman3.init:
+    - Coding style improvements and indention fixes.
+
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 18 Mar 2018 16:16:36 +0100
 
 mailman3 (3.1.1-7) unstable; urgency=medium
 
