@@ -8,7 +8,7 @@ if [ -f /usr/share/debconf/confmodule ]; then
 fi
 if [ -f /usr/share/dbconfig-common/dpkg/postrm ]; then
     . /usr/share/dbconfig-common/dpkg/postrm
-    dbc_go mailman3-core "$@"
+    dbc_go mailman3 "$@"
 fi
 
 case "$1" in
@@ -19,6 +19,18 @@ case "$1" in
     ;;
 
     purge)
+        if [ -f /usr/share/debconf/confmodule ]; then
+            db_purge
+        fi
+
+        for dir in archives cache data ext lists locks messages queue templates; do
+            rm -rf /var/lib/mailman3/$dir
+        done
+
+        for log in bounce debug mailman smtp; do
+            rm -f /var/log/mailman3/$log.log*
+        done
+
         for ext in .ucf-new .ucf-old .ucf-dist ""; do
             rm -f "/etc/mailman3/mailman.cfg$ext"
         done
@@ -26,7 +38,7 @@ case "$1" in
             ucf --purge /etc/mailman3/mailman.cfg
         fi
         if which ucfr >/dev/null 2>&1; then
-            ucfr --purge mailman3-core /etc/mailman3/mailman.cfg
+            ucfr --purge mailman3 /etc/mailman3/mailman.cfg
         fi
     ;;
 

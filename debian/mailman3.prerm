@@ -6,7 +6,7 @@ set -e
 . /usr/share/dbconfig-common/dpkg/prerm
 
 init_service_failed () {
-    db_input high mailman3-core/init_service_failed || true
+    db_input high mailman3/init_service_failed || true
     db_go
 }
 
@@ -26,7 +26,7 @@ esac
 #DEBHELPER#
 
 # database removal has to happen after service is stopped
-dbc_go mailman3-core "$@"
+dbc_go mailman3 "$@"
 
 db_stop
 exit 0

@@ -1,19 +1,19 @@
-Template: mailman3-core/config_hyperkitty
+Template: mailman3/config_hyperkitty
 Type: boolean
-_Description: Add the Hyperkitty configuration to mailman.cfg?
- Mailman3 needs additional configuration in mailman.cfg in order
- to send messages to the Hyperkitty archiver. This configuration
- can be added automatically now.
+_Description: Add the HyperKitty configuration to mailman.cfg?
+ Mailman3 needs additional configuration in mailman.cfg in order to send
+ messages to the HyperKitty archiver. This configuration can be added
+ automatically now.
  .
- This adds the content of /usr/share/mailman3-core/mailman_cfg
- _hyperkitty_snippet.cfg to mailman.cfg.
+ The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg
+ will be added to /etc/mailman3/mailman.cfg.
 
-Template: mailman3-core/init_service_failed
+Template: mailman3/init_service_failed
 Type: error
-_Description: The service for mailman3-core failed!
- The mailman3-core service didn't start correctly.
- This is probably because you didn't configure the database
- appropriately. The service won't work until you do so.
+_Description: The service for mailman3 failed!
+ The mailman3 service didn't start correctly. This is probably because
+ you didn't configure the database appropriately. The service won't work
+ until you do so.
  .
- If you actually DID install the db appropriately, please
- report the bug to the maintainers of mailman3-core package.
+ If you actually DID install the database appropriately, please report
+ the bug to the maintainers of the mailman3 package.

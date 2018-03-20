@@ -1,7 +1,7 @@
-# systemd service template for mailman3 core program
+# systemd service template for mailman3 program
 
 [Unit]
-Description=Mailman3 Core program
+Description=Mailman3 server
 Documentation=man:mailman(1)
 Documentation=https://mailman.readthedocs.io/
 ConditionPathExists=/etc/mailman3/mailman.cfg
@@ -12,7 +12,7 @@ ExecReload=/usr/bin/mailman -C /etc/mailman3/mailman.cfg restart
 ExecStop=/usr/bin/mailman -C /etc/mailman3/mailman.cfg stop
 Type=forking
 PIDFile=/run/mailman3/master.pid
-SyslogIdentifier=mailman3-core
+SyslogIdentifier=mailman3
 User=list
 Group=list
 

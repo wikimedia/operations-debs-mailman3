@@ -1,4 +1,4 @@
-# /etc/cron.d/mailman3-core: crontab entries for the mailman3-core package
+# /etc/cron.d/mailman3: crontab entries for the mailman3 package
 
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin

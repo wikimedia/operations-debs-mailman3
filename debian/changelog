@@ -1,8 +1,75 @@
-mailman3-core (3.1.1-4~bpo9+1) stretch-backports; urgency=medium
+mailman3 (3.1.1-7) unstable; urgency=medium
 
-  * Rebuild for stretch-backports.
+  * d/mailman3.postinst:
+    - Don't use dpkg-parsechangelog to determine the version that is being
+      installed (would require a dependency on dpkg-dev). Instead, use
+      'dpkg -s'.
 
- -- Jonas Meurer <jonas@freesources.org>  Mon, 29 Jan 2018 11:57:34 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Fri, 16 Mar 2018 09:50:32 +0100
+
+mailman3 (3.1.1-6) unstable; urgency=medium
+
+  [ Jonas Meurer ]
+  * Rename binary and source packages 'mailman3-core' to 'mailman3' to
+    avoid further confusion, add new metapackage 'mailman3-full'.
+
+    A bit more background:
+    - The naming of our mailman3 packages caused some confusion. So we
+      decided on the following:
+      1. binary package 'mailman3-suite' will become 'mailman3-web' to make
+         the purpose more obvious.
+      2. binary and source package 'mailman3-core' will become 'mailman3'.
+         This is closer to the upstream name.
+      3. binary metapackage 'mailman3' will become 'mailman3-full' and moves
+         to the source package 'mailman3-core'/'mailman3'.
+
+    This upload of source package 'mailman3' takes care of part 2 and 3.
+
+  * d/NEWS:
+    - Document the renaming of the package names.
+  * d/changelog, d/control, d/mailman3-core*, d/po/*.po, d/README.Debian,
+    d/README.source, d/rules, d/templates:
+    - Rename source and binary package 'mailman3-core' to 'mailman3'.
+  * d/mailman3.postinst:
+    - Take over mailman.cfg from old package mailman3-core in ucf database
+      if upgrading.
+  * d/control:
+    - Add appropriate Replaces/Breaks fields and versioned Provides fields
+      to renamed binary packages.
+    - Add 'mailman3-full' metapackage that depends on all components of
+      the mailman3 suite.
+  * d/mailman3.postrm:
+    - Remove cruft from mailman3 package at purge: archives, cache, data, logs
+  * d/copyright:
+    - Fix upstream name: it's 'mailman', not 'mailman3-core'.
+  * d/source/local-options:
+    - Removed, didn't work out as expected.
+
+  [ Pierre-Elliott Bécue ]
+  * d/control: Bump debhelper build-dependency to 11
+  * d/compat: Raise to 11
+
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 16:39:44 +0100
+
+mailman3-core (3.1.1-5) unstable; urgency=medium
+
+  [ Pierre-Elliott Bécue ]
+  * d/control:
+    - mailman3-core-doc is now Multi-Arch: foreign
+
+  [ Jonas Meurer ]
+  * d/contrib/mailman.cfg.sample:
+    - Add some settings from '[mta]' section to make configuration for
+      non-default MTAs easier. Add commented out settings for Exim4.
+  * d/README.Debian:
+    - Add paragraphs for Postfix and Exim4 as mail transport agent (MTA).
+  * d/control:
+    - Update Vcs-* fields to point to new repository on salsa.debian.org.
+  * d/contrib/mailman_cfg_hyperkitty_snippet.cfg:
+    - Update path to mailman-hyperkitty.cfg
+    - Update comment about the Mailman3 HyperKitty integration.
+
+ -- Jonas Meurer <jonas@freesources.org>  Sat, 03 Mar 2018 18:26:08 +0100
 
 mailman3-core (3.1.1-4) unstable; urgency=medium
 

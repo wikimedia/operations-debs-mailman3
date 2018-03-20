@@ -1,0 +1,13 @@
+mailman3 (3.1.1-6) unstable; urgency=medium
+
+  Package 'mailman3-core' renamed to 'mailman3':
+
+  To avoid further confusion, the package 'mailman3-core' got renamed to
+  'mailman3'. We decided to not provide complex migration tools as the
+  package is very young and has never been part of a stable release yet.
+
+  In case you want to keep your existent mailman3-core database, you're
+  advised to make a backup now and re-import it after the installation of
+  mailman3.
+
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 10:34:49 +0100

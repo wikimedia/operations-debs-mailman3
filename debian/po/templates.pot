@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the mailman3-core package.
+# This file is distributed under the same license as the mailman3 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: mailman3-core\n"
-"Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"Project-Id-Version: mailman3\n"
+"Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
+"POT-Creation-Date: 2018-03-15 10:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-msgid "Add the Hyperkitty configuration to mailman.cfg?"
+msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr ""
 
 #. Type: boolean
@@ -28,7 +28,7 @@ msgstr ""
 #: ../templates:1001
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
-"messages to the Hyperkitty archiver. This configuration can be added "
+"messages to the HyperKitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
 
@@ -36,29 +36,29 @@ msgstr ""
 #. Description
 #: ../templates:1001
 msgid ""
-"This adds the content of /usr/share/mailman3-core/mailman_cfg "
-"_hyperkitty_snippet.cfg to mailman.cfg."
+"The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
+"be added to /etc/mailman3/mailman.cfg."
 msgstr ""
 
 #. Type: error
 #. Description
 #: ../templates:2001
-msgid "The service for mailman3-core failed!"
-msgstr ""
-
-#. Type: error
-#. Description
-#: ../templates:2001
-msgid ""
-"The mailman3-core service didn't start correctly. This is probably because "
-"you didn't configure the database appropriately. The service won't work "
-"until you do so."
+msgid "The service for mailman3 failed!"
 msgstr ""
 
 #. Type: error
 #. Description
 #: ../templates:2001
 msgid ""
-"If you actually DID install the db appropriately, please report the bug to "
-"the maintainers of mailman3-core package."
+"The mailman3 service didn't start correctly. This is probably because you "
+"didn't configure the database appropriately. The service won't work until "
+"you do so."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"If you actually DID install the database appropriately, please report the "
+"bug to the maintainers of the mailman3 package."
 msgstr ""

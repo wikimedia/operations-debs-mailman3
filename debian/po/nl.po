@@ -1,13 +1,13 @@
-# Dutch translation of mailman3-core debconf templates.
+# Dutch translation of mailman3 debconf templates.
 # Copyright (C) 2017 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
-# This file is distributed under the same license as the mailman3-core package.
+# This file is distributed under the same license as the mailman3 package.
 # Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2017.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: mailman3-core_3.1.0-4\n"
-"Report-Msgid-Bugs-To: mailman3-core@packages.debian.org\n"
-"POT-Creation-Date: 2017-11-14 16:28+0100\n"
+"Project-Id-Version: mailman3_3.1.0-4\n"
+"Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
+"POT-Creation-Date: 2018-03-15 10:57+0100\n"
 "PO-Revision-Date: 2017-11-15 00:00+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -21,15 +21,22 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-msgid "Add the Hyperkitty configuration to mailman.cfg?"
+#, fuzzy
+#| msgid "Add the Hyperkitty configuration to mailman.cfg?"
+msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr "De configuratie voor Hyperkitty toevoegen aan mailman.cfg?"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
+#, fuzzy
+#| msgid ""
+#| "Mailman3 needs additional configuration in mailman.cfg in order to send "
+#| "messages to the Hyperkitty archiver. This configuration can be added "
+#| "automatically now."
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
-"messages to the Hyperkitty archiver. This configuration can be added "
+"messages to the HyperKitty archiver. This configuration can be added "
 "automatically now."
 msgstr ""
 "Mailman3 heeft extra configuratie nodig in mailman.cfg om berichten te "
@@ -39,32 +46,36 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
+#, fuzzy
+#| msgid ""
+#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
+#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
-"This adds the content of /usr/share/mailman3-core/mailman_cfg "
-"_hyperkitty_snippet.cfg to mailman.cfg."
+"The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
+"be added to /etc/mailman3/mailman.cfg."
 msgstr ""
-"Dit voegt de inhoud van /usr/share/mailman3-core/mailman_cfg "
+"Dit voegt de inhoud van /usr/share/mailman3/mailman_cfg "
 "_hyperkitty_snippet.cfg toe aan mailman.cfg."
 
 #. Type: error
 #. Description
 #: ../templates:2001
-msgid "The service for mailman3-core failed!"
+msgid "The service for mailman3 failed!"
 msgstr ""
 
 #. Type: error
 #. Description
 #: ../templates:2001
 msgid ""
-"The mailman3-core service didn't start correctly. This is probably because "
-"you didn't configure the database appropriately. The service won't work "
-"until you do so."
+"The mailman3 service didn't start correctly. This is probably because you "
+"didn't configure the database appropriately. The service won't work until "
+"you do so."
 msgstr ""
 
 #. Type: error
 #. Description
 #: ../templates:2001
 msgid ""
-"If you actually DID install the db appropriately, please report the bug to "
-"the maintainers of mailman3-core package."
+"If you actually DID install the database appropriately, please report the "
+"bug to the maintainers of the mailman3 package."
 msgstr ""

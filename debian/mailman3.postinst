@@ -9,20 +9,21 @@ set -e
 dbc_dbfile_owner="list:list"
 dbc_dbfile_perms="0660"
 
-dbc_go mailman3-core "$@"
+dbc_go mailman3 "$@"
 
 cleanup () {
     [ "$mailmancfg_new" ] && rm -f "$mailmancfg_new"
 }
 
 upgrade_fixes () {
-    if dpkg --compare-versions "$2" lt "3.1.0-3"; then
-        ucfr --force mailman3-core /etc/mailman3/mailman.cfg
+    version="$(dpkg -s $DPKG_MAINTSCRIPT_PACKAGE | sed -n 's/^Version: //p')"
+    if dpkg --compare-versions "$version" le "3.1.1-7"; then
+        ucfr --force mailman3 /etc/mailman3/mailman.cfg
     fi
 }
 
 init_service_failed () {
-    db_input high mailman3-core/init_service_failed || true
+    db_input high mailman3/init_service_failed || true
     db_go
 }
 
@@ -34,11 +35,11 @@ init_service_failed () {
 create_config () {
     trap cleanup EXIT
     mailmancfg_new=`tempfile -m 0640`
-    cp -a /usr/share/mailman3-core/mailman.cfg.sample $mailmancfg_new
+    cp -a /usr/share/mailman3/mailman.cfg.sample $mailmancfg_new
 
     # get database settings from dbconfig-common
-    if [ -f /etc/dbconfig-common/mailman3-core.conf ]; then
-        . /etc/dbconfig-common/mailman3-core.conf
+    if [ -f /etc/dbconfig-common/mailman3.conf ]; then
+        . /etc/dbconfig-common/mailman3.conf
 
         # Comment out default database settings if dbconfig is used
         sed -i -e 's|^\s*class: mailman\.database\..*$|#&|' \
@@ -89,16 +90,16 @@ create_config () {
     # Set new admin_pass in mailman.cfg
     sed -i -e "s|^\(\s*admin_pass:\s*\)\S\+$|\1$admin_pass|" $mailmancfg_new
 
-    db_get mailman3-core/config_hyperkitty
+    db_get mailman3/config_hyperkitty
     res="$RET"
     if [ "$res" = "true" ]; then
-        cat /usr/share/mailman3-core/mailman_cfg_hyperkitty_snippet.cfg \
+        cat /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg \
             >>$mailmancfg_new
     fi
 
     # Register new config file
     ucf --three-way --debconf-ok "$mailmancfg_new" /etc/mailman3/mailman.cfg
-    ucfr mailman3-core /etc/mailman3/mailman.cfg
+    ucfr mailman3 /etc/mailman3/mailman.cfg
     chmod 0640 /etc/mailman3/mailman.cfg
     chown root:list /etc/mailman3/mailman.cfg
     rm -f $mailmancfg_new
@@ -106,7 +107,7 @@ create_config () {
 
 case "$1" in
     configure)
-        [ -n "$2" ] && upgrade_fixes
+        upgrade_fixes
         create_config
     ;;
 

@@ -9,13 +9,13 @@ Building the package
         gbp buildpackage --git-pristine-tar
 
     You might need to manually copy the upstream tarball signature to the
-    build area (e.g. build-area/mailman3-core_3.1.0.orig.tar.gz.asc) to
+    build area (e.g. build-area/mailman3_3.1.1.orig.tar.gz.asc) to
     enable cryptographic signature verification of the upstream tarball.
 
 Import a new upstream version
 
     'gbp' is used to import new upstream versions into the Git repository:
 
-        gbp import-orig --pristine-tar ../mailman3-core_1.1.0.orig.tar.gz
+        gbp import-orig --pristine-tar ../mailman3_1.1.1.orig.tar.gz
 
- -- Jonas Meurer <jonas@freesources.org>  Thu, 28 Sep 2017 14:22:10 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 15 Mar 2018 10:54:05 +0100
