@@ -1,3 +1,11 @@
+mailman3 (3.1.1-7~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+  * Lower build-dependency on debhelper to '>= 11~' to match debhelper in
+    stretch-backports.
+
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 20 Mar 2018 09:14:07 +0100
+
 mailman3 (3.1.1-7) unstable; urgency=medium
 
   * d/mailman3.postinst:
