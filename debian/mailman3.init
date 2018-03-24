@@ -50,7 +50,7 @@ do_start() {
     #   0 if daemon has been started
     #   1 if daemon was already running
     #   2 if daemon could not be started
-    start-stop-daemon --start --quiet --pidfile $PIDFILE --user $USER --name $INTERPRETER \
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON \
         --test > /dev/null || return 1
     start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid ${USER}:${GROUP} \
         --exec $DAEMON -- $DAEMON_ARGS || return 2
@@ -65,8 +65,8 @@ do_stop() {
     #   1 if daemon was already stopped
     #   2 if daemon could not be stopped
     #   other if a failure occurred
-    start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --user $USER \
-        --name $INTERPRETER
+    start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE \
+        --user $USER --name $INTERPRETER
     RETVAL="$?"
     [ "$RETVAL" = 2 ] && return 2
 
@@ -79,7 +79,7 @@ do_stop() {
 
     REMAINING_PIDS=`pgrep -f ${RUNNER}`
 
-    if [ $REMAINING_PIDS ]; then
+    if [ "$REMAINING_PIDS" ]; then
         for PID in $REMAINING_PIDS; do
             start-stop-daemon --stop --quiet --oknodo --retry 1 \
                 --pid $PID --user $USER
@@ -131,7 +131,7 @@ case "$1" in
     esac
     ;;
   status)
-    status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+    status_of_proc -p $PIDFILE $DAEMON $NAME && exit 0 || exit $?
     ;;
   reload|force-reload)
     log_daemon_msg "Reloading $DESC" "$NAME"

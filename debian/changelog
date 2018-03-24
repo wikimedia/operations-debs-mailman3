@@ -10,9 +10,11 @@ mailman3 (3.1.1-8) unstable; urgency=medium
 
   [ Jonas Meurer ]
   * d/mailman3.init:
-    - Coding style improvements and indention fixes.
+    - Give '--exec $DAEMON' as start arguments to start-stop-daemon
+    - Give PIDFILE as argument to status_of_proc()
+    - Quote $REMAINING_PIDS when testing if it's non-empty.
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 18 Mar 2018 16:16:36 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sat, 24 Mar 2018 15:35:52 +0100
 
 mailman3 (3.1.1-7) unstable; urgency=medium
 
