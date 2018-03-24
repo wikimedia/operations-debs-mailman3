@@ -7,6 +7,8 @@ mailman3 (3.1.1-8) unstable; urgency=medium
       python3). Replace --name ... with --user list, it's roughly safe enough
       to assume that if pid + user are good, we are killing the good program.
       (Closes: #891881)
+    - Pass "$(which $INTERPRETER)" instead of $DAEMON to the test command of
+      start-stop-daemon in do_start.
 
   [ Jonas Meurer ]
   * d/mailman3.init:
@@ -16,7 +18,7 @@ mailman3 (3.1.1-8) unstable; urgency=medium
   * d/control:
     - Lower Build-Depends on 'debhelper' to '(>=11~)' for easier backporting.
 
- -- Jonas Meurer <jonas@freesources.org>  Sat, 24 Mar 2018 15:41:03 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 24 Mar 2018 17:31:01 +0100
 
 mailman3 (3.1.1-7) unstable; urgency=medium
 
