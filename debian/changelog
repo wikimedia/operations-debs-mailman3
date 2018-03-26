@@ -1,3 +1,25 @@
+mailman3 (3.1.1-8) unstable; urgency=medium
+
+  [ Pierre-Elliott Bécue ]
+  * d/mailman3.init:
+    - start-stop-daemon was called to stop mailman3 on an inappropriate
+      program name as it is an interpreted language. (the name actually is
+      python3). Replace --name ... with --user list, it's roughly safe enough
+      to assume that if pid + user are good, we are killing the good program.
+      (Closes: #891881)
+    - Pass "$(which $INTERPRETER)" instead of $DAEMON to the test command of
+      start-stop-daemon in do_start.
+
+  [ Jonas Meurer ]
+  * d/mailman3.init:
+    - Give '--exec $DAEMON' as start arguments to start-stop-daemon
+    - Give PIDFILE as argument to status_of_proc()
+    - Quote $REMAINING_PIDS when testing if it's non-empty.
+  * d/control:
+    - Lower Build-Depends on 'debhelper' to '(>=11~)' for easier backporting.
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 24 Mar 2018 17:31:01 +0100
+
 mailman3 (3.1.1-7~bpo9+1) stretch-backports; urgency=medium
 
   * Rebuild for stretch-backports.
