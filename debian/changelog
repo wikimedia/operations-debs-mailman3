@@ -1,3 +1,11 @@
+mailman3 (3.1.1-9) UNRELEASED; urgency=medium
+
+  * d/control:
+    - Add dh-python build-dependency explicitely as it'll not be dragged
+      automagically by debhelper soon.
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 26 Mar 2018 13:53:52 +0200
+
 mailman3 (3.1.1-8) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]

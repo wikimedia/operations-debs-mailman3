@@ -5,6 +5,7 @@ Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
 Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
            Jonas Meurer <jonas@freesources.org>
 Build-Depends: debhelper (>= 11~),
+               dh-python,
                po-debconf,
                python3,
                python3-aiosmtpd (>=1.0),
