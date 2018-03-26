@@ -1,3 +1,9 @@
+mailman3 (3.1.1-8~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 26 Mar 2018 12:00:13 +0200
+
 mailman3 (3.1.1-8) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]
