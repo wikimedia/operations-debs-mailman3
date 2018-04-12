@@ -2,15 +2,16 @@ mailman3 (3.1.1-9) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]
   * d/control:
-    - Add dh-python build-dependency explicitely as it'll not be dragged
+    - Add dh-python build-dependency explicitly as it'll not be dragged
       automagically by debhelper soon.
+    - Bump Standards-Version to 4.1.4. No change required.
 
   [ Jonas Meurer ]
   * d/mailman3.config:
     - Ignore errors on 'db_get mailman3/database-type'. If dbconfig-no-thanks
       is used, the debconf entry doesn't exist. (Closes: #895227)
 
- -- Jonas Meurer <jonas@freesources.org>  Wed, 11 Apr 2018 12:58:18 +0200
+ -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 12 Apr 2018 07:26:02 +0200
 
 mailman3 (3.1.1-8) unstable; urgency=medium
 
