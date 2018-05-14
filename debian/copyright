@@ -28,8 +28,8 @@ License: GPL-3
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 
 Files: debian/*
-Copyright: © 2015-2017 Pierre-Elliott Bécue <becue@crans.org>
-           © 2017 Jonas Meurer <jonas@freesources.org>
+Copyright: © 2015-2018 Pierre-Elliott Bécue <becue@crans.org>
+           © 2017-2018 Jonas Meurer <jonas@freesources.org>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

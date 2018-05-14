@@ -6,6 +6,10 @@ mailman3 (3.1.1-10) unstable; urgency=medium
   [ Frans Spiesschaert ]
   * Update Dutch translation for debconf (Closes: #898664)
 
+  [ Pierre-Elliott Bécue ]
+  * d/copyright:
+    - Update copyright years
+
  -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 14 May 2018 20:13:12 +0200
 
 mailman3 (3.1.1-9) unstable; urgency=medium
