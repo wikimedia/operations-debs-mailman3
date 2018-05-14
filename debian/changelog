@@ -1,3 +1,10 @@
+mailman3 (3.1.1-10) UNRELEASED; urgency=medium
+
+  [ Rui Branco ]
+  * Update Portuguese translation for debconf (Closes: #898192)
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 14 May 2018 20:07:09 +0200
+
 mailman3 (3.1.1-9) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]
