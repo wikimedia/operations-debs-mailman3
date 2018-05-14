@@ -31,6 +31,20 @@ Files: debian/*
 Copyright: © 2015-2018 Pierre-Elliott Bécue <becue@crans.org>
            © 2017-2018 Jonas Meurer <jonas@freesources.org>
 License: GPL-2+
+
+Files: debian/po/nl.po
+Copyright: © 2017-2018 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
+License: GPL-2+
+
+Files: debian/po/pt.po
+Copyright: © 2017-2018 Rui Branco <ruipb@debianpt.org>
+License: GPL-2+
+
+Files: debian/po/ru.po
+Copyright: © 2017 Lev Lamberov <dogsleg@debian.org>
+License: GPL-2+
+
+License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or

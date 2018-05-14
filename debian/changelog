@@ -9,6 +9,7 @@ mailman3 (3.1.1-10) unstable; urgency=medium
   [ Pierre-Elliott Bécue ]
   * d/copyright:
     - Update copyright years
+    - Add debconf translations statements
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 14 May 2018 20:13:12 +0200
 
