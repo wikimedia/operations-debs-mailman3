@@ -10,8 +10,11 @@ mailman3 (3.1.1-10) unstable; urgency=medium
   * d/copyright:
     - Update copyright years
     - Add debconf translations statements
+  * d/control:
+    - Remove the X-Python3-Version field as the mentioned version is the one
+      in stable.
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Mon, 14 May 2018 20:13:12 +0200
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 26 May 2018 14:59:55 +0200
 
 mailman3 (3.1.1-9) unstable; urgency=medium
 
