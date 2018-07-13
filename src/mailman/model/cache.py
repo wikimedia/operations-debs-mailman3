@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -140,7 +140,18 @@ class CacheManager:
         return contents
 
     @dbconnection
-    def evict(self, store):
+    def evict(self, store, key):
+        """See `ICacheManager`"""
+        entry = store.query(CacheEntry).filter(
+            CacheEntry.key == key).one_or_none()
+        if entry is None:
+            return
+        file_path, dir_path = self._id_to_path(entry.file_id)
+        os.remove(file_path)
+        store.delete(entry)
+
+    @dbconnection
+    def evict_expired(self, store):
         """See `ICacheManager`."""
         # Find all the cache entries which have expired.  We can probably do
         # this more efficiently, but for now there probably aren't that many

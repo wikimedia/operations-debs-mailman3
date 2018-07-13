@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -31,7 +31,9 @@ from mailman.rest.helpers import (
     GetterSetter, bad_request, etag, no_content, not_found, okay)
 from mailman.rest.validator import (
     PatchValidator, ReadOnlyPATCHRequestError, UnknownPATCHRequestError,
-    Validator, enum_validator, list_of_strings_validator)
+    Validator, enum_validator, integer_ge_zero_validator,
+    list_of_strings_validator
+    )
 from public import public
 from zope.component import getUtility
 
@@ -42,7 +44,7 @@ class AcceptableAliases(GetterSetter):
     def get(self, mlist, attribute):
         """Return the mailing list's acceptable aliases."""
         assert attribute == 'acceptable_aliases', (
-            'Unexpected attribute: {}'.format(attribute))   # pragma: no cover
+            'Unexpected attribute: {}'.format(attribute))   # pragma: nocover
         aliases = IAcceptableAliasSet(mlist)
         return sorted(aliases.aliases)
 
@@ -54,7 +56,7 @@ class AcceptableAliases(GetterSetter):
         ignored.
         """
         assert attribute == 'acceptable_aliases', (
-            'Unexpected attribute: {}'.format(attribute))   # pragma: no cover
+            'Unexpected attribute: {}'.format(attribute))   # pragma: nocover
         alias_set = IAcceptableAliasSet(mlist)
         alias_set.clear()
         for alias in value:
@@ -168,6 +170,7 @@ ATTRIBUTES = dict(
     list_name=GetterSetter(None),
     mail_host=GetterSetter(None),
     moderator_password=GetterSetter(password_bytes_validator),
+    max_message_size=GetterSetter(integer_ge_zero_validator),
     next_digest_number=GetterSetter(None),
     no_reply_address=GetterSetter(None),
     owner_address=GetterSetter(None),
@@ -177,10 +180,12 @@ ATTRIBUTES = dict(
     reply_goes_to_list=GetterSetter(enum_validator(ReplyToMunging)),
     reply_to_address=GetterSetter(str),
     request_address=GetterSetter(None),
+    require_explicit_destination=GetterSetter(as_boolean),
     send_welcome_message=GetterSetter(as_boolean),
     subject_prefix=GetterSetter(str),
     subscription_policy=GetterSetter(enum_validator(SubscriptionPolicy)),
     volume=GetterSetter(None),
+    respond_to_post_requests=GetterSetter(as_boolean),
     )
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -19,20 +19,11 @@
 
 import threading
 
+from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from mailman.testing.helpers import wait_for_webservice
 from mailman.testing.layers import RESTLayer
 from public import public
-
-
-# New in Python 3.5.
-try:
-    from http import HTTPStatus
-except ImportError:                                 # pragma: no cover
-    class HTTPStatus:
-        FORBIDDEN = 403
-        NOT_FOUND = 404
-        OK = 200
 
 
 # We need a web server to vend non-mailman: urls.
@@ -43,14 +34,14 @@ class TestableHandler(BaseHTTPRequestHandler):
 
     log_error = log_request
 
-    def do_GET(self):                             # pragma: no cover
+    def do_GET(self):                             # pragma: nocover
         if self.path == '/welcome_2.txt':
             if self.headers['Authorization'] != 'Basic YW5uZTppcyBzcGVjaWFs':
                 self.send_error(HTTPStatus.FORBIDDEN)
                 return
         response = TEXTS.get(self.path)
         if response is None:
-            self.send_error(HTTPStatus.NOT_FOUND)   # pragma: no cover
+            self.send_error(HTTPStatus.NOT_FOUND)   # pragma: nocover
             return
         self.send_response(HTTPStatus.OK)
         self.send_header('Content-Type', 'UTF-8')
@@ -78,6 +69,7 @@ class HTTPLayer(RESTLayer):
         cls._thread.join()
 
 
+# For flufl.testing -- define this doctest's layer.
 public(layer=HTTPLayer)
 
 

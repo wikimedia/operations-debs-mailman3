@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -41,7 +41,8 @@ from mailman.rest.members import AMember, MemberCollection
 from mailman.rest.post_moderation import HeldMessages
 from mailman.rest.sub_moderation import SubscriptionRequests
 from mailman.rest.uris import AListURI, AllListURIs
-from mailman.rest.validator import Validator, list_of_strings_validator
+from mailman.rest.validator import (
+    Validator, enum_validator, list_of_strings_validator, subscriber_validator)
 from public import public
 from zope.component import getUtility
 
@@ -117,6 +118,60 @@ class _ListBase(CollectionMixin):
         if advertised:
             kw['advertised'] = True
         return getUtility(IListManager).find(**kw)
+
+
+class _ListOfLists(_ListBase):
+    """An abstract class to return a sub-set of Lists.
+
+    This is used for filtering Lists based on some parameters.
+    """
+    def __init__(self, lists, api):
+        super().__init__()
+        self._lists = lists
+        self.api = api
+
+    def _get_collection(self, request):
+        return self._lists
+
+
+@public
+class FindLists(_ListBase):
+    """The mailing lists that a user is a member of."""
+
+    def on_get(self, request, response):
+        return self._find(request, response)
+
+    def on_post(self, request, response):
+        return self._find(request, response)
+
+    def _find(self, request, response):
+        validator = Validator(
+            subscriber=subscriber_validator(self.api),
+            role=enum_validator(MemberRole),
+            # Allow pagination.
+            page=int,
+            count=int,
+            _optional=('role', 'page', 'count'))
+        try:
+            data = validator(request)
+        except ValueError as error:
+            bad_request(response, str(error))
+            return
+        else:
+            # Remove any optional pagination query elements.
+            data.pop('page', None)
+            data.pop('count', None)
+            service = getUtility(ISubscriptionService)
+            # Get all membership records for given subscriber.
+            memberships = service.find_members(**data)
+            # Get all the lists from from the membership records.
+            lists = [getUtility(IListManager).get_by_list_id(member.list_id)
+                     for member in memberships]
+            # If there are no matching lists, return a 404.
+            if not len(lists):
+                return not_found(response)
+            resource = _ListOfLists(lists, self.api)
+            okay(response, etag(resource._make_collection(request)))
 
 
 @public
@@ -392,10 +447,16 @@ class ListDigest:
             validator = Validator(
                 send=as_boolean,
                 bump=as_boolean,
-                _optional=('send', 'bump'))
+                periodic=as_boolean,
+                _optional=('send', 'bump', 'periodic'))
             values = validator(request)
         except ValueError as error:
             bad_request(response, str(error))
+            return
+        if values.get('send', False) and values.get('periodic', False):
+            # Send and periodic and mutually exclusive options.
+            bad_request(
+                response, 'send and periodic options are mutually exclusive')
             return
         if len(values) == 0:
             # There's nothing to do, but that's okay.
@@ -404,6 +465,8 @@ class ListDigest:
         if values.get('bump', False):
             bump_digest_number_and_volume(self._mlist)
         if values.get('send', False):
+            maybe_send_digest_now(self._mlist, force=True)
+        if values.get('periodic', False) and self._mlist.digest_send_periodic:
             maybe_send_digest_now(self._mlist, force=True)
         accepted(response)
 
@@ -414,9 +477,14 @@ class Styles:
 
     def __init__(self):
         manager = getUtility(IStyleManager)
+        styles = [dict(name=style.name, description=style.description)
+                  for style in manager.styles]
         style_names = sorted(style.name for style in manager.styles)
         self._resource = dict(
+            # TODO (maxking): style_name is meant for backwards compatibility
+            # and should be removed in 3.3 release.
             style_names=style_names,
+            styles=styles,
             default=config.styles.default)
 
     def on_get(self, request, response):

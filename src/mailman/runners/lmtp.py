@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -46,6 +46,7 @@ from mailman.config import config
 from mailman.core.runner import Runner
 from mailman.database.transaction import transactional
 from mailman.email.message import Message
+from mailman.interfaces.domain import IDomainManager
 from mailman.interfaces.listmanager import IListManager
 from mailman.interfaces.runner import RunnerInterrupt
 from mailman.utilities.datetime import now
@@ -63,7 +64,6 @@ slog = logging.getLogger('mailman.smtp')
 # listname-request@.  This maps user visible subaddress names (which may
 # include aliases) to the internal canonical subaddress name.
 SUBADDRESS_NAMES = dict(
-    admin='bounces',
     bounces='bounces',
     confirm='confirm',
     join='join',
@@ -108,8 +108,16 @@ def split_recipient(address):
     :param address: The destination address.
     :return: A 3-tuple of the form (list-shortname, subaddress, domain).
         subaddress may be None if this is the list's posting address.
+
+    If the domain of the destination address matches an alias_domain of some
+    IDomain Domain, the domain is replaced by the Domain's mail_host.
     """
     localpart, domain = address.split('@', 1)
+    domain_manager = getUtility(IDomainManager)
+    for d in domain_manager:
+        if d.alias_domain is not None and domain == d.alias_domain:
+            domain = d.mail_host
+            break
     localpart = localpart.split(config.mta.verp_delimiter, 1)[0]
     listname, dash, subaddress = localpart.rpartition('-')
     if subaddress not in SUBADDRESS_NAMES or listname == '' or dash == '':
@@ -166,12 +174,12 @@ class LMTPHandler:
                 if listname not in listnames:
                     status.append(ERR_550)
                     continue
-                listid = '{}.{}'.format(local, domain)
+                mlist = getUtility(IListManager).get_by_fqdn(listname)
                 # The recipient is a valid mailing list.  Find the subaddress
                 # if there is one, and set things up to enqueue to the proper
                 # queue.
                 queue = None
-                msgdata = dict(listid=listid,
+                msgdata = dict(listid=mlist.list_id,
                                original_size=msg.original_size,
                                received_time=received_time)
                 canonical_subaddress = SUBADDRESS_NAMES.get(subaddress)

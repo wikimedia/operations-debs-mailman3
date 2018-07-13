@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -16,6 +16,8 @@
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
 """REST web form validation."""
+
+import re
 
 from mailman.interfaces.address import IEmailValidator
 from mailman.interfaces.errors import MailmanError
@@ -91,12 +93,57 @@ def language_validator(code):
 @public
 def list_of_strings_validator(values):
     """Turn a list of things, or a single thing, into a list of unicodes."""
+    # There is no good way to pass around an empty list through HTTP API, so,
+    # we consider an empty string as an empty list, which can easily be passed
+    # around. This is a contract between Core and Postorius. This also fixes a
+    # bug where an empty string ('') would be interpreted as a valid value ['']
+    # to create a singleton list, instead of empty list, which in later stages
+    # would create other problems.
+    if values is '':
+        return []
     if not isinstance(values, (list, tuple)):
         values = [values]
     for value in values:
         if not isinstance(value, str):
             raise ValueError('Expected str, got {!r}'.format(value))
     return values
+
+
+@public
+def list_of_emails_validator(values):
+    """Turn a list of things, or a single thing, into a list of emails."""
+    if not isinstance(values, (list, tuple)):
+        if getUtility(IEmailValidator).is_valid(values):
+            return [values]
+        raise ValueError('Bad email address format: {}'.format(values))
+    for value in values:
+        if not getUtility(IEmailValidator).is_valid(value):
+            raise ValueError('Expected email address, got {!r}'.format(value))
+    return values
+
+
+@public
+def integer_ge_zero_validator(value):
+    """Validate that the value is a non-negative integer."""
+    value = int(value)
+    if value < 0:
+        raise ValueError('Expected a non-negative integer: {}'.format(value))
+    return value
+
+
+@public
+def regexp_validator(value):                           # pragma: missed
+    """Validate that the value is a valid regexp."""
+    # This code is covered as proven by the fact that the tests
+    # test_add_bad_regexp and test_patch_bad_regexp in
+    # mailman/rest/tests/test_header_matches.py fail with AssertionError:
+    # HTTPError not raised if the code is bypassed, but coverage says it's
+    # not covered so work around it for now.
+    try:
+        re.compile(value)
+    except re.error:
+        raise ValueError('Expected a valid regexp, got {}'.format(value))
+    return value
 
 
 @public

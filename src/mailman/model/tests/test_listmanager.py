@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -134,6 +134,33 @@ class TestListManager(unittest.TestCase):
             mail_host='example.org', advertised=True)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], cat)
+
+    def test_find_by_list_spec(self):
+        ant = create_list('ant@example.com')
+        list_manager = getUtility(IListManager)
+        self.assertEqual(list_manager.get('ant@example.com'), ant)
+        self.assertEqual(list_manager.get('ant.example.com'), ant)
+
+    def test_find_by_list_id(self):
+        ant = create_list('ant@example.com')
+        list_manager = getUtility(IListManager)
+        self.assertEqual(list_manager.get_by_list_id('ant.example.com'), ant)
+        self.assertIsNone(list_manager.get_by_list_id('ant@example.com'))
+
+    def test_find_by_fqdn(self):
+        ant = create_list('ant@example.com')
+        list_manager = getUtility(IListManager)
+        self.assertEqual(list_manager.get_by_fqdn('ant@example.com'), ant)
+        self.assertIsNone(list_manager.get_by_fqdn('ant.example.com'))
+
+    def test_find_by_fqdn_renamed(self):
+        ant = create_list('ant@example.com')
+        ant.list_name = 'renamed'
+        self.assertEqual(ant.posting_address, 'renamed@example.com')
+        self.assertEqual(ant.list_id, 'ant.example.com')
+        list_manager = getUtility(IListManager)
+        self.assertEqual(list_manager.get_by_fqdn('renamed@example.com'), ant)
+        self.assertIsNone(list_manager.get_by_fqdn('ant@example.com'))
 
 
 class TestListLifecycleEvents(unittest.TestCase):

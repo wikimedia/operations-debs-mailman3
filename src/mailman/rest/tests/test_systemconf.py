@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -168,6 +168,7 @@ class TestSystemConfiguration(unittest.TestCase):
             'logging.http',
             'logging.locks',
             'logging.mischief',
+            'logging.plugins',
             'logging.root',
             'logging.runner',
             'logging.smtp',
@@ -182,6 +183,7 @@ class TestSystemConfiguration(unittest.TestCase):
             'paths.here',
             'paths.local',
             'paths.testing',
+            'plugin.master',
             'runner.archive',
             'runner.bad',
             'runner.bounces',

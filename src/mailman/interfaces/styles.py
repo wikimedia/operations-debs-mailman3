@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -33,6 +33,9 @@ class IStyle(Interface):
 
     name = Attribute(
         """The name of this style.  Must be unique.""")
+
+    description = Attribute(
+        """A short description of this list style.""")
 
     def apply(mailing_list):
         """Apply the style to the mailing list.

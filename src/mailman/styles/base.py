@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -80,7 +80,6 @@ class BasicOperation:
         # Digests.
         mlist.digests_enabled = True
         mlist.digest_is_default = False
-        mlist.mime_is_default_digest = False
         mlist.digest_size_threshold = 30          # KB
         mlist.digest_send_periodic = True
         mlist.digest_volume_frequency = DigestFrequency.monthly
@@ -191,6 +190,16 @@ class Public:
         mlist.reply_to_address = ''
         mlist.first_strip_reply_to = False
         mlist.archive_policy = ArchivePolicy.public
+
+
+@public
+class Private:
+    """Settings for private mailing lists."""
+
+    def apply(self, mailing_list):
+        mlist = mailing_list
+        mlist.advertised = False
+        mlist.archive_policy = ArchivePolicy.private
 
 
 @public

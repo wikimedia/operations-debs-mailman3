@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -211,7 +211,7 @@ class SubscriptionWorkflow(_SubscriptionWorkflowCommon):
             # verified by a full coverage run, but diffcov for some reason
             # claims that the test added in the branch that added this code
             # does not cover the change.  That seems like a bug in diffcov.
-            raise AlreadySubscribedError(           # pragma: no cover
+            raise AlreadySubscribedError(           # pragma: nocover
                 self.mlist.fqdn_listname,
                 self.address.email,
                 MemberRole.member)
@@ -573,7 +573,9 @@ def _handle_confirmation_needed_events(event, template_name):
         domain_name=event.mlist.domain.mail_host,
         contact_address=event.mlist.owner_address,
         ))
-    msg = UserNotification(email_address, confirm_address, subject, text)
+    msg = UserNotification(
+        email_address, confirm_address, subject, text,
+        event.mlist.preferred_language)
     msg.send(event.mlist, add_precedence=False)
 
 

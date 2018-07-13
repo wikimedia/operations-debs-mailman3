@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -19,6 +19,8 @@
 
 import unittest
 
+from mailman.app.lifecycle import create_list
+from mailman.interfaces.archiver import ArchivePolicy
 from mailman.interfaces.styles import (
     DuplicateStyleError, IStyle, IStyleManager)
 from mailman.testing.layers import ConfigLayer
@@ -31,13 +33,10 @@ from zope.interface.exceptions import DoesNotImplement
 class DummyStyle:
 
     name = 'dummy'
-    priority = 1
+    description = 'A dummy style.'
 
     def apply(self, mlist):
         pass
-
-    def match(self, mlist, styles):
-        styles.append(self)
 
 
 class TestStyle(unittest.TestCase):
@@ -65,3 +64,18 @@ class TestStyle(unittest.TestCase):
         # You cannot unregister a style that hasn't yet been registered.
         self.assertRaises(KeyError,
                           self.manager.unregister, DummyStyle())
+
+
+class TestPrivateDefaultStyle(unittest.TestCase):
+    """Test PrivateDefaultStyle."""
+
+    layer = ConfigLayer
+
+    def setUp(self):
+        self.mlist = create_list('test-list@example.com')
+        self.manager = getUtility(IStyleManager)
+
+    def test_private_default(self):
+        self.manager.get('private-default').apply(self.mlist)
+        self.assertEqual(self.mlist.advertised, False)
+        self.assertEqual(self.mlist.archive_policy, ArchivePolicy.private)

@@ -201,11 +201,48 @@ above. The ``postfix-mailman.cfg`` would look like this::
     transport_file_type: regex
 
 
+Unusual Postfix configuration
+-----------------------------
+
+In some cases there will be an existing Postfix configuration in which the
+domain that will be used for Mailman 3 lists is a `virtual alias domain`_ and
+for various reasons, perhaps because it supports Mailman 2 lists and Mailman 3
+lists need to use the same domain, it must remain a virtual alias domain.
+This is a challenge because ``virtual alias domains`` do not use
+``transport_maps``.
+
+In order to enable this configuration, Mailman `domains`_ have an
+``alias_domain`` attribute.  This is normally ``None`` but can be set to any
+otherwise unused domain name.  For example if the actual domain is
+``example.com`` the ``alias_domain`` could be ``x.example.com``.  If this is
+done, and the configured MTA is Postfix, Mailman will create an additional
+``/path-to-mailman/var/data/postfix_vmap`` file with mappings from the
+``example.com`` addresses to the corresponding ``x.example.com`` addresses and
+will use the ``x.example.com`` domain in the other files.  To use this feature,
+add the following in ``main.cf``::
+
+    transport_maps =
+        hash:/path-to-mailman/var/data/postfix_lmtp
+    relay_domains =
+        hash:/path-to-mailman/var/data/postfix_domains
+    virtual_alias_maps =
+        hash:/path-to-mailman/var/data/postfix_vmap
+
+where ``path-to-mailman`` is as above.  If any of these are already set, just
+add the ``hash`` references to the existing settings.  We don't add
+``local_recipient_maps`` because the lists are in a virtual domain and are
+therefore not local.  Note that these can be ``regexp`` tables rather than
+``hash`` tables.  See the ``Transport maps`` section above.
+
+
 Postfix documentation
 ---------------------
 
 For more information regarding how to configure Postfix, please see
-the Postfix documentation at:
+`The official Postfix documentation`_,
+`The reference page for all Postfix configuration parameters`_,
+and the documentation for the `relay_domains`_, `mydestination`_ and
+`virtual alias domain`_ settings.
 
 .. _`The official Postfix documentation`:
    http://www.postfix.org/documentation.html
@@ -213,6 +250,7 @@ the Postfix documentation at:
    http://www.postfix.org/postconf.5.html
 .. _`relay_domains`: http://www.postfix.org/postconf.5.html#relay_domains
 .. _`mydestination`: http://www.postfix.org/postconf.5.html#mydestination
+.. _`virtual alias domain`: http://www.postfix.org/ADDRESS_CLASS_README.html#virtual_alias_class
 
 
 Exim
@@ -322,7 +360,7 @@ There is `copious documentation for Exim`_.  The parts most relevant to
 configuring communication with Mailman 3 are the chapters on the `accept
 router`_ and the `LMTP transport`_.  Unless you are already familiar
 with Exim configuration, you probably want to start with the chapter on
-`how Exim receives and delivers mail`.
+`how Exim receives and delivers mail`_.
 
 .. _`Exim 4`: http://www.exim.org/
 .. _`University of Cambridge`: http://www.cam.ac.uk/
@@ -376,7 +414,7 @@ specifies the LMTP port of Mailman.  Long story short, as user mailman:
 ::
 
     % chmod +t "$HOME"
-    % echo '|qmail-lmtp 1 8042' > .qmail # put appropriate values here
+    % echo '|qmail-lmtp 8042 1' > .qmail # put appropriate values here
     % ln -sf .qmail .qmail-default
     % chmod -t "$HOME"
 
@@ -445,3 +483,4 @@ relay to the LMTP port of Mailman.
 .. _`Variable Envelope Return Path`:
    http://en.wikipedia.org/wiki/Variable_envelope_return_path
 .. _postconf: http://www.postfix.org/postconf.1.html
+.. _domains: ../model/docs/domains.html

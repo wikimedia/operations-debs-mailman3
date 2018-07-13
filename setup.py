@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -22,8 +22,8 @@ from setuptools import setup, find_packages
 from string import Template
 
 
-if sys.hexversion < 0x30400f0:
-    print('Mailman requires at least Python 3.4')
+if sys.hexversion < 0x30500f0:
+    print('Mailman requires at least Python 3.5')
     sys.exit(1)
 
 
@@ -104,18 +104,19 @@ case second `m'.  Any other spelling is incorrect.""",
         'console_scripts' : list(scripts),
         },
     install_requires = [
-        'aiosmtpd==1.0.0',
+        'aiosmtpd>=1.1',
         'alembic',
         'atpublic',
+        'click',
         'dnspython>=1.14.0',
         'falcon>=1.0.0rc1',
         'flufl.bounce',
-        'flufl.i18n>=2.0.1',
+        'flufl.i18n>=2.0',
         'flufl.lock>=3.1',
         'lazr.config',
         'passlib',
         'requests',
-        'sqlalchemy',
+        'sqlalchemy>=1.2.3',
         'zope.component',
         'zope.configuration',
         'zope.event',

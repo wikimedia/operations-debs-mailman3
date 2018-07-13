@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -74,14 +74,7 @@ class _HeldMessageBase(_ModerationBase):
         # resource.  XXX See LP: #967954
         key = resource.pop('key')
         msg = getUtility(IMessageStore).get_message_by_id(key)
-        try:
-            resource['msg'] = msg.as_string()
-        except KeyError:
-            # If the message can't be parsed, return a generic message instead
-            # of raising an error.
-            #
-            # See http://bugs.python.org/issue27321 and GL#256
-            resource['msg'] = 'This message is defective'
+        resource['msg'] = msg.as_string()
         # Some of the _mod_* keys we want to rename and place into the JSON
         # resource.  Others we can drop.  Since we're mutating the dictionary,
         # we need to make a copy of the keys.  When you port this to Python 3,
@@ -95,7 +88,7 @@ class _HeldMessageBase(_ModerationBase):
         # Store the original header and then try decoding it.
         resource['original_subject'] = resource['subject']
         # If we can't decode the header, leave the subject unchanged.
-        with suppress(LookupError, MessageError):
+        with suppress(LookupError, MessageError, UnicodeDecodeError):
             resource['subject'] = str(
                 make_header(decode_header(resource['subject'])))
         # Also, held message resources will always be this type, so ignore

@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -59,16 +59,23 @@ class ListManager:
         return mlist
 
     @dbconnection
-    def get(self, store, fqdn_listname):
+    def get(self, store, list_spec):
         """See `IListManager`."""
-        listname, at, hostname = fqdn_listname.partition('@')
-        list_id = '{}.{}'.format(listname, hostname)
-        return store.query(MailingList).filter_by(_list_id=list_id).first()
+        return (self.get_by_fqdn(list_spec)
+                if '@' in list_spec
+                else self.get_by_list_id(list_spec))
 
     @dbconnection
     def get_by_list_id(self, store, list_id):
         """See `IListManager`."""
         return store.query(MailingList).filter_by(_list_id=list_id).first()
+
+    @dbconnection
+    def get_by_fqdn(self, store, fqdn_listname):
+        """See `IListManager`."""
+        listname, at, hostname = fqdn_listname.partition('@')
+        return store.query(MailingList).filter_by(
+            list_name=listname, mail_host=hostname).first()
 
     @dbconnection
     def delete(self, store, mlist):

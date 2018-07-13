@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -160,7 +160,7 @@ class User(Model):
     def register(self, store, email, display_name=None):
         """See `IUser`."""
         # First, see if the address already exists
-        address = store.query(Address).filter_by(email=email).first()
+        address = store.query(Address).filter_by(email=email.lower()).first()
         if address is None:
             if display_name is None:
                 display_name = ''

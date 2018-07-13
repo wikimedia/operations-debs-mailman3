@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -140,7 +140,7 @@ class Member(Model):
         # to the subscriber.
         if self.subscriber.display_name:
             return self.subscriber.display_name
-        # If an unlinked address is subscribed tehre will be no .user.
+        # If an unlinked address is subscribed there will be no .user.
         elif self.user is not None and self.user.display_name:
             return self.user.display_name
         else:

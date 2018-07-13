@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -39,7 +39,7 @@ class Address(Model):
     __tablename__ = 'address'
 
     id = Column(Integer, primary_key=True)
-    email = Column(SAUnicode, index=True)
+    email = Column(SAUnicode, index=True, unique=True)
     _original = Column(SAUnicode)
     display_name = Column(SAUnicode)
     _verified_on = Column('verified_on', DateTime)

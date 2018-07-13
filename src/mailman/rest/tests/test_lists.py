@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -26,7 +26,7 @@ from mailman.database.transaction import transaction
 from mailman.interfaces.digests import DigestFrequency
 from mailman.interfaces.listmanager import IListManager
 from mailman.interfaces.mailinglist import IAcceptableAliasSet
-from mailman.interfaces.member import DeliveryMode
+from mailman.interfaces.member import DeliveryMode, MemberRole
 from mailman.interfaces.template import ITemplateManager
 from mailman.interfaces.usermanager import IUserManager
 from mailman.model.mailinglist import AcceptableAlias
@@ -72,6 +72,91 @@ class TestListsMissing(unittest.TestCase):
             call_api(
                 'http://localhost:9001/3.0/lists/missing@example.com/config')
         self.assertEqual(cm.exception.code, 404)
+
+
+class TestFindLists(unittest.TestCase):
+    """Test /list/find"""
+
+    layer = RESTLayer
+
+    def setUp(self):
+        with transaction():
+            self._mlist = create_list('test@example.com')
+        self._user_manager = getUtility(IUserManager)
+        self.address = self._user_manager.create_address('testing@example.com')
+
+    def test_find_lists(self):
+        # /lists/find gives 400 if no subscriber.
+        with self.assertRaises(HTTPError) as cm:
+            call_api('http://localhost:9001/3.1/lists/find')
+        self.assertEqual(cm.exception.code, 400)
+
+    def test_find_lists_with_subscriber(self):
+        # Test GET /lists/find with a valid
+        with transaction():
+            self._mlist.subscribe(self.address)
+            # We create another list so we have 2 lists.
+            create_list('test2@example.com')
+        json, response = call_api('http://localhost:9001/3.1/lists/find',
+                                  {'subscriber': 'testing@example.com'})
+        # This should return only one List.
+        self.assertEqual(json['total_size'], 1)
+        mlist = json['entries'][0]
+        self.assertEqual(mlist['list_id'], 'test.example.com')
+
+    def test_find_lists_with_subscriber_as_owner(self):
+        # Test GET /lists/find with a valid subscriber and a valid role.
+        with transaction():
+            list2 = create_list('test2@example.com')
+            create_list('test3@example.com')
+            anne_addr = self._user_manager.create_address('anne@example.com')
+            self._mlist.subscribe(anne_addr, role=MemberRole.owner)
+            list2.subscribe(anne_addr, role=MemberRole.moderator)
+        # With role=owner, only one list will be returned.
+        json, response = call_api(
+            'http://localhost:9001/3.1/lists/find',
+            {'subscriber': 'anne@example.com', 'role': 'owner'})
+        self.assertEqual(json['total_size'], 1)
+        mlist = json['entries'][0]
+        self.assertEqual(mlist['list_id'], 'test.example.com')
+        # With role=moderator, we should get 2nd list.
+        json, response = call_api(
+            'http://localhost:9001/3.1/lists/find',
+            {'subscriber': 'anne@example.com', 'role': 'moderator'})
+        self.assertEqual(json['total_size'], 1)
+        mlist = json['entries'][0]
+        self.assertEqual(mlist['list_id'], 'test2.example.com')
+
+    def test_find_lists_with_bad_role(self):
+        with transaction():
+            self._mlist.subscribe(self.address)
+        # with role=badrole, we should get a 400 error with right reason set.
+        with self.assertRaises(HTTPError) as cm:
+            json, response = call_api(
+                'http://localhost:9001/3.1/lists/find',
+                {'subscriber': 'testing@example.com', 'role': 'badrole'})
+        self.assertEqual(cm.exception.code, 400)
+        self.assertEqual(cm.exception.reason,
+                         'Cannot convert parameters: role')
+
+    def test_find_lists_no_results(self):
+        # No matching results exist for this query.
+        with self.assertRaises(HTTPError) as cm:
+            json, response = call_api(
+                'http://localhost:9001/3.1/lists/find',
+                {'subscriber': 'testing@example.com', 'role': 'owner'})
+        self.assertEqual(cm.exception.code, 404)
+        self.assertEqual(cm.exception.reason, '404 Not Found')
+
+    def test_find_lists_bad_subscriber(self):
+        # Bad subscriber should result in appropriate error.
+        with self.assertRaises(HTTPError) as cm:
+            json, response = call_api(
+                'http://localhost:9001/3.1/lists/find',
+                {'subscriber': 'testing.example.com', 'role': 'owner'})
+        self.assertEqual(cm.exception.code, 400)
+        self.assertEqual(cm.exception.reason,
+                         'Cannot convert parameters: subscriber')
 
 
 class TestLists(unittest.TestCase):
@@ -347,6 +432,33 @@ class TestLists(unittest.TestCase):
         self.assertEqual(cm.exception.reason, 'Missing parameters: emails')
 
 
+class TestListStyles(unittest.TestCase):
+    """Test /lists/styles."""
+
+    layer = RESTLayer
+
+    def test_styles(self):
+        json, response = call_api('http://localhost:9001/3.0/lists/styles')
+        self.assertEqual(response.status_code, 200)
+        # Remove the variable data.
+        json.pop('http_etag')
+        self.assertEqual(json, {
+            'style_names': [
+                'legacy-announce', 'legacy-default', 'private-default'
+                ],
+            'styles': [
+                {'name': 'legacy-announce',
+                 'description': 'Announce only mailing list style.'},
+                {'name': 'legacy-default',
+                 'description': 'Ordinary discussion mailing list style.'},
+                {'name': 'private-default',
+                 'description': 'Discussion mailing list style with ' +
+                 'private archives.'},
+                    ],
+            'default': 'legacy-default'
+            })
+
+
 class TestListArchivers(unittest.TestCase):
     """Test corner cases for list archivers."""
 
@@ -541,6 +653,17 @@ class TestListDigests(unittest.TestCase):
         self.assertEqual(cm.exception.code, 400)
         self.assertEqual(cm.exception.reason, 'Unexpected parameters: bogus')
 
+    def test_post_both_send_and_periodic_options(self):
+        # send and periodic options cannot both be set at the same time.
+        with self.assertRaises(HTTPError) as cm:
+            call_api(
+                'http://localhost:9001/3.0/lists/ant.example.com/digest', dict(
+                    send=True,
+                    periodic=True))
+        self.assertEqual(cm.exception.code, 400)
+        self.assertEqual(cm.exception.reason,
+                         'send and periodic options are mutually exclusive')
+
     def test_bump_before_send(self):
         with transaction():
             self._mlist.digest_volume_frequency = DigestFrequency.monthly
@@ -569,6 +692,38 @@ Subject: message 1
         items = get_queue_messages('virgin')
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].msg['subject'], 'Ant Digest, Vol 8, Issue 1')
+
+    def test_periodic_digests_send(self):
+        with transaction():
+            self._mlist.digest_send_periodic = False
+        msg = mfs("""\
+To: ant@example.com
+From: anne@example.com
+Subject: message 2
+
+""")
+        config.handlers['to-digest'].process(self._mlist, msg, {})
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant.example.com/digest', dict(
+                periodic=True))
+        # There shouldn't be any message going out after the above call.
+        self.assertEqual(response.status_code, 202)
+        make_testable_runner(DigestRunner, 'digest').run()
+        items = get_queue_messages('virgin')
+        self.assertEqual(len(items), 0)
+        # Now, we set the periodic_send_digest to True and call the API again.
+        with transaction():
+            self._mlist.digest_send_periodic = True
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant.example.com/digest', dict(
+                periodic=True))
+        # Now, there should be one message in the virgin queue to be sent out.
+        make_testable_runner(DigestRunner, 'digest').run()
+        items = get_queue_messages('virgin')
+        self.assertEqual(len(items), 1)
+        # This should be the first volume of the digest going out.
+        self.assertEqual(str(items[0].msg['subject']),
+                         'Ant Digest, Vol 1, Issue 1')
 
 
 class TestListTemplates(unittest.TestCase):

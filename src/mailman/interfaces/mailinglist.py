@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -532,6 +532,21 @@ class IMailingList(Interface):
 
         An example of list-specific data is the temporary digest mbox file
         that gets created to accumlate messages for the digest.
+        """)
+
+    require_explicit_destination = Attribute(
+        """Flag controlling requiring explisit destination.
+
+        If require_explicit_destination is True, a post must have the list's
+        posting address or an acceptable alias in To: or Cc: or be held for
+        moderator approval.
+        """)
+
+    acceptable_aliases = Attribute(
+        """List of addresses and regexps acceptable as explicit destination.
+
+        This is a list of addresses and regexps matching addresses that are
+        acceptable in To: or Cc: when require_explicit_destination is True.
         """)
 
     administrivia = Attribute(

@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -34,5 +34,5 @@ class AfterDelivery:
 
     def process(self, mlist, msg, msgdata):
         """See `IHander`."""
-        mlist.last_post_time = now()
+        mlist.last_post_at = now()
         mlist.post_id += 1

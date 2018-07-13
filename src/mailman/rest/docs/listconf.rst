@@ -62,6 +62,7 @@ All readable attributes for a list are available on a sub-resource.
     leave_address: ant-leave@example.com
     list_name: ant
     mail_host: example.com
+    max_message_size: 40
     moderator_password: None
     next_digest_number: 1
     no_reply_address: noreply@example.com
@@ -72,7 +73,9 @@ All readable attributes for a list are available on a sub-resource.
     reply_goes_to_list: no_munging
     reply_to_address:
     request_address: ant-request@example.com
-    send_welcome_message: True
+    require_explicit_destination: True
+    respond_to_post_requests: True
+		send_welcome_message: True
     subject_prefix: [Ant]
     subscription_policy: confirm
     volume: 1
@@ -125,12 +128,15 @@ When using ``PUT``, all writable attributes must be included.
     ...             collapse_alternatives=False,
     ...             reply_goes_to_list='point_to_list',
     ...             reply_to_address='bee@example.com',
+    ...             require_explicit_destination=False,
     ...             send_welcome_message=False,
     ...             subject_prefix='[ant]',
     ...             subscription_policy='moderate',
     ...             default_member_action='hold',
     ...             default_nonmember_action='discard',
     ...             moderator_password='password',
+    ...             max_message_size='500',
+    ...             respond_to_post_requests=True,
     ...             ),
     ...           'PUT')
     content-length: 0
@@ -187,6 +193,8 @@ These values are changed permanently.
     reply_goes_to_list: point_to_list
     reply_to_address: bee@example.com
     ...
+    require_explicit_destination: False
+    respond_to_post_requests: True
     send_welcome_message: False
     subject_prefix: [ant]
     subscription_policy: moderate
