@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -27,4 +27,4 @@ from public import public
 def initialize():
     """Find and register all rules in all plugins."""
     # Find rules in plugins.
-    add_components('mailman.rules', IRule, config.rules)
+    add_components('rules', IRule, config.rules)

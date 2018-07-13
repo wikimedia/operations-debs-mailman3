@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -18,8 +18,8 @@
 """Mailman version strings."""
 
 # Mailman version.
-VERSION = '3.1.1'
-CODENAME = 'Between The Wheels'
+VERSION = '3.2.0'
+CODENAME = 'La Villa Strangiato'
 
 # And as a hex number in the manner of PY_VERSION_HEX.
 ALPHA = 0xa
@@ -30,8 +30,8 @@ RC    = GAMMA                                       # noqa: E221
 FINAL = 0xf
 
 MAJOR_REV = 3
-MINOR_REV = 1
-MICRO_REV = 1
+MINOR_REV = 2
+MICRO_REV = 0
 REL_LEVEL = FINAL
 # At most 15 beta releases!
 REL_SERIAL = 0

@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2015-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -19,32 +19,69 @@
 
 import unittest
 
-from contextlib import ExitStack
+from click.testing import CliRunner
 from datetime import timedelta
-from io import StringIO
 from mailman.app.lifecycle import create_list
 from mailman.bin.mailman import main
 from mailman.config import config
 from mailman.database.transaction import transaction
+from mailman.interfaces.command import ICLISubCommand
 from mailman.testing.layers import ConfigLayer
 from mailman.utilities.datetime import now
+from mailman.utilities.modules import add_components
+from pkg_resources import resource_filename
 from unittest.mock import patch
 
 
 class TestMailmanCommand(unittest.TestCase):
     layer = ConfigLayer
 
-    def test_mailman_command_without_subcommand_prints_help(self):
+    def setUp(self):
+        self._command = CliRunner()
+
+    def test_mailman_command_config(self):
+        config_path = resource_filename('mailman.testing', 'testing.cfg')
+        with patch('mailman.bin.mailman.initialize') as init:
+            self._command.invoke(main, ('-C', config_path, 'info'))
+        init.assert_called_once_with(config_path)
+
+    def test_mailman_command_no_config(self):
+        with patch('mailman.bin.mailman.initialize') as init:
+            self._command.invoke(main, ('info',))
+        init.assert_called_once_with(None)
+
+    @patch('mailman.bin.mailman.initialize')
+    def test_mailman_command_without_subcommand_prints_help(self, mock):
         # Issue #137: Running `mailman` without a subcommand raises an
         # AttributeError.
-        testargs = ['mailman']
-        output = StringIO()
-        with patch('sys.argv', testargs), patch('sys.stdout', output):
-            with self.assertRaises(SystemExit):
-                main()
-        self.assertIn('usage', output.getvalue())
+        result = self._command.invoke(main)
+        lines = result.output.splitlines()
+        # "main" instead of "mailman" because of the way the click runner
+        # works.  It does actually show the correct program when run from the
+        # command line.
+        self.assertEqual(lines[0], 'Usage: main [OPTIONS] COMMAND [ARGS]...')
+        # The help output includes a list of subcommands, in sorted order.
+        commands = {}
+        add_components('commands', ICLISubCommand, commands)
+        help_commands = list(
+            line.split()[0].strip()
+            for line in lines[-len(commands):]
+            )
+        self.assertEqual(sorted(commands), help_commands)
 
-    def test_transaction_commit_after_successful_subcommand(self):
+    @patch('mailman.bin.mailman.initialize')
+    def test_mailman_command_with_bad_subcommand_prints_help(self, mock):
+        # Issue #137: Running `mailman` without a subcommand raises an
+        # AttributeError.
+        result = self._command.invoke(main, ('not-a-subcommand',))
+        lines = result.output.splitlines()
+        # "main" instead of "mailman" because of the way the click runner
+        # works.  It does actually show the correct program when run from the
+        # command line.
+        self.assertEqual(lines[0], 'Usage: main [OPTIONS] COMMAND [ARGS]...')
+
+    @patch('mailman.bin.mailman.initialize')
+    def test_transaction_commit_after_successful_subcommand(self, mock):
         # Issue #223: Subcommands which change the database need to commit or
         # abort the transaction.
         with transaction():
@@ -52,40 +89,23 @@ class TestMailmanCommand(unittest.TestCase):
             mlist.volume = 5
             mlist.next_digest_number = 3
             mlist.digest_last_sent_at = now() - timedelta(days=60)
-        testargs = ['mailman', 'digests', '-b', '-l', 'ant@example.com']
-        output = StringIO()
-        with ExitStack() as resources:
-            enter = resources.enter_context
-            enter(patch('sys.argv', testargs))
-            enter(patch('sys.stdout', output))
-            # Everything is already initialized.
-            enter(patch('mailman.bin.mailman.initialize'))
-            main()
+        self._command.invoke(main, ('digests', '-b', '-l', 'ant@example.com'))
         # Clear the current transaction to force a database reload.
         config.db.abort()
         self.assertEqual(mlist.volume, 6)
         self.assertEqual(mlist.next_digest_number, 1)
 
-    def test_transaction_abort_after_failing_subcommand(self):
+    @patch('mailman.bin.mailman.initialize')
+    @patch('mailman.commands.cli_digests.maybe_send_digest_now',
+           side_effect=RuntimeError)
+    def test_transaction_abort_after_failing_subcommand(self, mock1, mock2):
         with transaction():
             mlist = create_list('ant@example.com')
             mlist.volume = 5
             mlist.next_digest_number = 3
             mlist.digest_last_sent_at = now() - timedelta(days=60)
-        testargs = ['mailman', 'digests', '-b', '-l', 'ant@example.com',
-                    '--send']
-        output = StringIO()
-        with ExitStack() as resources:
-            enter = resources.enter_context
-            enter(patch('sys.argv', testargs))
-            enter(patch('sys.stdout', output))
-            # Force an exception in the subcommand.
-            enter(patch('mailman.commands.cli_digests.maybe_send_digest_now',
-                        side_effect=RuntimeError))
-            # Everything is already initialized.
-            enter(patch('mailman.bin.mailman.initialize'))
-            with self.assertRaises(RuntimeError):
-                main()
+        self._command.invoke(
+            main, ('digests', '-b', '-l', 'ant@example.com', '--send'))
         # Clear the current transaction to force a database reload.
         config.db.abort()
         # The volume and number haven't changed.

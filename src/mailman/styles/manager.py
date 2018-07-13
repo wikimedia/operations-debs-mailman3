@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -38,13 +38,7 @@ class StyleManager:
 
     def populate(self):
         self._styles.clear()
-        # Avoid circular imports.
-        from mailman.config import config
-        # Calculate the Python import paths to search.
-        paths = filter(None, (path.strip()
-                              for path in config.styles.paths.splitlines()))
-        for path in paths:
-            add_components(path, IStyle, self._styles)
+        add_components('styles', IStyle, self._styles)
 
     def get(self, name):
         """See `IStyleManager`."""

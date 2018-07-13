@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -46,6 +46,16 @@ class Message(email.message.Message):
 
     def __setstate__(self, values):
         self.__dict__ = values
+
+    def as_string(self):
+        # Work around for https://bugs.python.org/issue27321 and
+        # https://bugs.python.org/issue32330.
+        try:
+            value = email.message.Message.as_string(self)
+        except (KeyError, LookupError, UnicodeEncodeError):
+            value = email.message.Message.as_bytes(self).decode(
+                'ascii', 'replace')
+        return value
 
     @property
     def sender(self):
@@ -127,7 +137,7 @@ class UserNotification(Message):
         charset = (lang.charset if lang is not None else 'us-ascii')
         subject = ('(no subject)' if subject is None else subject)
         if text is not None:
-            self.set_payload(text.encode(charset), charset)
+            self.set_payload(text.encode(charset, errors='replace'), charset)
         self['Subject'] = Header(
             subject, charset, header_name='Subject', errors='replace')
         self['From'] = sender

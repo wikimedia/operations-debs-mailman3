@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -25,8 +25,10 @@ from datetime import datetime
 from mailman.app.lifecycle import create_list
 from mailman.config import config
 from mailman.database.transaction import transaction
+from mailman.interfaces.domain import IDomainManager
 from mailman.testing.helpers import get_lmtp_client, get_queue_messages
 from mailman.testing.layers import LMTPLayer
+from zope.component import getUtility
 
 
 class TestLMTP(unittest.TestCase):
@@ -118,6 +120,45 @@ Message-ID: <aardvark>
         self.assertEqual(cm.exception.smtp_error,
                          b'Requested action not taken: mailbox unavailable')
 
+    def test_nonexistent_domain(self):
+        # Trying to post to a nonexistent domain is an error.
+        with self.assertRaises(smtplib.SMTPDataError) as cm:
+            self._lmtp.sendmail('anne@example.com',
+                                ['test@x.example.com'], """\
+From: anne.person@example.com
+To: test@example.com
+Subject: An interesting message
+Message-ID: <aardvark>
+
+""")
+        self.assertEqual(cm.exception.smtp_code, 550)
+        self.assertEqual(cm.exception.smtp_error,
+                         b'Requested action not taken: mailbox unavailable')
+
+    def test_alias_domain(self):
+        # Posting to an alias_domain succeeds.
+        manager = getUtility(IDomainManager)
+        with transaction():
+            manager.get('example.com').alias_domain = 'x.example.com'
+        self._lmtp.sendmail('anne@example.com', ['test@x.example.com'], """\
+From: anne.person@example.com
+To: test@example.com
+Subject: An interesting message
+Message-ID: <aardvark>
+
+""")
+        items = get_queue_messages('in', expected_count=1)
+        self.assertMultiLineEqual(items[0].msg.as_string(), """\
+From: anne.person@example.com
+To: test@example.com
+Subject: An interesting message
+Message-ID: <aardvark>
+Message-ID-Hash: 75E2XSUXAFQGWANWEROVQ7JGYMNWHJBT
+X-Message-ID-Hash: 75E2XSUXAFQGWANWEROVQ7JGYMNWHJBT
+X-MailFrom: anne@example.com
+
+""")
+
     def test_missing_subaddress(self):
         # Trying to send a message to a bogus subaddress is an error.
         with self.assertRaises(smtplib.SMTPDataError) as cm:
@@ -196,6 +237,24 @@ Subject: This will be recognized as a post to the -join list.
         # The message is in the incoming queue but not the command queue.
         get_queue_messages('in', expected_count=1)
         get_queue_messages('command', expected_count=0)
+
+    def test_mailing_list_with_different_address_and_list_id(self):
+        # A mailing list can be renamed, in which case the list_name
+        # will be different but the list_id will remain the same.
+        # https://gitlab.com/mailman/mailman/issues/428
+        with transaction():
+            self._mlist.list_name = 'renamed'
+        self.assertEqual(self._mlist.posting_address, 'renamed@example.com')
+        self._lmtp.sendmail('anne@example.com', ['renamed@example.com'], """\
+From: anne@example.com
+To: renamed@example.com
+Message-ID: <ant>
+Subject: This should be accepted.
+
+""")
+        # The message is in the incoming queue but not the command queue.
+        items = get_queue_messages('in', expected_count=1)
+        self.assertEqual(items[0].msgdata['listid'], 'test.example.com')
 
 
 class TestBugs(unittest.TestCase):

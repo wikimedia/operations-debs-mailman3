@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -17,24 +17,25 @@
 
 """The Mailman version."""
 
+import click
+
+from mailman.core.i18n import _
 from mailman.interfaces.command import ICLISubCommand
+from mailman.utilities.options import I18nCommand
 from mailman.version import MAILMAN_VERSION_FULL
 from public import public
 from zope.interface import implementer
 
 
+@click.command(
+    cls=I18nCommand,
+    help=_("Display Mailman's version."))
+def version():
+    print(MAILMAN_VERSION_FULL)
+
+
 @public
 @implementer(ICLISubCommand)
 class Version:
-    """Mailman's version."""
-
     name = 'version'
-
-    def add(self, parser, command_parser):
-        """See `ICLISubCommand`."""
-        # No extra options.
-        pass
-
-    def process(self, args):
-        """See `ICLISubCommand`."""
-        print(MAILMAN_VERSION_FULL)
+    command = version

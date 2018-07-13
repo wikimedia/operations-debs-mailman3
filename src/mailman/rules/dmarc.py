@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -183,11 +183,23 @@ def is_reject_or_quarantine(mlist, email, dmarc_domain, org=False):
         txt_recs = resolver.query(dmarc_domain, dns.rdatatype.TXT)
     except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
         return KEEP_LOOKING
+    except (dns.resolver.NoNameservers):
+        elog.error(
+            'DNSException: No Nameservers available for %s (%s).',
+            email, dmarc_domain)
+        # Typically this means a dnssec validation error.  Clients that don't
+        # perform validation *may* successfully see a _dmarc RR whereas a
+        # validating mailman server won't see the _dmarc RR.  We should
+        # mitigate this email to be safe.
+        return True
     except DNSException as error:
         elog.error(
             'DNSException: Unable to query DMARC policy for %s (%s). %s',
             email, dmarc_domain, error.__doc__)
-        return KEEP_LOOKING
+        # While we can't be sure what caused the error, there is potentially
+        # a DMARC policy record that we missed and that a receiver of the mail
+        # might see.  Thus, we should err on the side of caution and mitigate.
+        return True
     # Be as robust as possible in parsing the result.
     results_by_name = {}
     cnames = {}
@@ -249,7 +261,7 @@ def is_reject_or_quarantine(mlist, email, dmarc_domain, org=False):
                     # Coverage BitBucket issue #198 and
                     # http://bugs.python.org/issue2506 coverage cannot report
                     # it as such, so just pragma it away.
-                    continue                        # pragma: no cover
+                    continue                        # pragma: missed
             if policy in ('reject', 'quarantine'):
                 vlog.info(
                     '%s: DMARC lookup for %s (%s) found p=%s in %s = %s',
@@ -298,7 +310,7 @@ class DMARCMitigation:
         if mlist.dmarc_mitigate_action is DMARCMitigateAction.no_mitigation:
             # Don't bother to check if we're not going to do anything.
             return False
-        display_name, address = parseaddr(msg.get('from'))
+        display_name, address = parseaddr(str(msg.get('from', '')))
         if maybe_mitigate(mlist, address):
             # If dmarc_mitigate_action is discard or reject, this rule fires
             # and jumps to the 'moderation' chain to do the actual discard.

@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -59,7 +59,14 @@ class ICacheManager(Interface):
         :rtype: bytes or str, depending on the original contents.
         """
 
-    def evict():
+    def evict(key):
+        """Evict the file pointed to by key.
+
+        :param key: The key identifying the contents you want to evict.
+        :type key: str
+        """
+
+    def evict_expired():
         """Evict all files which have expired."""
 
     def clear():

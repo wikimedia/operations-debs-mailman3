@@ -1,4 +1,4 @@
-# Copyright (C) 2001-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2001-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -19,7 +19,7 @@
 
 import os
 import sys
-import errno
+import click
 import signal
 import socket
 import logging
@@ -30,8 +30,10 @@ from flufl.lock import Lock, NotLockedError, TimeOutError
 from lazr.config import as_boolean
 from mailman.config import config
 from mailman.core.i18n import _
+from mailman.core.initialize import initialize
 from mailman.core.logging import reopen
-from mailman.utilities.options import Options
+from mailman.utilities.options import I18nCommand, validate_runner_spec
+from mailman.version import MAILMAN_VERSION_FULL
 from public import public
 
 
@@ -43,68 +45,29 @@ SUBPROC_START_WAIT = timedelta(seconds=20)
 # Environment variables to forward into subprocesses.
 PRESERVE_ENVS = (
     'COVERAGE_PROCESS_START',
+    'LANG',
+    'LANGUAGE',
+    'LC_ADDRESS',
+    'LC_ALL',
+    'LC_COLLATE',
+    'LC_CTYPE',
+    'LC_IDENTIFICATION',
+    'LC_MEASUREMENT',
+    'LC_MESSAGES',
+    'LC_MONETARY',
+    'LC_NAME',
+    'LC_NUMERIC',
+    'LC_PAPER',
+    'LC_TELEPHONE',
+    'LC_TIME',
+    'LOCALE_ARCHIVE',
     'MAILMAN_EXTRA_TESTING_CFG',
+    'PYTHONPATH',
+    'PYTHONHOME',
     )
 
 
-class MasterOptions(Options):
-    """Options for the master watcher."""
-
-    usage = _("""\
-%prog [options]
-
-Master subprocess watcher.
-
-Start and watch the configured runners and ensure that they stay alive and
-kicking.  Each runner is forked and exec'd in turn, with the master waiting on
-their process ids.  When it detects a child runner has exited, it may restart
-it.
-
-The runners respond to SIGINT, SIGTERM, SIGUSR1 and SIGHUP.  SIGINT, SIGTERM
-and SIGUSR1 all cause a runner to exit cleanly.  The master will restart
-runners that have exited due to a SIGUSR1 or some kind of other exit condition
-(say because of an uncaught exception).  SIGHUP causes the master and the
-runners to close their log files, and reopen then upon the next printed
-message.
-
-The master also responds to SIGINT, SIGTERM, SIGUSR1 and SIGHUP, which it
-simply passes on to the runners.  Note that the master will close and reopen
-its own log files on receipt of a SIGHUP.  The master also leaves its own
-process id in the file `data/master.pid` but you normally don't need to use
-this pid directly.""")
-
-    def add_options(self):
-        """See `Options`."""
-        self.parser.add_option(
-            '-n', '--no-restart',
-            dest='restartable', default=True, action='store_false',
-            help=_("""\
-Don't restart the runners when they exit because of an error or a SIGUSR1.
-Use this only for debugging."""))
-        self.parser.add_option(
-            '-f', '--force',
-            default=False, action='store_true',
-            help=_("""\
-If the master watcher finds an existing master lock, it will normally exit
-with an error message.  With this option,the master will perform an extra
-level of checking.  If a process matching the host/pid described in the lock
-file is running, the master will still exit, requiring you to manually clean
-up the lock.  But if no matching process is found, the master will remove the
-apparently stale lock and make another attempt to claim the master lock."""))
-        self.parser.add_option(
-            '-r', '--runner',
-            dest='runners', action='append', default=[],
-            help=_("""\
-Override the default set of runners that the master will invoke, which is
-typically defined in the configuration file.  Multiple -r options may be
-given.  The values for -r are passed straight through to bin/runner."""))
-
-    def sanity_check(self):
-        """See `Options`."""
-        if len(self.arguments) > 0:
-            self.parser.error(_('Too many arguments'))
-
-
+@public
 class WatcherState(Enum):
     """Enum for the state of the master process watcher."""
     # No lock has been acquired by any process.
@@ -117,6 +80,7 @@ class WatcherState(Enum):
     host_mismatch = 3
 
 
+@public
 def master_state(lock_file=None):
     """Get the state of the master watcher.
 
@@ -139,12 +103,9 @@ def master_state(lock_file=None):
     try:
         os.kill(pid, 0)
         return WatcherState.conflict, lock
-    except OSError as error:
-        if error.errno == errno.ESRCH:
-            # No matching process id.
-            return WatcherState.stale_lock, lock
-        # Some other error occurred.
-        raise
+    except ProcessLookupError:
+        # No matching process id.
+        return WatcherState.stale_lock, lock
 
 
 def acquire_lock_1(force, lock_file=None):
@@ -211,17 +172,17 @@ Lock host: $hostname
 Exiting.""")
         else:
             assert status is WatcherState.none, (
-                'Invalid enum value: ${0}'.format(status))
+                'Invalid enum value: {}'.format(status))
             hostname, pid, tempfile = lock.details
             message = _("""\
 For unknown reasons, the master lock could not be acquired.
-
 
 Lock file: $config.LOCK_FILE
 Lock host: $hostname
 
 Exiting.""")
-        config.options.parser.error(message)
+        print(message, file=sys.stderr)
+        sys.exit(1)
 
 
 class PIDWatcher:
@@ -229,6 +190,9 @@ class PIDWatcher:
 
     def __init__(self):
         self._pids = {}
+
+    def __contains__(self, pid):
+        return pid in self._pids.keys()
 
     def __iter__(self):
         # Safely iterate over all the keys in the dictionary.  Because
@@ -354,16 +318,16 @@ class Loop:
         env = {'MAILMAN_UNDER_MASTER_CONTROL': '1'}
         # Craft the command line arguments for the exec() call.
         rswitch = '--runner=' + spec
-        # Wherever master lives, so too must live the runner script.
-        exe = os.path.join(config.BIN_DIR, 'runner')
-        # config.PYTHON, which is the absolute path to the Python interpreter,
-        # must be given as argv[0] due to Python's library search algorithm.
-        args = [sys.executable, sys.executable, exe, rswitch]
         # Always pass the explicit path to the configuration file to the
         # sub-runners.  This avoids any debate about which cfg file is used.
         config_file = (config.filename if self._config_file is None
                        else self._config_file)
-        args.extend(['-C', config_file])
+        # Wherever master lives, so too must live the runner script.
+        exe = os.path.join(config.BIN_DIR, 'runner')   # pragma: nocover
+        # config.PYTHON, which is the absolute path to the Python interpreter,
+        # must be given as argv[0] due to Python's library search algorithm.
+        args = [sys.executable, sys.executable, exe,   # pragma: nocover
+                '-C', config_file, rswitch]
         log = logging.getLogger('mailman.runner')
         log.debug('starting: %s', args)
         # We must pass this environment variable through if it's set,
@@ -438,15 +402,16 @@ class Loop:
         while True:
             try:
                 pid, status = os.wait()
-            except OSError as error:
+            except ChildProcessError:
                 # No children?  We're done.
-                if error.errno == errno.ECHILD:
-                    break
+                break
+            except InterruptedError:                         # pragma: nocover
                 # If the system call got interrupted, just restart it.
-                elif error.errno == errno.EINTR:
-                    continue
-                else:
-                    raise
+                continue
+            if pid not in self._kids:                        # pragma: nocover
+                # This is not a runner subprocess that we own.  E.g. maybe a
+                # plugin started it.
+                continue
             # Find out why the subprocess exited by getting the signal
             # received or exit status.
             if os.WIFSIGNALED(status):
@@ -497,40 +462,121 @@ Runner {0} reached maximum restart limit of {1:d}, not restarting.""",
         for pid in self._kids:
             try:
                 os.kill(pid, signal.SIGTERM)
-            except OSError as error:
-                if error.errno == errno.ESRCH:
-                    # The child has already exited.
-                    log.info('ESRCH on pid: %d', pid)
+            except ProcessLookupError:              # pragma: nocover
+                # The child has already exited.
+                log.info('ESRCH on pid: %d', pid)
+            except OSError:                         # pragma: nocover
+                # XXX I'm not so sure about this.  It preserves the semantics
+                # before conversion to PEP 3151 exceptions.  But is it right?
+                pass
         # Wait for all the children to go away.
         while self._kids:
             try:
                 pid, status = os.wait()
                 self._kids.drop(pid)
-            except OSError as error:
-                if error.errno == errno.ECHILD:
-                    break
-                elif error.errno == errno.EINTR:
-                    continue
-                raise
+            except ChildProcessError:
+                break
+            except InterruptedError:                # pragma: nocover
+                continue
 
 
+@click.command(
+    cls=I18nCommand,
+    context_settings=dict(help_option_names=['-h', '--help']),
+    help=_("""\
+    Master subprocess watcher.
+
+    Start and watch the configured runners, ensuring that they stay alive and
+    kicking.  Each runner is forked and exec'd in turn, with the master waiting
+    on their process ids.  When it detects a child runner has exited, it may
+    restart it.
+
+    The runners respond to SIGINT, SIGTERM, SIGUSR1 and SIGHUP.  SIGINT,
+    SIGTERM and SIGUSR1 all cause a runner to exit cleanly.  The master will
+    restart runners that have exited due to a SIGUSR1 or some kind of other
+    exit condition (say because of an uncaught exception).  SIGHUP causes the
+    master and the runners to close their log files, and reopen then upon the
+    next printed message.
+
+    The master also responds to SIGINT, SIGTERM, SIGUSR1 and SIGHUP, which it
+    simply passes on to the runners.  Note that the master will close and
+    reopen its own log files on receipt of a SIGHUP.  The master also leaves
+    its own process id in the file specified in the configuration file but you
+    normally don't need to use this PID directly."""))
+@click.option(
+    '-C', '--config', 'config_file',
+    envvar='MAILMAN_CONFIG_FILE',
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    help=_("""\
+    Configuration file to use.  If not given, the environment variable
+    MAILMAN_CONFIG_FILE is consulted and used if set.  If neither are given, a
+    default configuration file is loaded."""))
+@click.option(
+    '--no-restart', '-n', 'restartable',
+    is_flag=True, default=True,
+    help=_("""\
+    Don't restart the runners when they exit because of an error or a SIGUSR1.
+    Use this only for debugging."""))
+@click.option(
+    '--force', '-f',
+    is_flag=True, default=False,
+    help=_("""\
+    If the master watcher finds an existing master lock, it will normally exit
+    with an error message.  With this option,the master will perform an extra
+    level of checking.  If a process matching the host/pid described in the
+    lock file is running, the master will still exit, requiring you to manually
+    clean up the lock.  But if no matching process is found, the master will
+    remove the apparently stale lock and make another attempt to claim the
+    master lock."""))
+@click.option(
+    '--runners', '-r',
+    metavar='runner[:slice:range]',
+    callback=validate_runner_spec, default=None,
+    multiple=True,
+    help=_("""\
+    Override the default set of runners that the master will invoke, which is
+    typically defined in the configuration file.  Multiple -r options may be
+    given.  The values for -r are passed straight through to bin/runner."""))
+@click.option(
+    '-v', '--verbose',
+    is_flag=True, default=False,
+    help=_('Display more debugging information to the log file.'))
+@click.version_option(MAILMAN_VERSION_FULL)
 @public
-def main():
-    """Main process."""
+def main(config_file, restartable, force, runners, verbose):
+    # XXX https://github.com/pallets/click/issues/303
+    """Master subprocess watcher.
 
-    options = MasterOptions()
-    options.initialize()
+    Start and watch the configured runners and ensure that they stay
+    alive and kicking.  Each runner is forked and exec'd in turn, with
+    the master waiting on their process ids.  When it detects a child
+    runner has exited, it may restart it.
+
+    The runners respond to SIGINT, SIGTERM, SIGUSR1 and SIGHUP.  SIGINT,
+    SIGTERM and SIGUSR1 all cause a runner to exit cleanly.  The master
+    will restart runners that have exited due to a SIGUSR1 or some kind
+    of other exit condition (say because of an uncaught exception).
+    SIGHUP causes the master and the runners to close their log files,
+    and reopen then upon the next printed message.
+
+    The master also responds to SIGINT, SIGTERM, SIGUSR1 and SIGHUP,
+    which it simply passes on to the runners.  Note that the master will
+    close and reopen its own log files on receipt of a SIGHUP.  The
+    master also leaves its own process id in the file `data/master.pid`
+    but you normally don't need to use this pid directly.
+    """
+    initialize(config_file, verbose)
     # Acquire the master lock, exiting if we can't.  We'll let the caller
     # handle any clean up or lock breaking.  No `with` statement here because
     # Lock's constructor doesn't support a timeout.
-    lock = acquire_lock(options.options.force)
+    lock = acquire_lock(force)
     try:
         with open(config.PID_FILE, 'w') as fp:
             print(os.getpid(), file=fp)
-        loop = Loop(lock, options.options.restartable, options.options.config)
+        loop = Loop(lock, restartable, config.filename)
         loop.install_signal_handlers()
         try:
-            loop.start_runners(options.options.runners)
+            loop.start_runners(runners)
             loop.loop()
         finally:
             loop.cleanup()

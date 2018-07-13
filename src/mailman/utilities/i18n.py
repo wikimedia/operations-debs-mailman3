@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -35,7 +35,7 @@ class TemplateNotFoundError(MailmanError):
     def __init__(self, template_file):
         self.template_file = template_file
 
-    def __str__(self):                              # pragma: no cover
+    def __str__(self):                              # pragma: nocover
         return self.template_file
 
 

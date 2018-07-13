@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -227,6 +227,7 @@ class TestStyle:
     """See `IStyle`."""
 
     name = 'test'
+    description = 'A test style.'
 
     def apply(self, mailing_list):
         """See `IStyle`."""
