@@ -5,9 +5,13 @@ mailman3 (3.2.0-1) UNRELEASED; urgency=medium
     * Bump Build-Depends on python3-sqlalchemy to >= 1.2.3
     * Drop obsolete patch d/patches/0001_sphinx_ignore_pc.patch
     * Drop obsolete patch d/patches/0002_change_mkdirs_behaviour.patch
+  * d/upstream/signing-key.asc:
+    - Change the key to 541EA0448453394FF77A0ECC9D9B2BA061D0A67C (Abhilash Raj
+      <raj.abhilash1@gmail.com>) since latest upstream tarball got signed by
+      him.
   * d/control: Bump standards-version to 4.1.5
 
- -- Jonas Meurer <jonas@freesources.org>  Fri, 13 Jul 2018 16:39:31 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Sat, 14 Jul 2018 14:46:54 +0200
 
 mailman3 (3.1.1-10) unstable; urgency=medium
 
