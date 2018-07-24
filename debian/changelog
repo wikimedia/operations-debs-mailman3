@@ -1,5 +1,6 @@
 mailman3 (3.2.0-1) UNRELEASED; urgency=medium
 
+  [ Jonas Meurer ]
   * New upstream release 3.2.0
     * Bump Build-Depends on python3-aiosmtpd to >=1.1
     * Bump Build-Depends on python3-sqlalchemy to >= 1.2.3
@@ -11,7 +12,11 @@ mailman3 (3.2.0-1) UNRELEASED; urgency=medium
       him.
   * d/control: Bump standards-version to 4.1.5
 
- -- Jonas Meurer <jonas@freesources.org>  Sat, 14 Jul 2018 14:46:54 +0200
+  [ Pierre-Elliott Bécue ]
+  * d/rules:
+    - Removes the docs/ directories from mailman3.deb
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 24 Jul 2018 18:10:30 +0200
 
 mailman3 (3.1.1-10) unstable; urgency=medium
 
