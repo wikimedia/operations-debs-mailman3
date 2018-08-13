@@ -38,9 +38,6 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#| msgid ""
-#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
-#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
 "The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
 "be added to /etc/mailman3/mailman.cfg."
@@ -57,10 +54,6 @@ msgstr "O serviço para o mailman3 falhou!"
 #. Type: error
 #. Description
 #: ../templates:2001
-#| msgid ""
-#| "The mailman3-core service didn't start correctly. This is probably "
-#| "because you didn't configure the database appropriately. The service "
-#| "won't work until you do so."
 msgid ""
 "The mailman3 service didn't start correctly. This is probably because you "
 "didn't configure the database appropriately. The service won't work until "
@@ -73,13 +66,9 @@ msgstr ""
 #. Type: error
 #. Description
 #: ../templates:2001
-#| msgid ""
-#| "If you actually DID install the db appropriately, please report the bug "
-#| "to the maintainers of mailman3-core package."
 msgid ""
 "If you actually DID install the database appropriately, please report the "
 "bug to the maintainers of the mailman3 package."
 msgstr ""
-"Se efectivamente instalou a base de dados correctamente por favor "
-"reporte o erro aos 'maintainers' do pacote mailman3."
-
+"Se efectivamente instalou a base de dados correctamente por favor reporte o "
+"erro aos 'maintainers' do pacote mailman3."

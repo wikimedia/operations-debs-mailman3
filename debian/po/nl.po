@@ -21,17 +21,12 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#| msgid "Add the Hyperkitty configuration to mailman.cfg?"
 msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr "De configuratie voor Hyperkitty toevoegen aan mailman.cfg?"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#| msgid ""
-#| "Mailman3 needs additional configuration in mailman.cfg in order to send "
-#| "messages to the Hyperkitty archiver. This configuration can be added "
-#| "automatically now."
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
 "messages to the HyperKitty archiver. This configuration can be added "
@@ -44,9 +39,6 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#| msgid ""
-#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
-#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
 "The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
 "be added to /etc/mailman3/mailman.cfg."
