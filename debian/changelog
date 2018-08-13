@@ -1,5 +1,9 @@
 mailman3 (3.2.0-1) UNRELEASED; urgency=medium
 
+  [ Elizabeth Ramos ]
+  * d/po/pt_BR.po: Brazilian Portuguese translation for debconf template.
+    (Closes: #905161)
+
   [ Jonas Meurer ]
   * New upstream release 3.2.0
     * Bump Build-Depends on python3-aiosmtpd to >=1.1

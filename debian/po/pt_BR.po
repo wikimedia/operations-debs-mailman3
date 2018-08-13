@@ -1,0 +1,74 @@
+# Portuguese translation for mailman3 debconf templates.
+# Copyright (C) 2018 ELIZABETH RAMOS <elizabethlopesramos@gmail.com>
+# This file is distributed under the same license as the mailman3 package.
+# ELIZABETH RAMOS <elizabethlopesramos@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mailman3\n"
+"Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
+"POT-Creation-Date: 2018-03-15 10:57+0100\n"
+"PO-Revision-Date: 2018-02-19 22:31-0300\n"
+"Last-Translator: ELIZABETH RAMOS <elizabethlopesramos@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
+"org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid "Add the HyperKitty configuration to mailman.cfg?"
+msgstr "Adicionar a configuração do Hyperkitty ao mailman.cfg?"
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid ""
+"Mailman3 needs additional configuration in mailman.cfg in order to send "
+"messages to the HyperKitty archiver. This configuration can be added "
+"automatically now."
+msgstr ""
+"O mailman3 precisa de configuração adicional no mailman.cfg para enviar "
+"mensagens ao arquivador do Hiperkitty. Esta configuração pode ser adicionada "
+"automaticamente agora."
+
+#. Type: boolean
+#. Description
+#: ../templates:1001
+msgid ""
+"The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
+"be added to /etc/mailman3/mailman.cfg."
+msgstr ""
+"Isto adiciona o conteúdo de /usr/share/mailman3/"
+"mailman_cfg_hyperkitty_snippet.cfg ao mailman.cfg."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid "The service for mailman3 failed!"
+msgstr "O serviço para mailman3 falhou!"
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"The mailman3 service didn't start correctly. This is probably because you "
+"didn't configure the database appropriately. The service won't work until "
+"you do so."
+msgstr ""
+"O serviço mailman3 não iniciou corretamente. Provavelmente, você não "
+"configurou o banco de dados adequadamente. O serviço não funcionará até que "
+"você faça isso."
+
+#. Type: error
+#. Description
+#: ../templates:2001
+msgid ""
+"If you actually DID install the database appropriately, please report the "
+"bug to the maintainers of the mailman3 package."
+msgstr ""
+"Se você de fato já instalou o banco de dados adequadamente, por favor, "
+"relate o bug aos mantenedores do pacote mailman3."
