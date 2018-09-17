@@ -1,4 +1,4 @@
-mailman3 (3.2.0-1) UNRELEASED; urgency=medium
+mailman3 (3.2.0-1) unstable; urgency=medium
 
   [ Elizabeth Ramos ]
   * d/po/pt_BR.po: Brazilian Portuguese translation for debconf template.
@@ -14,13 +14,14 @@ mailman3 (3.2.0-1) UNRELEASED; urgency=medium
     - Change the key to 541EA0448453394FF77A0ECC9D9B2BA061D0A67C (Abhilash Raj
       <raj.abhilash1@gmail.com>) since latest upstream tarball got signed by
       him.
-  * d/control: Bump standards-version to 4.1.5
+  * d/control:
+    - Bump standards-version to 4.2.1, no changes required
 
   [ Pierre-Elliott Bécue ]
   * d/rules:
     - Removes the docs/ directories from mailman3.deb
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 24 Jul 2018 18:10:30 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 17 Sep 2018 12:46:56 +0200
 
 mailman3 (3.1.1-10) unstable; urgency=medium
 
