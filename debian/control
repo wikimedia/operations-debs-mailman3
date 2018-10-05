@@ -81,7 +81,7 @@ Description: Mailing list management system documentation
 Package: mailman3-full
 Architecture: all
 Depends: mailman3,
-         mailman3-web,
+         mailman3-web (>= 0+20180916-1),
          python3-mailman-hyperkitty,
          ${misc:Depends}
 Description: Full Mailman3 mailing list management suite (metapackage)

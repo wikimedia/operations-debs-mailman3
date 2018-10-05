@@ -2,8 +2,10 @@ mailman3 (3.2.0-2) unstable; urgency=medium
 
   * d/control:
     - Replace my Crans address by my Debian one.
+    - Add an explicit dependency on mailman3-web >= 0+20180916-1 to ensure the
+      whole dependency chain is python3 when mailman3-full is installed.
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Fri, 05 Oct 2018 21:43:26 +0200
+ -- Pierre-Elliott Bécue <peb@debian.org>  Fri, 05 Oct 2018 21:46:26 +0200
 
 mailman3 (3.2.0-1) unstable; urgency=medium
 
