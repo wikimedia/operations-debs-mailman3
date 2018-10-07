@@ -43,9 +43,9 @@ Depends: dbconfig-sqlite3 | dbconfig-pgsql | dbconfig-mysql | dbconfig-no-thanks
          ucf,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: default-mta | mail-transport-agent,
-            lynx
-Suggests: mailman3-doc,
+Recommends: default-mta | mail-transport-agent
+Suggests: lynx,
+          mailman3-doc,
           postgresql | default-mysql-server | virtual-mysql-server
 Replaces: mailman3-core
 Breaks: mailman3-core
