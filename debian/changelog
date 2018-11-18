@@ -1,9 +1,13 @@
 mailman3 (3.2.0-3) UNRELEASED; urgency=medium
 
+  [ Jonas Meurer ]
   * d/control:
     - Demote lynx from Recommends to Suggests. (Closes: #909571)
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 07 Oct 2018 15:53:18 +0200
+  [ Pierre-Elliott Bécue ]
+  * d/po/fr.po refreshed
+
+ -- Pierre-Elliott Bécue <peb@debian.org>  Sun, 18 Nov 2018 21:18:47 +0100
 
 mailman3 (3.2.0-2) unstable; urgency=medium
 
