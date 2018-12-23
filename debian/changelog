@@ -1,3 +1,10 @@
+mailman3 (3.2.0-4) UNRELEASED; urgency=medium
+
+  * d/control:
+    - Bump Standards-Version to 4.3.0, no changes required
+
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:28:48 +0100
+
 mailman3 (3.2.0-3) unstable; urgency=medium
 
   [ Jonas Meurer ]

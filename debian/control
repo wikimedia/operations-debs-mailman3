@@ -27,7 +27,7 @@ Build-Depends: debhelper (>= 11~),
                python3-zope.event,
                python3-zope.interface
 Rules-Requires-Root: binary-targets
-Standards-Version: 4.2.1
+Standards-Version: 4.3.0
 Homepage: http://www.list.org/
 Vcs-Browser: https://salsa.debian.org/mailman-team/mailman3
 Vcs-Git: https://salsa.debian.org/mailman-team/mailman3.git
