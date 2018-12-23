@@ -1,9 +1,12 @@
-mailman3 (3.2.0-4) UNRELEASED; urgency=medium
+mailman3 (3.2.0-4) unstable; urgency=medium
 
   * d/control:
     - Bump Standards-Version to 4.3.0, no changes required
+  * d/p/0002_no_results_emails.patch:
+    - Backport upstream patch that stops messages to -join, -leave and
+      -confirm from producing result emails.
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:28:48 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:32:14 +0100
 
 mailman3 (3.2.0-3) unstable; urgency=medium
 
