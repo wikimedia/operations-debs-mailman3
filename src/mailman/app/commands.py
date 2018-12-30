@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2008-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -26,4 +26,4 @@ from public import public
 @public
 def initialize():
     """Initialize the email commands."""
-    add_components('mailman.commands', IEmailCommand, config.commands)
+    add_components('commands', IEmailCommand, config.commands)

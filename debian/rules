@@ -24,7 +24,7 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_auto_install
-	#find debian/mailman3/usr -type d -name "tests" -print0 | xargs -0 rm -r
+	find debian/mailman3/usr/lib/ -type d -name "docs" -exec rm -rf {} \; -prune;
 
 override_dh_installinit:
 	dh_installinit --error-handler=init_service_failed

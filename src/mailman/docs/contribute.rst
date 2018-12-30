@@ -2,7 +2,7 @@
  Contributing to Mailman 3
 ===========================
 
-Copyright (C) 2008-2017 by the Free Software Foundation, Inc.
+Copyright (C) 2008-2018 by the Free Software Foundation, Inc.
 
 
 How to contribute
@@ -62,7 +62,6 @@ of these command, depending on which version of Python 3 you have::
 
     $ tox -e py36-nocov
     $ tox -e py35-nocov
-    $ tox -e py34-nocov
 
 You can run individual tests in any given environment by providing additional
 positional arguments.  For example, to run only the tests that match a

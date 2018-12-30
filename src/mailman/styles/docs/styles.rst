@@ -23,6 +23,7 @@ To start with, there are a few legacy styles.
     ...     print(style.name)
     legacy-announce
     legacy-default
+    private-default
 
 When you create a mailing list through the low-level `IListManager` API, no
 style is applied.
@@ -49,6 +50,7 @@ New styles must implement the ``IStyle`` interface.
     >>> @implementer(IStyle)
     ... class TestStyle:
     ...     name = 'a-test-style'
+    ...     description = 'Testing mailing list style.'
     ...     def apply(self, mailing_list):
     ...         # Just does something very simple.
     ...         mailing_list.display_name = 'TEST STYLE LIST'
@@ -64,6 +66,7 @@ All registered styles are returned in alphabetical order by style name.
     a-test-style
     legacy-announce
     legacy-default
+    private-default
 
 You can also ask the style manager for the style, by name.
 
@@ -82,6 +85,7 @@ You can unregister a style, making it unavailable in the future.
     ...     print(style.name)
     legacy-announce
     legacy-default
+    private-default
 
 Asking for a missing style returns None.
 
@@ -115,6 +119,7 @@ If no style name is provided when creating the list, the system default style
     >>> @implementer(IStyle)
     ... class AnotherStyle:
     ...     name = 'another-style'
+    ...     description = 'Another testing mailing list style.'
     ...     def apply(self, mailing_list):
     ...         # Just does something very simple.
     ...         mailing_list.display_name = 'ANOTHER STYLE LIST'

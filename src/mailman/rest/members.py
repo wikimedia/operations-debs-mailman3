@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -68,6 +68,9 @@ class _MemberBase(CollectionMixin):
         # Add the moderation action if overriding the list's default.
         if member.moderation_action is not None:
             response['moderation_action'] = member.moderation_action
+        # Add display_name if it is present
+        if member.display_name is not None:
+            response['display_name'] = member.display_name
         # Add the user link if there is one.
         user = member.user
         if user is not None:

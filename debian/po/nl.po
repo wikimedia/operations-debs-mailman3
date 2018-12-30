@@ -1,14 +1,14 @@
 # Dutch translation of mailman3 debconf templates.
 # Copyright (C) 2017 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
 # This file is distributed under the same license as the mailman3 package.
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2017.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2017, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: mailman3_3.1.0-4\n"
+"Project-Id-Version: mailman3_3.1.1-9\n"
 "Report-Msgid-Bugs-To: mailman3@packages.debian.org\n"
 "POT-Creation-Date: 2018-03-15 10:57+0100\n"
-"PO-Revision-Date: 2017-11-15 00:00+0100\n"
+"PO-Revision-Date: 2018-04-30 21:51+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -21,19 +21,12 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid "Add the Hyperkitty configuration to mailman.cfg?"
 msgid "Add the HyperKitty configuration to mailman.cfg?"
 msgstr "De configuratie voor Hyperkitty toevoegen aan mailman.cfg?"
 
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid ""
-#| "Mailman3 needs additional configuration in mailman.cfg in order to send "
-#| "messages to the Hyperkitty archiver. This configuration can be added "
-#| "automatically now."
 msgid ""
 "Mailman3 needs additional configuration in mailman.cfg in order to send "
 "messages to the HyperKitty archiver. This configuration can be added "
@@ -46,22 +39,18 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid ""
-#| "This adds the content of /usr/share/mailman3-core/mailman_cfg "
-#| "_hyperkitty_snippet.cfg to mailman.cfg."
 msgid ""
 "The content of /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg will "
 "be added to /etc/mailman3/mailman.cfg."
 msgstr ""
-"Dit voegt de inhoud van /usr/share/mailman3/mailman_cfg "
-"_hyperkitty_snippet.cfg toe aan mailman.cfg."
+"De inhoud van /usr/share/mailman3/mailman_cfg_hyperkitty_snippet.cfg zal "
+"aan /etc/mailman3/mailman.cfg toegevoegd worden."
 
 #. Type: error
 #. Description
 #: ../templates:2001
 msgid "The service for mailman3 failed!"
-msgstr ""
+msgstr "Het commando service faalde voor mailman3!"
 
 #. Type: error
 #. Description
@@ -71,6 +60,9 @@ msgid ""
 "didn't configure the database appropriately. The service won't work until "
 "you do so."
 msgstr ""
+"De dienst mailman3 startte niet correct op. Vermoedelijk is dit omdat u de "
+"databank niet op de juiste wijze configureerde. De dienst zal niet "
+"functioneren tot u dit gedaan heeft."
 
 #. Type: error
 #. Description
@@ -79,3 +71,5 @@ msgid ""
 "If you actually DID install the database appropriately, please report the "
 "bug to the maintainers of the mailman3 package."
 msgstr ""
+"Indien u echter de databank WEL DEGELIJK correct installeerde, gelieve dan "
+"deze bug te rapporteren aan de onderhouders van het pakket mailman3"

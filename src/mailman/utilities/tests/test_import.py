@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -34,7 +34,7 @@ from mailman.interfaces.bounce import UnrecognizedBounceDisposition
 from mailman.interfaces.domain import IDomainManager
 from mailman.interfaces.languages import ILanguageManager
 from mailman.interfaces.mailinglist import (
-    IAcceptableAliasSet, SubscriptionPolicy)
+    DMARCMitigateAction, IAcceptableAliasSet, SubscriptionPolicy)
 from mailman.interfaces.member import DeliveryMode, DeliveryStatus
 from mailman.interfaces.nntp import NewsgroupModeration
 from mailman.interfaces.template import ITemplateLoader, ITemplateManager
@@ -203,6 +203,55 @@ class TestBasicImport(unittest.TestCase):
         self._import()
         self.assertTrue(self._mlist.send_welcome_message)
         self.assertTrue(self._mlist.send_goodbye_message)
+
+    def test_dmarc_zero_from_is_list(self):
+        self._mlist.dmarc_mitigate_action = DummyEnum.val
+        self._mlist.dmarc_mitigate_unconditionally = True
+        self._pckdict['from_is_list'] = 0
+        self._pckdict['dmarc_moderation_action'] = 1
+        self._import()
+        self.assertFalse(self._mlist.dmarc_mitigate_unconditionally)
+        self.assertEqual(self._mlist.dmarc_mitigate_action,
+                         DMARCMitigateAction.munge_from)
+
+    def test_dmarc_zero_dmarc_moderation_action(self):
+        self._mlist.dmarc_mitigate_action = DummyEnum.val
+        self._mlist.dmarc_mitigate_unconditionally = False
+        self._pckdict['from_is_list'] = 1
+        self._pckdict['dmarc_moderation_action'] = 0
+        self._import()
+        self.assertTrue(self._mlist.dmarc_mitigate_unconditionally)
+        self.assertEqual(self._mlist.dmarc_mitigate_action,
+                         DMARCMitigateAction.munge_from)
+
+    def test_dmarc_nonzero_actions_fil(self):
+        self._mlist.dmarc_mitigate_action = DummyEnum.val
+        self._mlist.dmarc_mitigate_unconditionally = False
+        self._pckdict['from_is_list'] = 2
+        self._pckdict['dmarc_moderation_action'] = 1
+        self._import()
+        self.assertTrue(self._mlist.dmarc_mitigate_unconditionally)
+        self.assertEqual(self._mlist.dmarc_mitigate_action,
+                         DMARCMitigateAction.wrap_message)
+
+    def test_dmarc_nonzero_actions_dma(self):
+        self._mlist.dmarc_mitigate_action = DummyEnum.val
+        self._mlist.dmarc_mitigate_unconditionally = True
+        self._pckdict['from_is_list'] = 1
+        self._pckdict['dmarc_moderation_action'] = 2
+        self._import()
+        self.assertFalse(self._mlist.dmarc_mitigate_unconditionally)
+        self.assertEqual(self._mlist.dmarc_mitigate_action,
+                         DMARCMitigateAction.wrap_message)
+
+    def test_dmarc_messages(self):
+        self._pckdict['dmarc_moderation_notice'] = b'This is a notice.\n'
+        self._pckdict['dmarc_wrapped_message_text'] = b'This is text.\n'
+        self._import()
+        self.assertEqual('This is a notice.\n',
+                         self._mlist.dmarc_moderation_notice)
+        self.assertEqual('This is text.\n',
+                         self._mlist.dmarc_wrapped_message_text)
 
     def test_ban_list(self):
         banned = [
@@ -628,12 +677,15 @@ class TestMemberActionImport(unittest.TestCase):
 
 class TestConvertToURI(unittest.TestCase):
     # The following values were plain text, and are now URIs in Mailman 3:
-    # - welcome_message_uri
-    # - goodbye_message_uri
-    # - header_uri
-    # - footer_uri
-    # - digest_header_uri
-    # - digest_footer_uri
+    # - welcome_message
+    # - goodbye_message
+    # - msg_header
+    # - msg_footer
+    # - digest_header
+    # - digest_footer
+    #
+    # We intentionally don't do welcome_message because it doesn't map well
+    # from MM 2.1
     #
     # The templates contain variables that must be replaced:
     # - %(real_name)s -> %(display_name)s
@@ -647,7 +699,6 @@ class TestConvertToURI(unittest.TestCase):
     def setUp(self):
         self._mlist = create_list('blank@example.com')
         self._conf_mapping = dict(
-            welcome_msg='list:user:notice:welcome',
             goodbye_msg='list:user:notice:goodbye',
             msg_header='list:member:regular:header',
             msg_footer='list:member:regular:footer',

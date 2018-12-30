@@ -1,4 +1,4 @@
-# Copyright (C) 2001-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2001-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -38,9 +38,7 @@ def process(mlist, msg, msgdata):
     if not mlist.topics_enabled:
         return
     # Extract the Subject:, Keywords:, and possibly body text
-    matchlines = []
-    matchlines.append(msg.get('subject', None))
-    matchlines.append(msg.get('keywords', None))
+    matchlines = [msg.get('subject', None), msg.get('keywords', None)]
     if mlist.topics_bodylines_limit == 0:
         # Don't scan any body lines
         pass

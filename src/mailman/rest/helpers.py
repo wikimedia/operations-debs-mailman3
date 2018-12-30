@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -293,7 +293,7 @@ def accepted(response, body=None):
 
 
 @public
-def bad_request(response, body='400 Bad Request'):
+def bad_request(response, body=b'400 Bad Request'):
     response.status = falcon.HTTP_400
     if body is not None:
         response.body = body

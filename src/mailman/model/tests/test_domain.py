@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -76,6 +76,16 @@ class TestDomainManager(unittest.TestCase):
         # If a domain is created without owners, then it has none.
         domain = self._manager.add('example.org')
         self.assertEqual(len(domain.owners), 0)
+
+    def test_domain_creation_no_alias(self):
+        # If a domain is created without an alias, then it has none.
+        domain = self._manager.add('example.org')
+        self.assertIsNone(domain.alias_domain)
+
+    def test_domain_creation_with_alias(self):
+        # If a domain is created with an alias then it has one.
+        domain = self._manager.add('example.org', alias_domain='x.example.org')
+        self.assertEqual(domain.alias_domain, 'x.example.org')
 
     def test_domain_creation_with_owner(self):
         # You can create a new domain with a single owner.

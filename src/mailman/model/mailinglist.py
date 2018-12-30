@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -155,7 +155,6 @@ class MailingList(Model):
     max_message_size = Column(Integer)
     max_num_recipients = Column(Integer)
     member_moderation_notice = Column(SAUnicode)
-    mime_is_default_digest = Column(Boolean)
     # FIXME: There should be no moderator_password
     moderator_password = Column(LargeBinary)             # TODO : was RawStr()
     newsgroup_moderation = Column(Enum(NewsgroupModeration))
@@ -225,13 +224,13 @@ class MailingList(Model):
         listen(cls, 'load', cls._post_load)
 
     def __repr__(self):
-        return '<mailing list "{0}" at {1:#x}>'.format(
+        return '<mailing list "{}" at {:#x}>'.format(
             self.fqdn_listname, id(self))
 
     @property
     def fqdn_listname(self):
         """See `IMailingList`."""
-        return '{0}@{1}'.format(self.list_name, self.mail_host)
+        return '{}@{}'.format(self.list_name, self.mail_host)
 
     @property
     def list_id(self):

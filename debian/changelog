@@ -1,8 +1,77 @@
-mailman3 (3.1.1-9~bpo9+1) stretch-backports; urgency=medium
+mailman3 (3.2.0-4) unstable; urgency=medium
 
-  * Rebuild for stretch-backports.
+  * d/control:
+    - Bump Standards-Version to 4.3.0, no changes required
+  * d/p/0002_no_results_emails.patch:
+    - Backport upstream patch that stops messages to -join, -leave and
+      -confirm from producing result emails.
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Thu, 12 Apr 2018 13:49:30 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:32:14 +0100
+
+mailman3 (3.2.0-3) unstable; urgency=medium
+
+  [ Jonas Meurer ]
+  * d/control:
+    - Demote lynx from Recommends to Suggests. (Closes: #909571)
+
+  [ Pierre-Elliott Bécue ]
+  * d/po/fr.po refreshed
+  * d/control:
+    - Add www-browser as an alternative Suggests for lynx.
+
+ -- Pierre-Elliott Bécue <peb@debian.org>  Sun, 09 Dec 2018 22:30:08 +0100
+
+mailman3 (3.2.0-2) unstable; urgency=medium
+
+  * d/control:
+    - Replace my Crans address by my Debian one.
+    - Add an explicit dependency on mailman3-web >= 0+20180916-1 to ensure the
+      whole dependency chain is python3 when mailman3-full is installed.
+
+ -- Pierre-Elliott Bécue <peb@debian.org>  Fri, 05 Oct 2018 21:46:26 +0200
+
+mailman3 (3.2.0-1) unstable; urgency=medium
+
+  [ Elizabeth Ramos ]
+  * d/po/pt_BR.po: Brazilian Portuguese translation for debconf template.
+    (Closes: #905161)
+
+  [ Jonas Meurer ]
+  * New upstream release 3.2.0
+    * Bump Build-Depends on python3-aiosmtpd to >=1.1
+    * Bump Build-Depends on python3-sqlalchemy to >= 1.2.3
+    * Drop obsolete patch d/patches/0001_sphinx_ignore_pc.patch
+    * Drop obsolete patch d/patches/0002_change_mkdirs_behaviour.patch
+  * d/upstream/signing-key.asc:
+    - Change the key to 541EA0448453394FF77A0ECC9D9B2BA061D0A67C (Abhilash Raj
+      <raj.abhilash1@gmail.com>) since latest upstream tarball got signed by
+      him.
+  * d/control:
+    - Bump standards-version to 4.2.1, no changes required
+
+  [ Pierre-Elliott Bécue ]
+  * d/rules:
+    - Removes the docs/ directories from mailman3.deb
+
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 17 Sep 2018 12:46:56 +0200
+
+mailman3 (3.1.1-10) unstable; urgency=medium
+
+  [ Rui Branco ]
+  * Update Portuguese translation for debconf (Closes: #898192)
+
+  [ Frans Spiesschaert ]
+  * Update Dutch translation for debconf (Closes: #898664)
+
+  [ Pierre-Elliott Bécue ]
+  * d/copyright:
+    - Update copyright years
+    - Add debconf translations statements
+  * d/control:
+    - Remove the X-Python3-Version field as the mentioned version is the one
+      in stable.
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 26 May 2018 14:59:55 +0200
 
 mailman3 (3.1.1-9) unstable; urgency=medium
 

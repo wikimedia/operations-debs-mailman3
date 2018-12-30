@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -22,6 +22,7 @@ import logging
 
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from mailman.archiving.mailarchive import MailArchive
 from mailman.core.i18n import _
 from mailman.email.message import Message
 from mailman.interfaces.handler import IHandler
@@ -42,15 +43,26 @@ def process(mlist, msg, msgdata):
     # Digests and Mailman-craft messages should not get additional headers.
     if msgdata.get('isdigest') or msgdata.get('nodecorate'):
         return
+    # Kludge to not decorate mail for Mail-Archive.com.
+    if ('recipients' in msgdata and len(msgdata['recipients']) == 1 and
+            list(msgdata['recipients'])[0] == MailArchive().recipient):
+        return
     d = {}
     member = msgdata.get('member')
     if member is not None:
         # Calculate the extra personalization dictionary.
-        recipient = msgdata.get('recipient', member.address.original_email)
+        # member.subscriber can be a User instance or an Address instance, and
+        # member.address can be None and so can member._user.preferred_address.
+        if member._address is not None:
+            _address = member._address
+        else:
+            _address = (member._user.preferred_address or
+                        list(member._user.addresses)[0])
+        recipient = msgdata.get('recipient', _address.original_email)
         d['member'] = formataddr(
-            (member.subscriber.display_name, member.subscriber.email))
+            (_address.display_name, _address.email))
         d['user_email'] = recipient
-        d['user_delivered_to'] = member.address.original_email
+        d['user_delivered_to'] = _address.original_email
         d['user_language'] = member.preferred_language.description
         d['user_name'] = member.display_name
         # For backward compatibility.
@@ -144,11 +156,13 @@ def process(mlist, msg, msgdata):
         if not isinstance(payload, list):
             payload = [payload]
         if len(footer) > 0:
-            mimeftr = MIMEText(footer.encode(lcset), 'plain', lcset)
+            mimeftr = MIMEText(
+                footer.encode(lcset, errors='replace'), 'plain', lcset)
             mimeftr['Content-Disposition'] = 'inline'
             payload.append(mimeftr)
         if len(header) > 0:
-            mimehdr = MIMEText(header.encode(lcset), 'plain', lcset)
+            mimehdr = MIMEText(
+                header.encode(lcset, errors='replace'), 'plain', lcset)
             mimehdr['Content-Disposition'] = 'inline'
             payload.insert(0, mimehdr)
         msg.set_payload(payload)
@@ -186,11 +200,13 @@ def process(mlist, msg, msgdata):
     # any).
     payload = [inner]
     if len(header) > 0:
-        mimehdr = MIMEText(header.encode(lcset), 'plain', lcset)
+        mimehdr = MIMEText(
+            header.encode(lcset, errors='replace'), 'plain', lcset)
         mimehdr['Content-Disposition'] = 'inline'
         payload.insert(0, mimehdr)
     if len(footer) > 0:
-        mimeftr = MIMEText(footer.encode(lcset), 'plain', lcset)
+        mimeftr = MIMEText(
+            footer.encode(lcset, errors='replace'), 'plain', lcset)
         mimeftr['Content-Disposition'] = 'inline'
         payload.append(mimeftr)
     msg.set_payload(payload)

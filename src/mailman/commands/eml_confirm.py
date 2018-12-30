@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -45,7 +45,7 @@ class Confirm:
         tokens = getattr(results, 'confirms', set())
         if token in tokens:
             # Do not try to confirm this one again.
-            return ContinueProcessing.yes
+            return ContinueProcessing.no
         tokens.add(token)
         results.confirms = tokens
         try:
@@ -72,6 +72,8 @@ class Confirm:
             succeeded = False
         if succeeded:
             print(_('Confirmed'), file=results)
-            return ContinueProcessing.yes
+            # After the 'confirm' command, do not process any other commands in
+            # the email.
+            return ContinueProcessing.no
         print(_('Confirmation token did not match'), file=results)
         return ContinueProcessing.no
