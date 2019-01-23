@@ -1,2 +1,3 @@
 debian/contrib/mailman.cfg.sample                 usr/share/mailman3/
 debian/contrib/mailman_cfg_hyperkitty_snippet.cfg usr/share/mailman3/
+debian/contrib/mailman-wrapper                    usr/bin/
