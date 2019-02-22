@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -17,10 +17,9 @@
 
 """Internationalization for the tests."""
 
-from contextlib import closing
 from flufl.i18n import registry
 from gettext import GNUTranslations, NullTranslations
-from pkg_resources import resource_stream
+from importlib_resources import open_binary
 from public import public
 
 
@@ -34,7 +33,7 @@ class TestingStrategy:
         if language_code in ('en', None):
             return NullTranslations()
         mo_file = 'mailman-%s.mo' % language_code
-        with closing(resource_stream('mailman.testing', mo_file)) as fp:
+        with open_binary('mailman.testing', mo_file) as fp:
             return GNUTranslations(fp)
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -89,6 +89,14 @@ Subject: aardvarks
             'cate@example.com', ['dave@example.com'], self.msg_text)
         self.connection.quit()
         self.assertEqual(SMTPLayer.smtpd.get_connection_count(), 2)
+
+    def test_count_2_no_quit(self):
+        self.connection.sendmail(
+            'anne@example.com', ['bart@example.com'], self.msg_text)
+        self.connection.sendmail(
+            'cate@example.com', ['dave@example.com'], self.msg_text)
+        self.connection.quit()
+        self.assertEqual(SMTPLayer.smtpd.get_connection_count(), 1)
 
     def test_count_reset(self):
         self.connection.sendmail(

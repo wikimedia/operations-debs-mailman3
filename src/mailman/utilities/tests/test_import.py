@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -22,6 +22,7 @@ import unittest
 
 from datetime import timedelta, datetime
 from enum import Enum
+from importlib_resources import open_binary
 from mailman.app.lifecycle import create_list
 from mailman.config import config
 from mailman.handlers.decorate import decorate
@@ -45,7 +46,6 @@ from mailman.utilities.filesystem import makedirs
 from mailman.utilities.importer import (
     Import21Error, check_language_code, import_config_pck)
 from pickle import load
-from pkg_resources import resource_filename
 from unittest import mock
 from urllib.error import URLError
 from zope.component import getUtility
@@ -69,9 +69,7 @@ class TestBasicImport(unittest.TestCase):
 
     def setUp(self):
         self._mlist = create_list('blank@example.com')
-        pickle_file = resource_filename('mailman.testing', 'config.pck')
-        with open(pickle_file, 'rb') as fp:
-            self._pckdict = load(fp)
+        self._pckdict = load(open_binary('mailman.testing', 'config.pck'))
 
     def _import(self):
         import_config_pck(self._mlist, self._pckdict)
@@ -135,6 +133,73 @@ class TestBasicImport(unittest.TestCase):
         self._import()
         self.assertEqual(self._mlist.autorespond_owner, ResponseAction.none)
         self.assertEqual(self._mlist.autoresponse_owner_text, '')
+
+    def test_autoresponse_owner_yes(self):
+        # Yes -> ResponseAction.respond_and_continue
+        self._mlist.autorespond_owner = DummyEnum.val
+        self._mlist.autoresponse_owner_text = 'DUMMY'
+        self._pckdict['autorespond_admin'] = 1
+        self._pckdict['autoresponse_admin_text'] = 'Autoresponse'
+        self._import()
+        self.assertEqual(self._mlist.autorespond_owner,
+                         ResponseAction.respond_and_continue)
+        self.assertEqual(self._mlist.autoresponse_owner_text, 'Autoresponse')
+
+    def test_autoresponse_post_yes(self):
+        # Yes -> ResponseAction.respond_and_continue
+        self._mlist.autorespond_postings = DummyEnum.val
+        self._mlist.autoresponse_postings_text = 'DUMMY'
+        self._pckdict['autorespond_postings'] = 1
+        self._pckdict['autoresponse_postings_text'] = 'Autoresponse'
+        self._import()
+        self.assertEqual(self._mlist.autorespond_postings,
+                         ResponseAction.respond_and_continue)
+        self.assertEqual(self._mlist.autoresponse_postings_text,
+                         'Autoresponse')
+
+    def test_autoresponse_post_no(self):
+        # No -> ResponseAction.none
+        self._mlist.autorespond_postings = DummyEnum.val
+        self._mlist.autoresponse_postings_text = 'DUMMY'
+        self._pckdict['autorespond_postings'] = 0
+        self._import()
+        self.assertEqual(self._mlist.autorespond_postings,
+                         ResponseAction.none)
+        self.assertEqual(self._mlist.autoresponse_postings_text, '')
+
+    def test_autoresponse_request_continue(self):
+        # Yes, w/forward -> ResponseAction.respond_and_continue
+        self._mlist.autorespond_requests = DummyEnum.val
+        self._mlist.autoresponse_request_text = 'DUMMY'
+        self._pckdict['autorespond_requests'] = 2
+        self._pckdict['autoresponse_request_text'] = 'Autoresponse'
+        self._import()
+        self.assertEqual(self._mlist.autorespond_requests,
+                         ResponseAction.respond_and_continue)
+        self.assertEqual(self._mlist.autoresponse_request_text,
+                         'Autoresponse')
+
+    def test_autoresponse_request_discard(self):
+        # Yes, w/discard -> ResponseAction.respond_and_discard
+        self._mlist.autorespond_requests = DummyEnum.val
+        self._mlist.autoresponse_request_text = 'DUMMY'
+        self._pckdict['autorespond_requests'] = 1
+        self._pckdict['autoresponse_request_text'] = 'Autoresponse'
+        self._import()
+        self.assertEqual(self._mlist.autorespond_requests,
+                         ResponseAction.respond_and_discard)
+        self.assertEqual(self._mlist.autoresponse_request_text,
+                         'Autoresponse')
+
+    def test_autoresponse_request_no(self):
+        # No -> ResponseAction.none
+        self._mlist.autorespond_requests = DummyEnum.val
+        self._mlist.autoresponse_request_text = 'DUMMY'
+        self._pckdict['autorespond_requests'] = 0
+        self._import()
+        self.assertEqual(self._mlist.autorespond_requests,
+                         ResponseAction.none)
+        self.assertEqual(self._mlist.autoresponse_request_text, '')
 
     def test_administrativia(self):
         self._mlist.administrivia = None
@@ -265,7 +330,9 @@ class TestBasicImport(unittest.TestCase):
             self.assertTrue(IBanManager(self._mlist).is_banned(addr))
 
     def test_acceptable_aliases(self):
-        # This used to be a plain-text field (values are newline-separated).
+        # This used to be a plain-text field (values are newline-separated)
+        # but values were interpreted as regexps even without '^' so we need
+        # to add the '^'.
         aliases = ['alias1@example.com',
                    'alias2@exemple.com',
                    'non-ascii-\xe8@example.com',
@@ -273,7 +340,8 @@ class TestBasicImport(unittest.TestCase):
         self._pckdict['acceptable_aliases'] = list_to_string(aliases)
         self._import()
         alias_set = IAcceptableAliasSet(self._mlist)
-        self.assertEqual(sorted(alias_set.aliases), aliases)
+        self.assertEqual(sorted(alias_set.aliases),
+                         [('^' + alias) for alias in aliases])
 
     def test_acceptable_aliases_invalid(self):
         # Values without an '@' sign used to be matched against the local
@@ -287,13 +355,23 @@ class TestBasicImport(unittest.TestCase):
 
     def test_acceptable_aliases_as_list(self):
         # In some versions of the pickle, this can be a list, not a string
-        # (seen in the wild).
+        # (seen in the wild).  We still need to add the '^'.
         aliases = [b'alias1@example.com', b'alias2@exemple.com']
         self._pckdict['acceptable_aliases'] = aliases
         self._import()
         alias_set = IAcceptableAliasSet(self._mlist)
         self.assertEqual(sorted(alias_set.aliases),
-                         sorted(a.decode('utf-8') for a in aliases))
+                         sorted(('^' + a.decode('utf-8')) for a in aliases))
+
+    def test_dont_add_caret_if_present(self):
+        # The 2.1 alias could have had a leading '^' even though not required.
+        aliases = ['^alias1@example.com',
+                   '^alias2@.*',
+                   ]
+        self._pckdict['acceptable_aliases'] = list_to_string(aliases)
+        self._import()
+        alias_set = IAcceptableAliasSet(self._mlist)
+        self.assertEqual(sorted(alias_set.aliases), aliases)
 
     def test_info_non_ascii(self):
         # info can contain non-ascii characters.

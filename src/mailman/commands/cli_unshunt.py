@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -46,7 +46,7 @@ def unshunt(discard):
             which_queue = msgdata.get('whichq', 'in')
             if not discard:
                 config.switchboards[which_queue].enqueue(msg, msgdata)
-        except Exception as error:
+        except Exception as error:                             # noqa: F841
             print(_('Cannot unshunt message $filebase, skipping:\n$error'),
                   file=sys.stderr)
         else:

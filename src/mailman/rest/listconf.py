@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -27,6 +27,7 @@ from mailman.interfaces.mailinglist import (
     DMARCMitigateAction, IAcceptableAliasSet, IMailingList, ReplyToMunging,
     SubscriptionPolicy)
 from mailman.interfaces.template import ITemplateManager
+from mailman.model.roster import RosterVisibility
 from mailman.rest.helpers import (
     GetterSetter, bad_request, etag, no_content, not_found, okay)
 from mailman.rest.validator import (
@@ -171,6 +172,7 @@ ATTRIBUTES = dict(
     mail_host=GetterSetter(None),
     moderator_password=GetterSetter(password_bytes_validator),
     max_message_size=GetterSetter(integer_ge_zero_validator),
+    member_roster_visibility=GetterSetter(enum_validator(RosterVisibility)),
     next_digest_number=GetterSetter(None),
     no_reply_address=GetterSetter(None),
     owner_address=GetterSetter(None),
@@ -186,6 +188,7 @@ ATTRIBUTES = dict(
     subscription_policy=GetterSetter(enum_validator(SubscriptionPolicy)),
     volume=GetterSetter(None),
     respond_to_post_requests=GetterSetter(as_boolean),
+    max_num_recipients=GetterSetter(integer_ge_zero_validator),
     )
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -65,6 +65,7 @@ def process(mlist, msg, msgdata):
         d['user_delivered_to'] = _address.original_email
         d['user_language'] = member.preferred_language.description
         d['user_name'] = member.display_name
+        d['user_name_or_address'] = member.display_name or recipient
         # For backward compatibility.
         d['user_address'] = recipient
     # Calculate the archiver permalink substitution variables.  This provides

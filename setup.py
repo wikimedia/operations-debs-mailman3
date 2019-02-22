@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -107,12 +107,13 @@ case second `m'.  Any other spelling is incorrect.""",
         'aiosmtpd>=1.1',
         'alembic',
         'atpublic',
-        'click',
+        'click>=7.0',
         'dnspython>=1.14.0',
         'falcon>=1.0.0rc1',
         'flufl.bounce',
         'flufl.i18n>=2.0',
         'flufl.lock>=3.1',
+        'importlib_resources',
         'lazr.config',
         'passlib',
         'requests',

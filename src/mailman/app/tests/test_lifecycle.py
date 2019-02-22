@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -47,7 +47,7 @@ class TestLifecycle(unittest.TestCase):
         self.assertRaises(InvalidListNameError,
                           create_list, 'my/list@example.com')
 
-    @configuration('mailman', listname_chars='[a-z0-9-+\]')
+    @configuration('mailman', listname_chars=r'[a-z0-9-+\]')
     def test_bad_config_listname_chars(self):
         mark = LogFileMark('mailman.error')
         # This list create should succeed but log an error
@@ -55,8 +55,8 @@ class TestLifecycle(unittest.TestCase):
         # Check the error log.
         self.assertRegex(
             mark.readline(),
-            '^.*Bad config\.mailman\.listname_chars setting: '
-            '\[a-z0-9-\+\\\]: '
+            r'^.*Bad config\.mailman\.listname_chars setting: '
+            r'\[a-z0-9-\+\\]: '
             '(unterminated character set|'
             'unexpected end of regular expression)$'
             )

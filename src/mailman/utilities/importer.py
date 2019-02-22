@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -23,6 +23,7 @@ import sys
 import logging
 import datetime
 
+from contextlib import ExitStack
 from mailman.config import config
 from mailman.handlers.decorate import decorate_template
 from mailman.interfaces.action import Action, FilterAction
@@ -85,6 +86,12 @@ def days_to_delta(value):
 
 def list_members_to_unicode(value):
     return [bytes_to_str(item) for item in value]
+
+
+def autoresponder_mapping(value):
+    if value:
+        return ResponseAction.respond_and_continue
+    return ResponseAction.none
 
 
 def dmarc_action_mapping(value):
@@ -175,8 +182,8 @@ enabled: yes
 # Attributes in Mailman 2 which have a different type in Mailman 3.  Some
 # types (e.g. bools) are autodetected from their SA column types.
 TYPES = dict(
-    autorespond_owner=ResponseAction,
-    autorespond_postings=ResponseAction,
+    autorespond_owner=autoresponder_mapping,
+    autorespond_postings=autoresponder_mapping,
     autorespond_requests=ResponseAction,
     autoresponse_grace_period=days_to_delta,
     bounce_info_stale_after=seconds_to_delta,
@@ -351,12 +358,14 @@ def import_config_pck(mlist, config_dict):
         if len(address) == 0:
             continue
         address = bytes_to_str(address)
-        try:
-            alias_set.add(address)
-        except ValueError:
-            # When .add() rejects this, the line probably contains a regular
-            # expression.  Make that explicit for MM3.
-            alias_set.add('^' + address)
+        # All 2.1 acceptable aliases are regexps whether or not they start
+        # with '^' or contain '@'.
+        if not address.startswith('^'):
+            address = '^' + address
+        # This used to be in a try which would catch ValueError and add a '^',
+        # but .add() would not raise ValueError if address contained '@' and
+        # that needs the '^' too as it could be a regexp with an '@' in it.
+        alias_set.add(address)
     # Handle header_filter_rules conversion to header_matches.
     header_matches = IHeaderMatchList(mlist)
     header_filter_rules = config_dict.get('header_filter_rules', [])
@@ -486,7 +495,8 @@ def import_config_pck(mlist, config_dict):
         base_uri = 'mailman:///$listname/$language/'
         filename = '{}.txt'.format(newvar)
         manager.set(newvar, mlist.list_id, base_uri + filename)
-        filepath = list(search(filename, mlist))[0]
+        with ExitStack() as resources:
+            filepath = list(search(resources, filename, mlist))[0]
         makedirs(os.path.dirname(filepath))
         with open(filepath, 'w', encoding='utf-8') as fp:
             fp.write(text)

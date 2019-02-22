@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -85,7 +85,7 @@ def lists(ctx, advertised, names, descriptions, quiet, domains):
     if len(mailing_lists) == 0:
         if not quiet:
             print(_('No matching mailing lists found'))
-        ctx.exit()
+        sys.exit()
     count = len(mailing_lists)                  # noqa: F841
     if not quiet:
         print(_('$count matching mailing lists found:'))
@@ -186,7 +186,7 @@ def create(ctx, language, owners, notify, quiet, create_domain, fqdn_listname):
         ctx.fail(_('Illegal list name: $fqdn_listname'))
     except ListAlreadyExistsError:
         ctx.fail(_('List already exists: $fqdn_listname'))
-    except BadDomainSpecificationError as domain:
+    except BadDomainSpecificationError as domain:              # noqa: F841
         ctx.fail(_('Undefined domain: $domain'))
     # Find the language associated with the code, then set the mailing list's
     # preferred language to that.

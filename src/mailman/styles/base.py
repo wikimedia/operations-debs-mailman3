@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -33,6 +33,7 @@ from mailman.interfaces.digests import DigestFrequency
 from mailman.interfaces.mailinglist import (
     DMARCMitigateAction, Personalization, ReplyToMunging, SubscriptionPolicy)
 from mailman.interfaces.nntp import NewsgroupModeration
+from mailman.model.roster import RosterVisibility
 from public import public
 
 
@@ -68,6 +69,7 @@ class BasicOperation:
         mlist.default_nonmember_action = Action.hold
         mlist.subscription_policy = SubscriptionPolicy.confirm
         mlist.unsubscription_policy = SubscriptionPolicy.confirm
+        mlist.member_roster_visibility = RosterVisibility.moderators
         # Notify the administrator of pending requests and membership changes.
         mlist.admin_immed_notify = True
         mlist.admin_notify_mchanges = False
@@ -200,6 +202,7 @@ class Private:
         mlist = mailing_list
         mlist.advertised = False
         mlist.archive_policy = ArchivePolicy.private
+        mlist.subscription_policy = SubscriptionPolicy.confirm_then_moderate
 
 
 @public

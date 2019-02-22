@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -48,7 +48,7 @@ class TestJoin(unittest.TestCase):
     def test_double_confirmation(self):
         # A join request comes in using both the -join address and the word
         # 'subscribe' in the first line of the body.  This should produce just
-        # one subscription request and one confirmation response.
+        # one subscription request.
         msg = mfs("""\
 From: anne@example.org
 To: test-join@example.com
@@ -61,31 +61,12 @@ subscribe
         self._commandq.enqueue(msg, dict(listid='test.example.com',
                                          subaddress='join'))
         self._runner.run()
-        # There will be two messages in the queue.  The first one is a reply
-        # to Anne notifying her of the status of her command email.  The
-        # second one is the confirmation message of her join request.
+        # There will be one messages in the queue. This is the confirmation
+        # message of her join request.
         items = get_queue_messages('virgin', sort_on='subject',
-                                   expected_count=2)
-        self.assertTrue(str(items[1].msg['subject']).startswith('confirm'))
-        self.assertEqual(items[0].msg['subject'],
-                         'The results of your email commands')
-        # Search the contents of the results message.  There should be just
-        # one 'Confirmation email' line.
-        confirmation_lines = []
-        in_results = False
-        for line in body_line_iterator(items[0].msg):
-            line = line.strip()
-            if in_results:
-                if line.startswith('- Done'):
-                    break
-                if len(line) > 0:
-                    confirmation_lines.append(line)
-            if line.strip() == '- Results:':
-                in_results = True
-        # There should be exactly one confirmation line.
-        self.assertEqual(len(confirmation_lines), 1)
-        # And the confirmation line should name Anne's email address.
-        self.assertIn('anne@example.org', confirmation_lines[0])
+                                   expected_count=1)
+
+        self.assertTrue(str(items[0].msg['subject']).startswith('confirm'))
 
     def test_join_when_already_a_member(self):
         anne = getUtility(IUserManager).create_user('anne@example.org')
@@ -156,6 +137,34 @@ class TestJoinWithDigests(unittest.TestCase):
         self.assertEqual(len(members), 1)
         self.assertEqual(rmember, members[0])
         return rmember
+
+    def test_join_in_subject_case_insensitive(self):
+        # Test that join commands are case insensitive.
+        msg = mfs("""\
+From: anne@example.org
+To: test-requests@example.com
+Subject: Join
+
+""")
+        self._commandq.enqueue(msg, dict(listid='test.example.com'))
+        self._runner.run()
+        anne = self._confirm()
+        self.assertEqual(anne.address.email, 'anne@example.org')
+        self.assertEqual(anne.delivery_mode, DeliveryMode.regular)
+
+    def test_join_case_insensitive(self):
+        # Test that join commands are case insensitive.
+        msg = mfs("""\
+From: anne@example.org
+To: test-requests@example.com
+
+Join
+""")
+        self._commandq.enqueue(msg, dict(listid='test.example.com'))
+        self._runner.run()
+        anne = self._confirm()
+        self.assertEqual(anne.address.email, 'anne@example.org')
+        self.assertEqual(anne.delivery_mode, DeliveryMode.regular)
 
     def test_join_with_implicit_no_digests(self):
         # Test the digest=mime argument to the join command.

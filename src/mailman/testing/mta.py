@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -16,6 +16,7 @@
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
 """Fake MTA for testing purposes."""
+from __future__ import generator_stop
 
 import asyncio
 import smtplib
@@ -209,7 +210,7 @@ class ConnectionCountingController(Controller):
             try:
                 yield self._msg_queue.get_nowait()
             except Empty:
-                raise StopIteration
+                return
 
     @property
     def messages(self):

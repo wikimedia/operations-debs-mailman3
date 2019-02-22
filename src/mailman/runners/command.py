@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -34,6 +34,7 @@ from mailman.config import config
 from mailman.core.i18n import _
 from mailman.core.runner import Runner
 from mailman.email.message import UserNotification
+from mailman.interfaces.autorespond import ResponseAction
 from mailman.interfaces.command import ContinueProcessing, IEmailResults
 from mailman.interfaces.languages import ILanguageManager
 from public import public
@@ -52,6 +53,7 @@ class CommandFinder:
         self.command_lines = []
         self.ignored_lines = []
         self.processed_lines = []
+        self.send_response = True
         # Depending on where the message was destined to, add some implicit
         # commands.  For example, if this was sent to the -join or -leave
         # addresses, it's the same as if 'join' or 'leave' commands were sent
@@ -60,15 +62,18 @@ class CommandFinder:
         subaddress = msgdata.get('subaddress')
         if subaddress == 'join':
             self.command_lines.append('join')
+            self.send_response = False
             is_address_command = True
         elif subaddress == 'leave':
             self.command_lines.append('leave')
             is_address_command = True
+            self.send_response = False
         elif subaddress == 'confirm':
             mo = re.match(config.mta.verp_confirm_regexp, msg.get('to', ''))
             if mo:
                 self.command_lines.append('confirm ' + mo.group('cookie'))
                 is_address_command = True
+                self.send_response = False
         # Stop processing if the address already contained a valid command
         if is_address_command:
             return
@@ -116,9 +121,9 @@ class CommandFinder:
                 continue
             # Ensure that all the parts are unicodes.  Since we only accept
             # ASCII commands and arguments, ignore anything else.
-            parts = [(part
+            parts = [(part.lower()
                       if isinstance(part, str)
-                      else part.decode('ascii', 'ignore'))
+                      else part.decode('ascii', 'ignore').lower())
                      for part in parts]
             yield parts
 
@@ -164,9 +169,9 @@ class CommandRunner(Runner):
         # Do replybot for commands.
         replybot = config.handlers['replybot']
         replybot.process(mlist, msg, msgdata)
-        if mlist.autorespond_requests == 1:
+        if mlist.autorespond_requests == ResponseAction.respond_and_discard:
             # Respond and discard.
-            log.info('%s -request message replied and discard', message_id)
+            log.info('%s -request message replied and discarded', message_id)
             return False
         # Now craft the response and process the command lines.
         charset = msg.get_param('charset')
@@ -205,7 +210,10 @@ class CommandRunner(Runner):
                     'Invalid status: %s' % status)
                 if status == ContinueProcessing.no:
                     break
-        # All done.  Strip blank lines and send the response.
+        # All done. If we don't need to send response, return.
+        if not finder.send_response:
+            return
+        # Strip blank lines and send the response.
         lines = [line.strip() for line in finder.command_lines if line]
         if len(lines) > 0:
             print(_('\n- Unprocessed:'), file=results)
