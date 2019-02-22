@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -105,7 +105,9 @@ def process(mlist, msg, msgdata):
             d[lcaddr] = pair
             new.append(pair)
         # List admin wants an explicit Reply-To: added
-        if mlist.reply_goes_to_list is ReplyToMunging.explicit_header:
+        if (mlist.reply_goes_to_list is ReplyToMunging.explicit_header
+            or mlist.reply_goes_to_list
+                is ReplyToMunging.explicit_header_only):
             add(parseaddr(mlist.reply_to_address))
         # If we're not first stripping existing Reply-To: then we need to add
         # the original Reply-To:'s to the list we're building up.  In both
@@ -147,10 +149,14 @@ def process(mlist, msg, msgdata):
             d = {}
             for pair in getaddresses(msg.get_all('cc', [])):
                 add(pair)
-            i18ndesc = uheader(mlist, mlist.description, 'Cc')
-            add((str(i18ndesc), mlist.posting_address))
+            if (mlist.reply_goes_to_list is not
+                    ReplyToMunging.explicit_header_only):
+                i18ndesc = uheader(mlist, mlist.description, 'Cc')
+                add((str(i18ndesc), mlist.posting_address))
             del msg['Cc']
-            msg['Cc'] = COMMASPACE.join([formataddr(pair) for pair in new])
+            # Don't add an empty Cc:
+            if new:
+                msg['Cc'] = COMMASPACE.join([formataddr(pair) for pair in new])
 
 
 @public

@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2015-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -40,7 +40,8 @@ class TestCLIMembers(unittest.TestCase):
         self.assertEqual(result.exit_code, 2)
         self.assertEqual(
             result.output,
-            'Usage: members [OPTIONS] LISTSPEC\n\n'
+            'Usage: members [OPTIONS] LISTSPEC\n'
+            'Try "members --help" for help.\n\n'
             'Error: No such list: bee.example.com\n')
 
     def test_role_administrator(self):

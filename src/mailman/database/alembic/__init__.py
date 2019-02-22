@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -18,8 +18,11 @@
 """Alembic configuration initization."""
 
 from alembic.config import Config
+from contextlib import ExitStack
 from mailman.utilities.modules import expand_path
 from public import public
 
 
-public(alembic_cfg=Config(expand_path('python:mailman.config.alembic')))
+with ExitStack() as resources:
+    cfg_path = expand_path(resources, 'python:mailman.config.alembic')
+    public(alembic_cfg=Config(cfg_path))

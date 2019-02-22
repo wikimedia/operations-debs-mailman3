@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -18,15 +18,11 @@
 """The `mailman` package."""
 
 import sys
+import pkgutil
 
 
 # This is a namespace package.
-try:
-    import pkg_resources
-    pkg_resources.declare_namespace(__name__)
-except ImportError:                                 # pragma: nocover
-    import pkgutil
-    __path__ = pkgutil.extend_path(__path__, __name__)
+__path__ = pkgutil.extend_path(__path__, __name__)   # noqa: F821
 
 
 # We have to initialize the i18n subsystem before anything else happens,

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -105,6 +105,7 @@ class _ListBase(CollectionMixin):
             mail_host=mlist.mail_host,
             member_count=mlist.members.member_count,
             volume=mlist.volume,
+            description=mlist.description,
             self_link=self.api.path_to('lists/{}'.format(mlist.list_id)),
             )
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -27,7 +27,7 @@ from public import public
 from zope.interface import implementer
 
 
-RE_PATTERN = '\s*((RE|AW|SV|VS)(\[\d+\])?\s*:\s*)+'
+RE_PATTERN = r'\s*((RE|AW|SV|VS)(\[\d+\])?\s*:\s*)+'
 ASCII_CHARSETS = (None, 'ascii', 'us-ascii')
 EMPTYSTRING = ''
 
@@ -54,7 +54,10 @@ def ascii_header(mlist, msgdata, subject, prefix, prefix_pattern, ws):
     else:
         recolon = ''
     lines = subject_text.splitlines()
-    first_line = [lines[0]]
+    # If the subject was only the prefix or Re:, the text could be null.
+    first_line = []
+    if lines:
+        first_line = [lines[0]]
     if recolon:
         first_line.insert(0, recolon)
     if prefix:
@@ -74,7 +77,7 @@ def all_same_charset(mlist, msgdata, subject, prefix, prefix_pattern, ws):
         else:
             try:
                 chunks.append(chunk.decode(charset))
-            except LookupError as e:
+            except LookupError:
                 # The charset value is unknown.
                 return None
         if charset != list_charset:
@@ -95,7 +98,10 @@ def all_same_charset(mlist, msgdata, subject, prefix, prefix_pattern, ws):
     else:
         recolon = ''
     lines = subject_text.splitlines()
-    first_line = [lines[0]]
+    # If the subject was only the prefix or Re:, the text could be null.
+    first_line = []
+    if lines:
+        first_line = [lines[0]]
     if recolon:
         first_line.insert(0, recolon)
     if prefix:
@@ -123,7 +129,7 @@ def mixed_charsets(mlist, msgdata, subject, prefix, prefix_pattern, ws):
     else:
         try:
             first_text = chunk_text.decode(chunk_charset)
-        except LookupError as e:
+        except LookupError:
             # The chunk_charset is unknown. Add a dummy first_text.
             chunks.insert(0, ('', 'us-ascii'))
             first_text = ''
@@ -173,7 +179,7 @@ class SubjectPrefix:
         prefix_pattern = re.escape(prefix)
         # Unescape '%'.
         prefix_pattern = '%'.join(prefix_pattern.split(r'\%'))
-        p = re.compile('%\d*d')
+        p = re.compile(r'%\d*d')
         if p.search(prefix, 1):
             # The prefix has number, so we should search prefix w/number in
             # subject.  Also, force new style.

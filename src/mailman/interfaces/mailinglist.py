@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -71,6 +71,9 @@ class ReplyToMunging(Enum):
     point_to_list = 1
     # An explicit Reply-To header is added
     explicit_header = 2
+    # An explicit Reply-To header is added and
+    # the list address is removed from CC
+    explicit_header_only = 3
 
 
 @public
@@ -387,6 +390,12 @@ class IMailingList(Interface):
 
     reply_goes_to_list = Attribute(
         """Reply-To: header munging policy.""")
+
+    member_roster_visibility = Attribute(
+        """The policy for who can view the member roster of this mailing list.
+
+        The value is an `RosterVisibility` enum.  Use this to change who can
+        view the member list. Options are public, members, or moderators.""")
 
     # Digests.
 

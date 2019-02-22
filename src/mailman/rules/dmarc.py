@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -24,6 +24,7 @@ import dns.resolver
 
 from dns.exception import DNSException
 from email.utils import parseaddr
+from importlib_resources import read_binary
 from lazr.config import as_timedelta
 from mailman.config import config
 from mailman.core.i18n import _
@@ -32,7 +33,6 @@ from mailman.interfaces.rules import IRule
 from mailman.utilities.datetime import now
 from mailman.utilities.protocols import get
 from mailman.utilities.string import wrap
-from pkg_resources import resource_string as resource_bytes
 from public import public
 from requests.exceptions import HTTPError
 from urllib.error import URLError
@@ -85,7 +85,7 @@ def ensure_current_suffix_list():
             else:
                 # We couldn't access the URL and didn't even have an out of
                 # date suffix list cached.  Use the shipped version.
-                content = resource_bytes('mailman.rules.data', LOCAL_FILE_NAME)
+                content = read_binary('mailman.rules.data', LOCAL_FILE_NAME)
         if content is not None:
             # Content is either a string or UTF-8 encoded bytes.
             if isinstance(content, bytes):
@@ -113,7 +113,7 @@ def parse_suffix_list(filename=None):
         for line in fp:
             if not line.strip() or line.startswith('//'):
                 continue
-            line = re.sub('\s.*', '', line)
+            line = re.sub(r'\s.*', '', line)
             if not line:
                 continue
             parts = line.lower().split('.')

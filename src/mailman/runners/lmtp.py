@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -197,6 +197,8 @@ class LMTPHandler:
                 else:
                     # A valid subaddress.
                     msgdata['subaddress'] = canonical_subaddress
+                    if subaddress == 'request':
+                        msgdata['to_request'] = True
                     if canonical_subaddress == 'owner':
                         msgdata.update(dict(
                             to_owner=True,

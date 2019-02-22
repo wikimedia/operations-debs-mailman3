@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -21,6 +21,7 @@ import unittest
 
 from mailman.app.lifecycle import create_list
 from mailman.interfaces.archiver import ArchivePolicy
+from mailman.interfaces.mailinglist import SubscriptionPolicy
 from mailman.interfaces.styles import (
     DuplicateStyleError, IStyle, IStyleManager)
 from mailman.testing.layers import ConfigLayer
@@ -79,3 +80,5 @@ class TestPrivateDefaultStyle(unittest.TestCase):
         self.manager.get('private-default').apply(self.mlist)
         self.assertEqual(self.mlist.advertised, False)
         self.assertEqual(self.mlist.archive_policy, ArchivePolicy.private)
+        self.assertEqual(self.mlist.subscription_policy,
+                         SubscriptionPolicy.confirm_then_moderate)

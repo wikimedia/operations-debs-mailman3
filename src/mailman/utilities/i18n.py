@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -20,11 +20,12 @@
 import os
 import sys
 
+from contextlib import ExitStack
+from importlib_resources import path
 from itertools import product
 from mailman.config import config
 from mailman.core.constants import system_preferences
 from mailman.interfaces.errors import MailmanError
-from pkg_resources import resource_filename
 from public import public
 
 
@@ -40,7 +41,7 @@ class TemplateNotFoundError(MailmanError):
 
 
 @public
-def search(template_file, mlist=None, language=None):
+def search(resources, template_file, mlist=None, language=None):
     """Generator that provides file system search order.
 
     This is Mailman's internal template search algorithm.  The first locations
@@ -60,6 +61,9 @@ def search(template_file, mlist=None, language=None):
     * The site-wide language directory
       $template_dir/site/<language>
 
+    * The template direcotry within the mailman source tree
+    * <source_dir>/templates/<language>
+
     The <language> path component is calculated as follows, in this order:
 
     * The `language` parameter if given
@@ -77,21 +81,25 @@ def search(template_file, mlist=None, language=None):
     * $template_dir/lists/test@example.com/it/foo.txt (deprecated)
     * $template_dir/domains/example.com/it/foo.txt
     * $template_dir/site/it/foo.txt
+    * <source_dir>/templates/it/foo.txt
 
     * $template_dir/lists/test.example.com/de/foo.txt
     * $template_dir/lists/test@example.com/de/foo.txt (deprecated)
     * $template_dir/domains/example.com/de/foo.txt
     * $template_dir/site/de/foo.txt
+    * <source_dir>/templates/de/foo.txt
 
     * $template_dir/lists/test.example.com/fr/foo.txt
     * $template_dir/lists/test@example.com/fr/foo.txt (deprecated)
     * $template_dir/domains/example.com/fr/foo.txt
     * $template_dir/site/fr/foo.txt
+    * <source_dir>/templates/fr/foo.txt
 
     * $template_dir/lists/test.example.com/en/foo.txt
     * $template_dir/lists/test@example.com/en/foo.txt (deprecated)
     * $template_dir/domains/example.com/en/foo.txt
     * $template_dir/site/en/foo.txt
+    * <source_dir>/templates/en/foo.txt
 
     After all those paths are searched, the final fallback is the English
     template within the Mailman source tree.
@@ -106,7 +114,8 @@ def search(template_file, mlist=None, language=None):
         languages.append(language)
     languages.reverse()
     # The non-language qualified $template_dir paths in search order.
-    paths = [os.path.join(config.TEMPLATE_DIR, 'site')]
+    templates_dir = str(resources.enter_context(path('mailman', 'templates')))
+    paths = [templates_dir, os.path.join(config.TEMPLATE_DIR, 'site')]
     if mlist is not None:
         # Don't forget these are in REVERSE search order!
         paths.append(os.path.join(
@@ -116,10 +125,9 @@ def search(template_file, mlist=None, language=None):
         paths.append(os.path.join(
             config.TEMPLATE_DIR, 'lists', mlist.list_id))
     paths.reverse()
-    for language, path in product(languages, paths):
-        yield os.path.join(path, language, template_file)
+    for language, search_path in product(languages, paths):
+        yield os.path.join(search_path, language, template_file)
     # Finally, fallback to the in-tree English template.
-    templates_dir = resource_filename('mailman', 'templates')
     yield os.path.join(templates_dir, 'en', template_file)
 
 
@@ -143,17 +151,18 @@ def find(template_file, mlist=None, language=None, _trace=False):
     :rtype: (string, file)
     :raises TemplateNotFoundError: when the template could not be found.
     """
-    raw_search_order = search(template_file, mlist, language)
-    for path in raw_search_order:
-        try:
-            if _trace:
-                print('@@@', path, end='', file=sys.stderr)
-            fp = open(path, 'r', encoding='utf-8')
-        except FileNotFoundError:
-            if _trace:
-                print(' MISSING', file=sys.stderr)
-        else:
-            if _trace:
-                print(' FOUND:', path, file=sys.stderr)
-            return path, fp
-    raise TemplateNotFoundError(template_file)
+    with ExitStack() as resources:
+        raw_search_order = search(resources, template_file, mlist, language)
+        for search_path in raw_search_order:
+            try:
+                if _trace:
+                    print('@@@', search_path, end='', file=sys.stderr)   # noqa: E501, pragma: nocover
+                fp = open(search_path, 'r', encoding='utf-8')
+            except FileNotFoundError:
+                if _trace:
+                    print(' MISSING', file=sys.stderr)   # pragma: nocover
+            else:
+                if _trace:
+                    print(' FOUND:', search_path, file=sys.stderr)  # noqa: E501, pragma: nocover
+                return search_path, fp
+        raise TemplateNotFoundError(template_file)

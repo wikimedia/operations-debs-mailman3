@@ -8,6 +8,64 @@ Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 Here is a history of user visible changes to Mailman.
 
 
+3.3.0 -- "Tom Sawyer"
+=====================
+(20xx-xx-xx)
+
+
+
+3.2.1
+=====
+(2019-02-22)
+
+Command line
+------------
+* The ``mailman import21`` command properly converts all acceptable_aliases
+  to regexps.  (Closes #496)
+* The ``mailman import21`` command correctly converts autorespond_* settings.
+  (Closes #505)
+* The various ``mailman`` commands now issue a help hint in case of error.
+  Tests have been updated to recognize this.  (Closes #519)
+
+Bugs
+----
+* Open non-regular log files (e.g. fifos) in write mode instead of append mode.
+  (See !407)
+* Autoresponses to posts and -owner and -request messages now work.
+  (Closes #504)
+* Message parts are now properly decoded when trying to remove an Approved:
+  header.  (Closes #518)
+* Outgoing SMTP connections are now closed following message delivery
+  regardless of the max_sessions_per_connection setting.  (Closes #529)
+* Messages with Subject: Re: only are now processed correctly.  (Closes #545)
+
+LOCALIZATION
+------------
+* Added German translations for mail templates. Thanks to the "Institut für
+  Gebrauchsgrafik" for providing them. (Closes #534)
+
+REST
+----
+* Allow setting ``max_num_recipients`` for a mailing list.  (Closes #508)
+* Add a per-list visibility option for Members. (Closes #108)
+
+Other
+-----
+* Email commands are now case insensitive.  (Closes #353)
+* Implicit commands sent to -join, -leave and -confirm addresses no longer
+  generate a Results email.  (Closes #516)
+* An ``explicit_header_only`` option has been added to Reply-To: munging to
+  avoid putting the list address in Cc:.  (Closes #531)
+* The default list welcome message has been cleaned up a bit.  (Closes #530)
+* A substitution variable ``user_name_or_email`` has been added to
+  ``list:member:regular:header`` and ``list:member:regular:footer`` templates
+  when personalized deliveries are enabled.  (Closes #533)
+* The template search algorithm was fixed to look for in-tree templates for
+  each language in the search list. (Closes #535)
+* Set default subscription policy to "confirm then moderate" for private
+  mailing list style. (Closes #536)
+
+
 3.2.0 -- "La Villa Strangiato"
 ==============================
 (2018-07-10)
@@ -82,6 +140,8 @@ Bugs
   has been fixed to generate proper mappings in this case.  (Closes #485)
 * Fix a bug where duplicate address records can be created when a user adds an
   existing address with a different case. (Closes #476)
+* Several additional templates can now be set in the ``var/templates``
+  hierarchy.  (Closes #486)
 
 Command line
 ------------
@@ -141,7 +201,7 @@ Other
   ``None``, but which can be set to an alternate domain.  This will enable
   the Postfix MTA to generate ``virtual_alias_maps`` which will map list
   addresses in the domain to addresses in the alternate domain, and will
-  modify the other generated mapings to use the ``alias_domain``.  The
+  modify the other generated mappings to use the ``alias_domain``.  The
   ``lmtp`` runner will also accept the alias_domain as an alias for the
   ``email_host``.
 * ``ICacheManager`` now allows evicting a single file from cache.
