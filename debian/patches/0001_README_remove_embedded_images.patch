@@ -15,7 +15,7 @@ Subject: _README_remove_embedded_images
  1 file changed, 12 deletions(-)
 
 diff --git a/README.rst b/README.rst
-index e58d182..92ace8b 100644
+index 18b3dba..e8d13a7 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -2,18 +2,6 @@
@@ -34,6 +34,6 @@ index e58d182..92ace8b 100644
 -.. image:: http://img.shields.io/pypi/dm/mailman.svg
 -    :target: https://pypi.python.org/pypi/mailman
 -
- Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+ Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
  
  This is GNU Mailman, a mailing list management system distributed under the
