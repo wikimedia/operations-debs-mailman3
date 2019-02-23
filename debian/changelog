@@ -3,8 +3,11 @@ mailman3 (3.2.1-1) unstable; urgency=medium
   * New upstream release 3.2.1
   * d/p/0002_no_results_emails.patch:
     - Remove, got incorporated upstream
+  * d/p/0002-remove_import_resources_dependency.patch
+    - Remove dependency on `importlib_resources`, migrate to
+      `importlib.resources`.
 
- -- Jonas Meurer <jonas@freesources.org>  Fri, 22 Feb 2019 20:43:42 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 24 Feb 2019 00:42:50 +0100
 
 mailman3 (3.2.0-5) unstable; urgency=medium
 
