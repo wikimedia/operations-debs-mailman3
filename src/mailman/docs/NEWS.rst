@@ -12,6 +12,29 @@ Here is a history of user visible changes to Mailman.
 =====================
 (20xx-xx-xx)
 
+3.2.2
+=====
+(2019-03-23)
+
+REST
+----
+* Failed validation to new Mailing List creation and Domain creation no longer
+  returns 500 errors.
+* Expose ``preferred_language`` for MailingList through REST API.
+* Self-link of banned emails will be url-encoded when the email is actually
+  a regex, mainly to prevent misplaced `?` in the link.
+* REST API now accepts inputs in JSON format. (See !451)
+* REST API errors are now always formatted as JSON. (See !451)
+* Failed request validations now return more verbose errors, like ``Enum`` types
+  return all acceptable values. (See !451)
+* REST API accepts request with content type None (See !479)
+
+
+Command line
+------------
+* The ``mailman import21`` command now displays import progress.  (Closes #561)
+* An issue with ``mailman subcommand --help`` hanging has been worked around.
+  (Closes #520)
 
 
 3.2.1
@@ -488,7 +511,7 @@ Other
   ``MailmanException`` has been removed; use ``MailmanError`` everywhere.
 * Drop the use of the ``lazr.smtptest`` library, which is based on the
   asynchat/asyncore-based smtpd.py stdlib module.  Instead, use the
-  asyncio-based `aiosmtpd <http://aiosmtpd.readthedocs.io/>`_ package.
+  asyncio-based `aiosmtpd <https://aiosmtpd.readthedocs.io/>`_ package.
 * Improvements in importing Mailman 2.1 lists, given by Aurélien Bompard.
 * The ``prototype`` archiver is not web accessible so it does not have a
   ``list_url`` or permalink.  Given by Aurélien Bompard.
@@ -975,7 +998,7 @@ Bug fixes
 * Fix residual references to the old `IMailingList` archive variables.
   (LP: #1031393)
 
-.. _`passlib`: http://packages.python.org/passlib/index.html
+.. _`passlib`: https://passlib.readthedocs.io/en/stable/index.html
 
 
 3.0 beta 1 -- "The Twilight Zone"
@@ -1479,11 +1502,11 @@ Architecture
 
 * Converted to using zope.testing as the test infrastructure.  Use bin/test
   now to run the full test suite.
-  <http://pypi.python.org/pypi/zope.testing/3.7.1>
+  <https://pypi.org/project/zope.testing/3.7.1/>
 * Partially converted to using lazr.config as the new configuration
   regime.  Not everything has been converted yet, so some manual editing
   of mailman/Defaults.py is required.  This will be rectified in future
-  versions.  <http://launchpad.net/lazr.config>
+  versions.  <https://launchpad.net/lazr.config>
 * All web-related stuff is moved to its own directory, effectively moving
   it out of the way for now.
 * The email command infrastructure has been reworked to play more nicely
@@ -1515,7 +1538,7 @@ Installation
 * Python 2.6 is the minimal requirement.
 * Converted to using zc.buildout as the build infrastructure.  See
   docs/ALPHA.txt for details.
-  <http://pypi.python.org/pypi/zc.buildout/1.1.1>
+  <https://pypi.org/project/zc.buildout/1.1.1/>
 
 
 3.0 alpha 1 -- "Leave That Thing Alone"
@@ -1586,8 +1609,8 @@ Architecture
   number of existing Python web application frameworks.  For more information
   see:
 
-  http://www.wsgi.org/wsgi
-  http://www.python.org/dev/peps/pep-0333/
+  https://wsgi.readthedocs.io/en/latest/
+  https://www.python.org/dev/peps/pep-0333/
 
   Mailman can still be run as a traditional CGI program of course.
 * Mailman now provides an LMTP server for more efficient integration with

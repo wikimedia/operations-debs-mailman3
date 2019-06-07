@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """REST for domains."""
 
@@ -163,7 +163,7 @@ class AllDomains(_DomainBase):
             if owners is not None:
                 values['owners'] = owners
             domain = domain_manager.add(**values)
-        except BadDomainSpecificationError as error:
+        except (BadDomainSpecificationError, ValueError) as error:
             bad_request(response, str(error))
         else:
             location = self.api.path_to('domains/{}'.format(domain.mail_host))

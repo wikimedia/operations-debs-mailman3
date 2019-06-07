@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
 import sys
@@ -78,21 +78,21 @@ setup(
 This is GNU Mailman, a mailing list management system distributed under the
 terms of the GNU General Public License (GPL) version 3 or later.  The name of
 this software is spelled 'Mailman' with a leading capital 'M' but with a lower
-case second `m'.  Any other spelling is incorrect.""",
+case second 'm'.  Any other spelling is incorrect.""",
     author          = 'The Mailman Developers',
     author_email    = 'mailman-developers@python.org',
     license         = 'GPLv3',
-    url             = 'http://www.list.org',
+    url             = 'https://www.list.org',
     keywords        = 'email',
     classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: '
-            'GNU General Public License v3 or later (GPLv3+)',
+        'GNU General Public License v3 or later (GPLv3+)',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Communications :: Email :: Mailing List Servers',
         'Topic :: Communications :: Usenet News',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
@@ -109,7 +109,7 @@ case second `m'.  Any other spelling is incorrect.""",
         'atpublic',
         'click>=7.0',
         'dnspython>=1.14.0',
-        'falcon>=1.0.0rc1',
+        'falcon>1.0.0',
         'flufl.bounce',
         'flufl.i18n>=2.0',
         'flufl.lock>=3.1',

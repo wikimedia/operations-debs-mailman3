@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Test address bans."""
 
@@ -86,3 +86,38 @@ class TestBans(unittest.TestCase):
         with self.assertRaises(HTTPError) as cm:
             call_api('http://localhost:9001/3.0/lists/bee.example.com/bans')
         self.assertEqual(cm.exception.code, 404)
+
+    def test_invalid_ban_email_address(self):
+        with self.assertRaises(HTTPError) as cm:
+            call_api('http://localhost:9001/3.0/lists/ant.example.com/bans',
+                     dict(email='badaddress@example'),
+                     method="POST")
+        self.assertEqual(cm.exception.code, 400)
+        # Workaround for coming API exception message change
+        self.assertEqual(
+            cm.exception.reason,
+            'Invalid Parameter "email": Expected a valid email '
+            'address or regular expression, got badaddress@example.')
+
+    def test_invalid_ban_regex(self):
+        with self.assertRaises(HTTPError) as cm:
+            call_api('http://localhost:9001/3.0/lists/ant.example.com/bans',
+                     dict(email='^[^@]+@(?!('),
+                     method="POST")
+        self.assertEqual(cm.exception.code, 400)
+        # Workaround for coming API exception message change
+        self.assertEqual(
+            cm.exception.reason,
+            'Invalid Parameter "email": Expected a valid email address'
+            ' or regular expression, got ^[^@]+@(?!(.')
+
+    def test_ban_regex_and_encoded_self_link(self):
+        call_api('http://localhost:9001/3.0/lists/ant.example.com/bans',
+                 dict(email='^[^@]+'),
+                 method="POST")
+        json, content = call_api(
+            'http://localhost:9001/3.0/lists/ant.example.com'
+            '/bans/^[^@]+')
+        self.assertEqual(json['self_link'],
+                         'http://localhost:9001/3.0/lists/ant.example.com'
+                         '/bans/%5E%5B%5E%40%5D%2B')

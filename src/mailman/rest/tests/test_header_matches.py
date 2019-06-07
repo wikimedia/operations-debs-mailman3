@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Test REST header matches."""
 
@@ -79,8 +79,10 @@ class TestHeaderMatches(unittest.TestCase):
                          'pattern': '+invalid',
                         })
         self.assertEqual(cm.exception.code, 400)
-        self.assertEqual(cm.exception.reason,
-                         'Cannot convert parameters: pattern')
+        self.assertEqual(
+            cm.exception.reason,
+            'Invalid Parameter "pattern":'
+            ' Expected a valid regexp, got +invalid.')
 
     def test_patch_bad_regexp(self):
         header_matches = IHeaderMatchList(self._mlist)
@@ -93,5 +95,7 @@ class TestHeaderMatches(unittest.TestCase):
                          'pattern': '+invalid',
                         }, method='PATCH')
         self.assertEqual(cm.exception.code, 400)
-        self.assertEqual(cm.exception.reason,
-                         'Cannot convert parameters: pattern')
+        self.assertEqual(
+            cm.exception.reason,
+            'Invalid Parameter "pattern":'
+            ' Expected a valid regexp, got +invalid.')

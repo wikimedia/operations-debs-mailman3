@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Additional tests for helpers."""
 
@@ -25,6 +25,12 @@ from email.header import Header
 from email.message import Message
 from mailman.rest import helpers
 from mailman.testing.layers import ConfigLayer, RESTLayer
+
+
+class FakeRequest:
+    def __init__(self):
+        self.content_type = None
+        self.params = 'not set'
 
 
 class FakeResponse:
@@ -77,6 +83,95 @@ class TestHelpers(unittest.TestCase):
     def test_json_encoding_default(self):
         resource = dict(interval=Unserializable())
         self.assertRaises(TypeError, helpers.etag, resource)
+
+    def test_bad_request_content_type(self):
+        response = FakeResponse()
+        helpers.bad_request(response, body=None)
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+
+    def test_not_found_content_type(self):
+        response = FakeResponse()
+        helpers.not_found(response, body=None)
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+
+    def test_bad_request_with_body(self):
+        response = FakeResponse()
+        helpers.bad_request(response, 'Missing Parameter: random')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '400 Bad Request',
+                          'description': 'Missing Parameter: random', })
+
+    def test_not_found_with_body(self):
+        response = FakeResponse()
+        helpers.not_found(response, 'Resource not found')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '404 Not Found',
+                          'description': 'Resource not found', })
+
+    def test_http_conflict_with_body(self):
+        response = FakeResponse()
+        helpers.conflict(response, 'Conflicting request')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '409 Conflict',
+                          'description': 'Conflicting request', })
+
+    def test_http_forbidden_with_body(self):
+        response = FakeResponse()
+        helpers.forbidden(response, 'Conflicting request')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '403 Forbidden',
+                          'description': 'Conflicting request', })
+
+    def test_bad_request_with_bytes_body(self):
+        response = FakeResponse()
+        helpers.bad_request(response, b'Missing Parameter: random')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '400 Bad Request',
+                          'description': 'Missing Parameter: random', })
+
+    def test_not_found_with_bytes_body(self):
+        response = FakeResponse()
+        helpers.not_found(response, b'Resource not found')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '404 Not Found',
+                          'description': 'Resource not found', })
+
+    def test_http_conflict_with_bytes_body(self):
+        response = FakeResponse()
+        helpers.conflict(response, b'Conflicting request')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '409 Conflict',
+                          'description': 'Conflicting request', })
+
+    def test_http_forbidden_with_bytes_body(self):
+        response = FakeResponse()
+        helpers.forbidden(response, b'Conflicting request')
+        self.assertEqual(response.content_type,
+                         'application/json; charset=UTF-8')
+        self.assertEqual(json.loads(response.body),
+                         {'title': '403 Forbidden',
+                          'description': 'Conflicting request', })
+
+    def test_get_request_params_with_none(self):
+        request = FakeRequest()
+        self.assertEqual(helpers.get_request_params(request),
+                         'not set')
 
 
 class TestJSONEncoder(unittest.TestCase):
