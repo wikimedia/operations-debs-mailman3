@@ -1,6 +1,7 @@
 mailman3 (3.2.2-1) UNRELEASED; urgency=medium
 
   * New upstream release 3.2.2 (Closes: #930147)
+  * Switch to debhelper-compat for build
 
  -- Pierre-Elliott Bécue <peb@debian.org>  Thu, 22 Aug 2019 19:49:45 +0200
 
