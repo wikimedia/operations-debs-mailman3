@@ -13,7 +13,7 @@ Author: Jonas Meurer <jonas@freesources.org>
  1 file changed, 12 deletions(-)
 
 diff --git a/README.rst b/README.rst
-index 18b3dba..e8d13a7 100644
+index aafb196..e8d13a7 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -2,18 +2,6 @@
@@ -26,11 +26,11 @@ index 18b3dba..e8d13a7 100644
 -.. image:: https://readthedocs.org/projects/mailman/badge
 -    :target: https://mailman.readthedocs.io
 -
--.. image:: http://img.shields.io/pypi/v/mailman.svg
--    :target: https://pypi.python.org/pypi/mailman
+-.. image:: https://img.shields.io/pypi/v/mailman.svg
+-    :target: https://pypi.org/project/mailman/
 -
--.. image:: http://img.shields.io/pypi/dm/mailman.svg
--    :target: https://pypi.python.org/pypi/mailman
+-.. image:: https://img.shields.io/pypi/dm/mailman.svg
+-    :target: https://pypi.org/project/mailman/
 -
  Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
  
