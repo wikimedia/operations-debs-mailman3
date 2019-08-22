@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Web service helpers."""
 
@@ -30,6 +30,10 @@ from lazr.config import as_boolean
 from mailman.config import config
 from pprint import pformat
 from public import public
+
+
+CONTENT_TYPE_JSON = 'application/json; charset=UTF-8'
+CONTENT_TYPE_TEXT_PLAIN = 'text/plain'
 
 
 class ExtendedEncoder(json.JSONEncoder):
@@ -140,11 +144,20 @@ class CollectionMixin:
         """
         # Allow falcon's HTTPBadRequest exceptions to percolate up.  They'll
         # get turned into HTTP 400 errors.
-        count = request.get_param_as_int('count', min=0)
-        page = request.get_param_as_int('page', min=1)
+        count = request.get_param_as_int('count')
+        page = request.get_param_as_int('page')
         total_size = len(collection)
         if count is None and page is None:
             return 0, total_size, collection
+        # TODO(maxking): Count and page should be positive integers. Once
+        # falcon 2.0.0 is out and we can jump to it, we can remove this logic
+        # and use `min_value` parameter in request.get_param_as_int.
+        if count < 0:
+            raise falcon.HTTPInvalidParam(
+                count, 'count should be a positive integer.')
+        if page < 1:
+            raise falcon.HTTPInvalidParam(
+                page, 'page should be greater than 0.')
         list_start = (page - 1) * count
         list_end = page * count
         return list_start, total_size, collection[list_start:list_end]
@@ -279,10 +292,13 @@ def no_content(response):
 
 
 @public
-def not_found(response, body=b'404 Not Found'):
+def not_found(response, body='404 Not Found'):
     response.status = falcon.HTTP_404
+    response.content_type = CONTENT_TYPE_JSON
+    if isinstance(body, bytes):
+        body = body.decode()
     if body is not None:
-        response.body = body
+        response.body = falcon.HTTPNotFound(description=body).to_json()
 
 
 @public
@@ -293,10 +309,13 @@ def accepted(response, body=None):
 
 
 @public
-def bad_request(response, body=b'400 Bad Request'):
+def bad_request(response, body='400 Bad Request'):
     response.status = falcon.HTTP_400
+    response.content_type = CONTENT_TYPE_JSON
+    if isinstance(body, bytes):
+        body = body.decode()
     if body is not None:
-        response.body = body
+        response.body = falcon.HTTPBadRequest(description=body).to_json()
 
 
 @public
@@ -306,14 +325,38 @@ def created(response, location):
 
 
 @public
-def conflict(response, body=b'409 Conflict'):
+def conflict(response, body='409 Conflict'):
     response.status = falcon.HTTP_409
+    response.content_type = CONTENT_TYPE_JSON
+    if isinstance(body, bytes):
+        body = body.decode()
     if body is not None:
-        response.body = body
+        response.body = falcon.HTTPConflict(description=body).to_json()
 
 
 @public
-def forbidden(response, body=b'403 Forbidden'):
+def forbidden(response, body='403 Forbidden'):
     response.status = falcon.HTTP_403
+    response.content_type = CONTENT_TYPE_JSON
+    if isinstance(body, bytes):
+        body = body.decode()
     if body is not None:
-        response.body = body
+        response.body = falcon.HTTPForbidden(description=body).to_json()
+
+
+@public
+def get_request_params(request):
+    """Return the request items based on the content-type header"""
+    # maxking: If there is a requirement for a new media type in future, The
+    # way to handle that would be add a new media type handler in Falcon's API
+    # class and then use the items returned by that handler here to return the
+    # values to validators in the form of a dictionary.
+
+    # We parse the request based on the content type. Falcon has a default
+    # JSONHandler handler to parse json media type, so we can just do
+    # `request.media` to return the request params passed as json body.
+    if (request.content_type and
+            request.content_type.startswith('application/json')):
+        return request.media or dict()
+    # request.params returns the parameters passed as URL form encoded.
+    return request.params or dict()

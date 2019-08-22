@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """REST for mailing lists."""
 
@@ -299,6 +299,8 @@ class AllLists(_ListBase):
                                   style_name=str,
                                   _optional=('style_name',))
             mlist = create_list(**validator(request))
+        except ValueError as error:
+            bad_request(response, str(error))
         except ListAlreadyExistsError:
             bad_request(response, b'Mailing list exists')
         except BadDomainSpecificationError as error:

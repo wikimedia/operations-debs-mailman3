@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """REST web form validation."""
 
@@ -22,6 +22,7 @@ import re
 from mailman.interfaces.address import IEmailValidator
 from mailman.interfaces.errors import MailmanError
 from mailman.interfaces.languages import ILanguageManager
+from mailman.rest.helpers import get_request_params
 from public import public
 from zope.component import getUtility
 
@@ -65,9 +66,15 @@ class enum_validator:
             return None
         try:
             return self._enum_class[enum_value]
-        except KeyError as exception:
+        except KeyError:
             # Retain the error message.
-            raise ValueError(exception.args[0])
+            err_msg = 'Accepted Values are: {}'.format(self._accepted_values)
+            raise ValueError(err_msg)
+
+    @property
+    def _accepted_values(self):
+        """Joined comma separated self._enum_class values"""
+        return ', '.join(item._name_ for item in self._enum_class)
 
 
 @public
@@ -147,6 +154,34 @@ def regexp_validator(value):                           # pragma: missed
 
 
 @public
+def email_or_regexp_validator(value):
+    """ Email or regular expression validator
+
+    Validate that the value is not null and is a valid regular expression or
+     email.
+    """
+    if not value:
+        raise ValueError(
+            'Expected a valid email address or regular expression, got empty')
+    valid = True
+    # A string starts with ^ will be regarded as regex.
+    if value.startswith('^'):
+        try:
+            regexp_validator(value)
+        except ValueError:
+            valid = False
+    else:
+        valid = getUtility(IEmailValidator).is_valid(value)
+
+    if valid:
+        return value
+    else:
+        raise ValueError(
+            'Expected a valid email address or regular expression,'
+            ' got {}'.format(value))
+
+
+@public
 class Validator:
     """A validator of parameter input."""
 
@@ -166,8 +201,10 @@ class Validator:
         # in the pre-converted dictionary.  All keys which show up more than
         # once get a list value.
         missing = object()
-        items = request.params.items()
-        for key, new_value in items:
+        # Parse the items from request depending on the content type.
+        items = get_request_params(request)
+
+        for key, new_value in items.items():
             old_value = form_data.get(key, missing)
             if old_value is missing:
                 form_data[key] = new_value
@@ -181,22 +218,29 @@ class Validator:
                 values[key] = self._converters[key](value)
             except KeyError:
                 extras.add(key)
-            except (TypeError, ValueError):
-                cannot_convert.add(key)
+            except (TypeError, ValueError) as e:
+                cannot_convert.add((key, str(e)))
         # Make sure there are no unexpected values.
         if len(extras) != 0:
             extras = COMMASPACE.join(sorted(extras))
             raise ValueError('Unexpected parameters: {}'.format(extras))
+            # raise BadRequestError(
+            #     description='Unexpected parameters: {}'.format(extras))
         # Make sure everything could be converted.
         if len(cannot_convert) != 0:
-            bad = COMMASPACE.join(sorted(cannot_convert))
-            raise ValueError('Cannot convert parameters: {}'.format(bad))
+            invalid_msg = []
+            for param in sorted(cannot_convert):
+                invalid_msg.append(
+                    'Invalid Parameter "{0}": {1}.'.format(*param))
+            raise ValueError(' '.join(invalid_msg))
+            # raise InvalidParamError(param_name=bad, msg=invalid_msg)
         # Make sure nothing's missing.
         value_keys = set(values)
         required_keys = set(self._converters) - self._optional
         if value_keys & required_keys != required_keys:
             missing = COMMASPACE.join(sorted(required_keys - value_keys))
-            raise ValueError('Missing parameters: {}'.format(missing))
+            raise ValueError('Missing Parameter: {}'.format(missing))
+            # raise MissingParamError(param_name=missing)
         return values
 
     def update(self, obj, request):
@@ -224,6 +268,7 @@ class PatchValidator(Validator):
     you're only changing a subset of the attributes, so you only validate the
     ones that exist in the request.
     """
+
     def __init__(self, request, converters):
         """Create a validator for the PATCH request.
 
@@ -239,7 +284,9 @@ class PatchValidator(Validator):
             that is defined as read-only.
         """
         validationators = {}
-        for attribute in request.params:
+        # Parse the items from request depending on the content type.
+        items = get_request_params(request)
+        for attribute in items:
             if attribute not in converters:
                 raise UnknownPATCHRequestError(attribute)
             if converters[attribute].decoder is None:

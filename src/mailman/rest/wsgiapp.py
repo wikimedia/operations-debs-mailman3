@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Basic WSGI Application object for REST server."""
 
@@ -22,7 +22,7 @@ import logging
 
 from base64 import b64decode
 from falcon import API, HTTPUnauthorized
-from falcon.routing import create_http_method_map
+from falcon.routing import map_http_methods, set_default_responders
 from mailman.config import config
 from mailman.database.transaction import transactional
 from mailman.rest.root import Root
@@ -38,6 +38,7 @@ SLASH = '/'
 EMPTYSTRING = ''
 REALM = 'mailman3-rest'
 UTF8 = 'utf-8'
+WILDCARD_ACCEPT_HEADER = '*/*'
 
 
 class AdminWSGIServer(WSGIServer):
@@ -112,7 +113,7 @@ class ObjectRouter:
         # We don't need this method for object-based routing.
         raise NotImplementedError
 
-    def find(self, uri):
+    def find(self, uri, req=None):
         segments = uri.split(SLASH)
         # Since the path is always rooted at /, skip the first segment, which
         # will always be the empty string.
@@ -184,7 +185,8 @@ class ObjectRouter:
                 if len(segments) == 0:
                     # We're at the end of the path, so the root must be the
                     # responder.
-                    method_map = create_http_method_map(resource)
+                    method_map = map_http_methods(resource)
+                    set_default_responders(method_map)
                     return resource, method_map, context
                 this_segment = segments.pop(0)
                 break

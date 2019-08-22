@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Test REST validators."""
 
@@ -23,8 +23,8 @@ from mailman.core.api import API30, API31
 from mailman.interfaces.action import Action
 from mailman.interfaces.usermanager import IUserManager
 from mailman.rest.validator import (
-    enum_validator, integer_ge_zero_validator, list_of_emails_validator,
-    list_of_strings_validator, subscriber_validator)
+    email_or_regexp_validator, enum_validator, integer_ge_zero_validator,
+    list_of_emails_validator, list_of_strings_validator, subscriber_validator)
 from mailman.testing.layers import RESTLayer
 from zope.component import getUtility
 
@@ -120,3 +120,19 @@ class TestValidators(unittest.TestCase):
             ValueError,
             list_of_emails_validator,
             ['foo@example.com', 'bar.example.com'])
+
+    def test_email_or_regexp_validator_valid(self):
+        self.assertEqual(
+            email_or_regexp_validator('foo@example.com'),
+            'foo@example.com')
+        self.assertEqual(
+            email_or_regexp_validator('^[^@]+'),
+            '^[^@]+')
+
+    def test_email_or_regexp_validator_invalid(self):
+        self.assertRaises(
+            ValueError, email_or_regexp_validator, 'foo.example.com')
+        self.assertRaises(
+            ValueError, email_or_regexp_validator, '^[^@]+(')
+        self.assertRaises(
+            ValueError, email_or_regexp_validator, '')
