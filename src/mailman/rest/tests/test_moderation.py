@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """REST moderation tests."""
 
@@ -94,7 +94,8 @@ Something else.
             call_api(url.format(held_id), {'action': 'bogus'})
         self.assertEqual(cm.exception.code, 400)
         self.assertEqual(cm.exception.msg,
-                         'Cannot convert parameters: action')
+                         'Invalid Parameter "action": Accepted Values are:'
+                         ' hold, reject, discard, accept, defer.')
 
     def test_discard(self):
         # Discarding a message removes it from the moderation queue.
@@ -204,7 +205,8 @@ class TestSubscriptionModeration(unittest.TestCase):
                 ))
         self.assertEqual(cm.exception.code, 400)
         self.assertEqual(cm.exception.msg,
-                         'Cannot convert parameters: action')
+                         'Invalid Parameter "action": Accepted Values are:'
+                         ' hold, reject, discard, accept, defer.')
 
     def test_list_held_requests(self):
         # We can view all the held requests.

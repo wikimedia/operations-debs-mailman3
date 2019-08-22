@@ -13,12 +13,11 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """The 'mailman' command dispatcher."""
 import click
 
-from contextlib import ExitStack
 from mailman.commands.cli_help import help as help_command
 from mailman.config import config
 from mailman.core.i18n import _
@@ -60,13 +59,14 @@ class Subcommands(click.MultiCommand):
     # This is here to hook command parsing into the Mailman database
     # transaction system.  If the subcommand succeeds, the transaction is
     # committed, otherwise it's aborted.
+    # See https://github.com/pallets/click/issues/1134
     def invoke(self, ctx):
-        with ExitStack() as resources:
-            # If given a bogus subcommand, the database won't have been
-            # initialized so there's no transaction to commit.
-            if config.db is not None:
-                resources.enter_context(transaction())
-            return super().invoke(ctx)
+        # If given a bogus subcommand, the database won't have been
+        # initialized so there's no transaction to commit.
+        if config.db is not None:
+            with transaction():
+                return super().invoke(ctx)
+        return super().invoke(ctx)             # pragma: missed
 
     # https://github.com/pallets/click/issues/834
     #

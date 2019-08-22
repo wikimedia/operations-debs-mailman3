@@ -3,7 +3,7 @@ alembic
 atpublic
 click>=7.0
 dnspython>=1.14.0
-falcon>=1.0.0rc1
+falcon>1.0.0
 flufl.bounce
 flufl.i18n>=2.0
 flufl.lock>=3.1

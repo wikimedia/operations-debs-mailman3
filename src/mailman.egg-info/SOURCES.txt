@@ -538,6 +538,7 @@ src/mailman/rest/tests/test_systemconf.py
 src/mailman/rest/tests/test_uids.py
 src/mailman/rest/tests/test_users.py
 src/mailman/rest/tests/test_validator.py
+src/mailman/rest/tests/test_wsgiapp.py
 src/mailman/rules/__init__.py
 src/mailman/rules/administrivia.py
 src/mailman/rules/any.py

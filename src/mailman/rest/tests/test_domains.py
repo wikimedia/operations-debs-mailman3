@@ -13,7 +13,7 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """REST domain tests."""
 
@@ -47,6 +47,18 @@ class TestDomains(unittest.TestCase):
         content, response = call_api(
             'http://localhost:9001/3.0/domains', data, method="POST")
         self.assertEqual(response.status_code, 201)
+
+    def test_create_domain_bad_values(self):
+        # Failed validation of values don't return 500 error but 400.
+        data = dict(
+            mail_host='example.org',
+            random=10,
+            )
+        with self.assertRaises(HTTPError) as cm:
+            content, response = call_api(
+                'http://localhost:9001/3.0/domains', data, method="POST")
+        self.assertEqual(cm.exception.code, 400)
+        self.assertEqual(cm.exception.reason, 'Unexpected parameters: random')
 
     def test_patch_domain_description(self):
         # Patch the example.com description.

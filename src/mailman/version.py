@@ -13,12 +13,12 @@
 # more details.
 #
 # You should have received a copy of the GNU General Public License along with
-# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+# GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Mailman version strings."""
 
 # Mailman version.
-VERSION = '3.2.1'
+VERSION = '3.2.2'
 CODENAME = 'La Villa Strangiato'
 
 # And as a hex number in the manner of PY_VERSION_HEX.
@@ -31,7 +31,7 @@ FINAL = 0xf
 
 MAJOR_REV = 3
 MINOR_REV = 2
-MICRO_REV = 1
+MICRO_REV = 2
 REL_LEVEL = RC
 # At most 15 beta releases!
 REL_SERIAL = FINAL
