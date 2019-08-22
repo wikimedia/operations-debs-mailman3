@@ -1,12 +1,14 @@
-mailman3 (3.2.2-1) UNRELEASED; urgency=medium
+mailman3 (3.2.2-1) unstable; urgency=medium
 
   * New upstream release 3.2.2 (Closes: #930147)
   * Switch to debhelper-compat for build
   * d/control:
     - Bump Standards-Version to 4.4.0
     - Drop X-Python3-Version field
+    - Add Pre-Depends on misc:Pre-Depends to allow the use of the
+      skip-systemd-native flag.
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Thu, 22 Aug 2019 19:49:45 +0200
+ -- Pierre-Elliott Bécue <peb@debian.org>  Thu, 22 Aug 2019 22:42:56 +0200
 
 mailman3 (3.2.1-1) unstable; urgency=medium
 

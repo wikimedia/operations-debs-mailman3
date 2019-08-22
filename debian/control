@@ -43,6 +43,7 @@ Depends: dbconfig-sqlite3 | dbconfig-pgsql | dbconfig-mysql | dbconfig-no-thanks
          ucf,
          ${misc:Depends},
          ${python3:Depends}
+Pre-Depends: ${misc:Pre-Depends}
 Recommends: default-mta | mail-transport-agent
 Suggests: lynx | www-browser,
           mailman3-doc,
