@@ -318,7 +318,7 @@ mailing list.
     ...           'role': 'moderator',
     ...           })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/members/6
     server: ...
@@ -330,7 +330,7 @@ mailing list.
     ...           'role': 'owner',
     ...           })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/members/7
     server: ...
@@ -682,7 +682,7 @@ won't have to approve her subscription request.
     ...           'pre_approved': True,
     ...           })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/members/8
     server: ...
@@ -740,7 +740,7 @@ list with her preferred address.
     ...     'pre_approved': True,
     ...     })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/members/9
     server: ...
@@ -801,7 +801,7 @@ so she leaves from the mailing list.
     >>> transaction.abort()
     >>> dump_json('http://localhost:9001/3.0/members/8',
     ...           method='DELETE')
-    content-length: 0
+    date: ...
     ...
     status: 204
 
@@ -888,7 +888,6 @@ the `address` attribute.
     >>> dump_json('http://localhost:9001/3.0/members/10', {
     ...           'address': 'hperson@example.com',
     ...           }, method='PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -896,7 +895,6 @@ the `address` attribute.
     >>> dump_json('http://localhost:9001/3.0/members/11', {
     ...           'address': 'hperson@example.com',
     ...           }, method='PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -948,7 +946,6 @@ mode of delivery.
     ...           'address': 'herb@example.com',
     ...           'delivery_mode': 'mime_digests',
     ...           }, method='PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -997,7 +994,6 @@ the attribute to the member's resource.
     >>> dump_json('http://localhost:9001/3.0/members/10', {
     ...           'moderation_action': 'hold',
     ...           }, method='PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -1014,7 +1010,6 @@ It can be reset to the list default by patching an empty value.
     >>> dump_json('http://localhost:9001/3.0/members/10', {
     ...           'moderation_action': '',
     ...           }, method='PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -1071,7 +1066,7 @@ Unbanning addresses is also possible by issuing a DELETE request.
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com'
     ...           '/bans/banned@example.com',
     ...           method='DELETE')
-    content-length: 0
+    date: ...
     ...
     status: 204
 
@@ -1112,7 +1107,7 @@ As with list-centric bans, you can delete a global ban.
 
     >>> dump_json('http://localhost:9001/3.0/bans/banned@example.com',
     ...           method='DELETE')
-    content-length: 0
+    date: ...
     ...
     status: 204
 
