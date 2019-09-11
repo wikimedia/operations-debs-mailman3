@@ -52,6 +52,8 @@ All readable attributes for a list are available on a sub-resource.
     first_strip_reply_to: False
     footer_uri:
     fqdn_listname: ant@example.com
+    gateway_to_mail: False
+    gateway_to_news: False
     goodbye_message_uri:
     header_uri:
     http_etag: "..."
@@ -60,13 +62,16 @@ All readable attributes for a list are available on a sub-resource.
     join_address: ant-join@example.com
     last_post_at: None
     leave_address: ant-leave@example.com
+    linked_newsgroup:
     list_name: ant
     mail_host: example.com
     max_message_size: 40
     max_num_recipients: 10
     member_roster_visibility: moderators
     moderator_password: None
+    newsgroup_moderation: none
     next_digest_number: 1
+    nntp_prefix_subject_too: True
     no_reply_address: noreply@example.com
     owner_address: ant-owner@example.com
     post_id: 1
@@ -81,6 +86,7 @@ All readable attributes for a list are available on a sub-resource.
     send_welcome_message: True
     subject_prefix: [Ant]
     subscription_policy: confirm
+    usenet_watermark: None
     volume: 1
     welcome_message_uri:
 
@@ -128,6 +134,11 @@ When using ``PUT``, all writable attributes must be included.
     ...             posting_pipeline='virgin',
     ...             filter_content=True,
     ...             first_strip_reply_to=True,
+    ...             gateway_to_mail=True,
+    ...             gateway_to_news=True,
+    ...             linked_newsgroup='my.group',
+    ...             newsgroup_moderation='moderated',
+    ...             nntp_prefix_subject_too=False,
     ...             convert_html_to_plaintext=True,
     ...             collapse_alternatives=False,
     ...             reply_goes_to_list='point_to_list',
@@ -145,9 +156,8 @@ When using ``PUT``, all writable attributes must be included.
     ...             max_num_recipients='20',
     ...             ),
     ...           'PUT')
-    content-length: 0
     date: ...
-    server: WSGIServer/...
+    server: ...
     status: 204
 
 These values are changed permanently.
@@ -190,11 +200,16 @@ These values are changed permanently.
     first_strip_reply_to: True
     footer_uri:
     fqdn_listname: ant@example.com
+    gateway_to_mail: True
+    gateway_to_news: True
     ...
     include_rfc2369_headers: False
     ...
     member_roster_visibility: members
     moderator_password: {plaintext}password
+    newsgroup_moderation: moderated
+    ...
+    nntp_prefix_subject_too: False
     ...
     posting_pipeline: virgin
     preferred_language: ja
@@ -218,7 +233,6 @@ Using ``PATCH``, you can change just one attribute.
     ...           'ant@example.com/config',
     ...           dict(display_name='My List'),
     ...           'PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -256,7 +270,6 @@ name of the resource.
     ...           '/config/display_name',
     ...           dict(display_name='Your List'),
     ...           'PUT')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -273,7 +286,6 @@ either method.
     ...           '/config/display_name',
     ...           dict(display_name='Their List'),
     ...           'PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -307,9 +319,8 @@ dictionary are ignored.
     ...           dict(acceptable_aliases=['foo@example.com',
     ...                                    'bar@example.net']),
     ...           'PUT')
-    content-length: 0
     date: ...
-    server: WSGIServer/...
+    server: ...
     status: 204
 
 You can get all the mailing list's acceptable aliases through the REST API.
@@ -337,9 +348,8 @@ The aliases can be removed by using ``DELETE``.
     ...     'http://localhost:9001/3.0/lists/'
     ...     'ant@example.com/config/acceptable_aliases',
     ...     method='DELETE')
-    content-length: 0
     date: ...
-    server: WSGIServer/...
+    server: ...
     status: 204
 
 Now the mailing list has no aliases.
@@ -376,7 +386,7 @@ New header matches can be created by POSTing to the resource.
     ...           'pattern': '^Yes',
     ...           })
     content-length: 0
-    ...
+		...
     location: .../3.0/lists/ant.example.com/header-matches/0
     ...
     status: 201
@@ -403,7 +413,7 @@ is desired, the ``action`` key must name a valid chain to jump to.
     ...           'action': 'discard',
     ...           })
     content-length: 0
-    ...
+		...
     location: .../3.0/lists/ant.example.com/header-matches/1
     ...
     status: 201
@@ -426,7 +436,6 @@ the priority is not changed.
     ...           '/header-matches/1',
     ...           dict(pattern='^No', action='accept'),
     ...           'PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -443,7 +452,6 @@ the priority is not changed.
     ...           '/header-matches/1',
     ...           dict(position=0),
     ...           'PATCH')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -476,7 +484,6 @@ optional; if it is omitted, the order will not be changed.
     ...                pattern='^Yes',
     ...                action='hold',
     ...           ), 'PUT')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -496,8 +503,8 @@ A header match can be removed using the DELETE method.
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com'
     ...           '/header-matches/1',
     ...           method='DELETE')
-    content-length: 0
-    ...
+    date: ...
+    server: ...
     status: 204
 
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com'
@@ -520,8 +527,8 @@ the top resource.
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com'
     ...           '/header-matches',
     ...           method='DELETE')
-    content-length: 0
-    ...
+    date: ...
+    server: ...
     status: 204
 
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com'

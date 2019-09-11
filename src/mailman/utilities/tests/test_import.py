@@ -40,6 +40,7 @@ from mailman.interfaces.member import DeliveryMode, DeliveryStatus
 from mailman.interfaces.nntp import NewsgroupModeration
 from mailman.interfaces.template import ITemplateLoader, ITemplateManager
 from mailman.interfaces.usermanager import IUserManager
+from mailman.model.roster import RosterVisibility
 from mailman.testing.helpers import LogFileMark
 from mailman.testing.layers import ConfigLayer
 from mailman.utilities.filesystem import makedirs
@@ -738,7 +739,7 @@ class TestMemberActionImport(unittest.TestCase):
 
     def test_nonmember_accept(self):
         self._pckdict['generic_nonmember_action'] = 0
-        self._do_test(dict(default_nonmember_action=Action.accept))
+        self._do_test(dict(default_nonmember_action=Action.defer))
 
     def test_nonmember_hold(self):
         self._pckdict['generic_nonmember_action'] = 1
@@ -1139,7 +1140,7 @@ class TestRosterImport(unittest.TestCase):
     def test_nonmembers(self):
         import_config_pck(self._mlist, self._pckdict)
         expected = {
-            'gene': Action.accept,
+            'gene': Action.defer,
             'homer': Action.hold,
             'iris': Action.reject,
             'kenny': Action.discard,
@@ -1151,12 +1152,60 @@ class TestRosterImport(unittest.TestCase):
             member = self._mlist.nonmembers.get_member(
                 '{}@example.com'.format(name))
             self.assertEqual(member.moderation_action, action)
+            # Action.defer maps from accept; map it back to get the name.
+            if action == Action.defer:
+                action = Action.accept
             # Only regexps should remain in the list property.
             list_prop = getattr(
                 self._mlist,
                 '{}_these_nonmembers'.format(action.name))
             self.assertEqual(len(list_prop), 1)
             self.assertTrue(all(addr.startswith('^') for addr in list_prop))
+
+    def test_nonmember_following_member(self):
+        self._pckdict['hold_these_nonmembers'] = [
+            'linda@example.com',
+            'homer@example.com',
+            ]
+        self._pckdict['members']['linda@example.com'] = 0
+        self._pckdict['user_options'] = {'linda@example.com': 1}
+        import_config_pck(self._mlist, self._pckdict)
+        member = self._mlist.nonmembers.get_member('linda@example.com')
+        self.assertEqual(member.moderation_action, Action.defer)
+        member = self._mlist.nonmembers.get_member('homer@example.com')
+        self.assertEqual(member.moderation_action, Action.hold)
+
+
+class TestRosterVisibilityImport(unittest.TestCase):
+    """Test that member_roster_visibility is imported correctly.
+
+    Mailman 2.1 lists have a private_roster attribute to control roster
+    visibility with values 0==public, 1==members, 2==admins
+    These correspond to the Mailman 3 member_roster_visibility values
+    RosterVisibility.public, RosterVisibility.members and
+    RosterVisibility.moderators
+    """
+    layer = ConfigLayer
+
+    def setUp(self):
+        self._mlist = create_list('blank@example.com')
+        self._mlist.member_roster_visibility = DummyEnum.val
+
+    def _do_test(self, original, expected):
+        import_config_pck(self._mlist, dict(private_roster=original))
+        self.assertEqual(self._mlist.member_roster_visibility, expected)
+
+    def test_roster_visibility_public(self):
+        self._do_test(0, RosterVisibility.public)
+
+    def test_roster_visibility_members(self):
+        self._do_test(1, RosterVisibility.members)
+
+    def test_roster_visibility_moderators(self):
+        self._do_test(2, RosterVisibility.moderators)
+
+    def test_roster_visibility_bad(self):
+        self._do_test(3, DummyEnum.val)
 
 
 class TestPreferencesImport(unittest.TestCase):
