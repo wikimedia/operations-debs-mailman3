@@ -3,7 +3,8 @@ Section: mail
 Priority: optional
 Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
 Uploaders: Pierre-Elliott Bécue <peb@debian.org>,
-           Jonas Meurer <jonas@freesources.org>
+           Jonas Meurer <jonas@freesources.org>,
+           Mike Gabriel <sunweaver@debian.org>,
 Build-Depends: debhelper-compat (= 12),
                dh-python,
                po-debconf,
