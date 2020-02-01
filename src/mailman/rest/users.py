@@ -20,9 +20,10 @@
 from functools import lru_cache
 from lazr.config import as_boolean
 from mailman.config import config
-from mailman.interfaces.address import ExistingAddressError
+from mailman.interfaces.address import (
+    ExistingAddressError, InvalidEmailAddressError)
 from mailman.interfaces.usermanager import IUserManager
-from mailman.rest.addresses import UserAddresses
+from mailman.rest.addresses import PreferredAddress, UserAddresses
 from mailman.rest.helpers import (
     BadRequest, CollectionMixin, GetterSetter, NotFound, bad_request, child,
     conflict, created, etag, forbidden, no_content, not_found, okay)
@@ -160,10 +161,10 @@ class AllUsers(_UserBase):
         try:
             validator = Validator(**CREATION_FIELDS)
             arguments = validator(request)
-        except ValueError as error:
+            create_user(self.api, arguments, response)
+        except (ValueError, InvalidEmailAddressError) as error:
             bad_request(response, str(error))
             return
-        create_user(self.api, arguments, response)
 
 
 @public
@@ -215,6 +216,13 @@ class AUser(_UserBase):
         if self._user is None:
             return NotFound(), []
         return UserAddresses(self._user)
+
+    @child()
+    def preferred_address(self, context, segements):
+        """Return a user's preferred address."""
+        if self._user is None:
+            return NotFound(), []
+        return PreferredAddress(self._user)
 
     def on_delete(self, request, response):
         """Delete the named user and all associated resources."""

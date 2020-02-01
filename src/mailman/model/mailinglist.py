@@ -24,7 +24,7 @@ from mailman.database.model import Model
 from mailman.database.transaction import dbconnection
 from mailman.database.types import Enum, SAUnicode, SAUnicodeLarge
 from mailman.interfaces.action import Action, FilterAction
-from mailman.interfaces.address import IAddress
+from mailman.interfaces.address import IAddress, InvalidEmailAddressError
 from mailman.interfaces.archiver import ArchivePolicy
 from mailman.interfaces.autorespond import ResponseAction
 from mailman.interfaces.bounce import UnrecognizedBounceDisposition
@@ -54,6 +54,7 @@ from sqlalchemy import (
     LargeBinary, PickleType)
 from sqlalchemy.event import listen
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
 from zope.component import getUtility
@@ -98,7 +99,7 @@ class MailingList(Model):
     # Attributes which are directly modifiable via the web u/i.  The more
     # complicated attributes are currently stored as pickles, though that
     # will change as the schema and implementation is developed.
-    accept_these_nonmembers = Column(PickleType)       # XXX
+    accept_these_nonmembers = Column(MutableList.as_mutable(PickleType))  # XXX
     admin_immed_notify = Column(Boolean)
     admin_notify_mchanges = Column(Boolean)
     administrivia = Column(Boolean)
@@ -141,14 +142,14 @@ class MailingList(Model):
     digest_send_periodic = Column(Boolean)
     digest_size_threshold = Column(Float)
     digest_volume_frequency = Column(Enum(DigestFrequency))
-    discard_these_nonmembers = Column(PickleType)
+    discard_these_nonmembers = Column(MutableList.as_mutable(PickleType))
     emergency = Column(Boolean)
     encode_ascii_prefixes = Column(Boolean)
     first_strip_reply_to = Column(Boolean)
     forward_auto_discards = Column(Boolean)
     gateway_to_mail = Column(Boolean)
     gateway_to_news = Column(Boolean)
-    hold_these_nonmembers = Column(PickleType)
+    hold_these_nonmembers = Column(MutableList.as_mutable(PickleType))
     info = Column(SAUnicode)
     linked_newsgroup = Column(SAUnicode)
     max_days_to_hold = Column(Integer)
@@ -169,7 +170,7 @@ class MailingList(Model):
     posting_pipeline = Column(SAUnicode)
     _preferred_language = Column('preferred_language', SAUnicode)
     display_name = Column(SAUnicode)
-    reject_these_nonmembers = Column(PickleType)
+    reject_these_nonmembers = Column(MutableList.as_mutable(PickleType))
     reply_goes_to_list = Column(Enum(ReplyToMunging))
     reply_to_address = Column(SAUnicode)
     require_explicit_destination = Column(Boolean)
@@ -184,6 +185,7 @@ class MailingList(Model):
     topics_bodylines_limit = Column(Integer)
     topics_enabled = Column(Boolean)
     unsubscription_policy = Column(Enum(SubscriptionPolicy))
+    usenet_watermark = Column(Integer)
     # ORM relationships.
     header_matches = relationship(
         'HeaderMatch', backref='mailing_list',
@@ -484,6 +486,9 @@ class MailingList(Model):
     def subscribe(self, store, subscriber, role=MemberRole.member):
         """See `IMailingList`."""
         member, email = self._get_subscriber(store, subscriber, role)
+        test_email = email or subscriber.lower()
+        if test_email == self.posting_address:
+            raise InvalidEmailAddressError('List posting address not allowed')
         if member is not None:
             raise AlreadySubscribedError(self.fqdn_listname, email, role)
         member = Member(role=role,
@@ -641,6 +646,7 @@ class HeaderMatch(Model):
     header = Column(SAUnicode)
     pattern = Column(SAUnicode)
     chain = Column(SAUnicode, nullable=True)
+    tag = Column(SAUnicode, nullable=True)
 
     def __init__(self, **kw):
         position = kw.pop('position', None)
@@ -709,7 +715,7 @@ class HeaderMatchList:
         del self._mailing_list.header_matches[:]
 
     @dbconnection
-    def append(self, store, header, pattern, chain=None):
+    def append(self, store, header, pattern, chain=None, tag=None):
         header = header.lower()
         existing = store.query(HeaderMatch).filter(
             HeaderMatch.mailing_list == self._mailing_list,
@@ -725,19 +731,20 @@ class HeaderMatchList:
         header_match = HeaderMatch(
             mailing_list=self._mailing_list,
             header=header, pattern=pattern, chain=chain,
-            position=last_position + 1)
+            position=last_position + 1, tag=tag)
         store.add(header_match)
         store.expire(self._mailing_list, ['header_matches'])
 
     @dbconnection
-    def insert(self, store, index, header, pattern, chain=None):
-        self.append(header, pattern, chain)
+    def insert(self, store, index, header, pattern, chain=None, tag=None):
+        self.append(header, pattern, chain, tag)
         # Get the header match that was just added.
         header_match = store.query(HeaderMatch).filter(
             HeaderMatch.mailing_list == self._mailing_list,
             HeaderMatch.header == header.lower(),
             HeaderMatch.pattern == pattern,
-            HeaderMatch.chain == chain).one()
+            HeaderMatch.chain == chain,
+            HeaderMatch.tag == tag).one()
         header_match.position = index
         store.expire(self._mailing_list, ['header_matches'])
 
@@ -806,3 +813,24 @@ class HeaderMatchList:
                 ).order_by(HeaderMatch.position)):
             match._position = position
         store.expire(self._mailing_list, ['header_matches'])
+
+    @dbconnection
+    def get_by_tag(self, store, tag):
+        # Get all the header matches that correspond to a single tag.
+        entries = store.query(HeaderMatch).filter(
+            HeaderMatch.mailing_list == self._mailing_list,
+            HeaderMatch.tag == tag
+            ).order_by(HeaderMatch.position)
+        yield from entries
+
+    @dbconnection
+    def filter(self, store, header=None, chain=None, tag=None):
+        entries = store.query(HeaderMatch).filter(
+            HeaderMatch.mailing_list == self._mailing_list)
+        if tag:
+            entries = entries.filter(HeaderMatch.tag == tag)
+        if header:
+            entries = entries.filter(HeaderMatch.header == header)
+        if chain:
+            entries = entries.filter(HeaderMatch.chain == chain)
+        yield from entries.order_by(HeaderMatch.position)

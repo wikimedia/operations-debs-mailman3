@@ -100,7 +100,6 @@ Addresses can also be verified through the REST API, by POSTing to the
 
     >>> dump_json('http://localhost:9001/3.0/addresses/'
     ...           'cris@example.com/verify', {})
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -121,7 +120,6 @@ sub-resource.  Again, the POST data is ignored.
 
     >>> dump_json('http://localhost:9001/3.0/addresses/'
     ...           'cris@example.com/unverify', {})
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -146,7 +144,7 @@ sub-resource of the address.  If the user does not exist, it will be created.
     >>> dump_json('http://localhost:9001/3.0/addresses/cris@example.com/user',
     ...           {'display_name': 'Cris X. Person'})
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/users/1
     server: ...
@@ -201,7 +199,6 @@ The address and the user can be unlinked by sending a DELETE request on the
 
     >>> dump_json('http://localhost:9001/3.0/addresses/cris@example.com/user',
     ...           method='DELETE')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -223,7 +220,7 @@ POST request.
     >>> dump_json('http://localhost:9001/3.0/addresses/cris@example.com/user',
     ...           {'user_id': 1})
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     server: ...
     status: 200
@@ -242,8 +239,8 @@ followed by a POST request, or you can send a PUT request.
 
     >>> dump_json('http://localhost:9001/3.0/addresses/cris@example.com/user',
     ...           {'display_name': 'Cris Q Person'}, method="PUT")
-    content-length: 0
-    content-type: application/json; charset=UTF-8
+		content-length: 0
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/users/2
     server: ...
@@ -297,7 +294,7 @@ addresses to an existing user.
     ...           'email': 'dave.person@example.org'
     ...           })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/addresses/dave.person@example.org
     server: ...
@@ -311,7 +308,7 @@ When you add the new address, you can give it an optional display name.
     ...           'display_name': 'Davie P',
     ...           })
     content-length: 0
-    content-type: application/json; charset=UTF-8
+    content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/addresses/dp@example.org
     server: ...
@@ -347,6 +344,79 @@ The user controls these new addresses.
     start: 0
     total_size: 3
 
+
+Preferred address
+=================
+
+Each user can have a preferred address. Initially, every user's preferred
+address is unset.
+::
+
+    >>> ram = user_manager.create_user('ram@example.com', 'Ram Person')
+    >>> transaction.commit()
+    >>> dump_json(
+    ...    'http://localhost:9001/3.1/users/ram@example.com/addresses')
+    entry 0:
+        display_name: Ram Person
+        email: ram@example.com
+        http_etag: "..."
+        original_email: ram@example.com
+        registered_on: 2005-08-01T07:49:23
+        self_link: http://localhost:9001/3.1/addresses/ram@example.com
+        user: http://localhost:9001/3.1/users/00000000000000000000000000000004
+    http_etag: "..."
+    start: 0
+    total_size: 1
+    >>> import pdb
+    >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address')
+    Traceback (most recent call last):
+    ...
+    urllib.error.HTTPError: HTTP Error 404: ...
+
+Setting Ram's preferred addresses requires that it first be verified:
+::
+    >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address',
+    ...     {'email': 'ram@example.com'})
+    Traceback (most recent call last):
+    ...
+    urllib.error.HTTPError: HTTP Error 400: Ram Person <ram@example.com>
+
+Verify Ram's address first:
+::
+    >>> addr = ram.addresses[0]
+    >>> addr.verified_on = now()
+    >>> transaction.commit()
+
+Now, Ram can set his preferred address:
+::
+
+    >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address',
+    ...     {'email': 'ram@example.com'})
+    content-length: 0
+    content-type: application/json
+    date: ...
+    location: http://localhost:9001/3.1/addresses/ram@example.com
+    server: ...
+    status: 201
+    >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address')
+    display_name: Ram Person
+    email: ram@example.com
+    http_etag: "..."
+    original_email: ram@example.com
+    registered_on: 2005-08-01T07:49:23
+    self_link: http://localhost:9001/3.1/addresses/ram@example.com
+    user: http://localhost:9001/3.1/users/00000000000000000000000000000004
+    verified_on: 2005-08-01T07:49:23
+
+
+To unset Ram's preferred address, call a ``DELETE`` on preferred address resource:
+::
+
+   >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address',
+   ...     method='DELETE')
+   date: ...
+   server: ...
+   status: 204
 
 Memberships
 ===========
@@ -391,7 +461,7 @@ Elle can get her memberships for each of her email addresses.
         member_id: 1
         role: member
         self_link: http://localhost:9001/3.0/members/1
-        user: http://localhost:9001/3.0/users/4
+        user: http://localhost:9001/3.0/users/5
     entry 1:
         address: http://localhost:9001/3.0/addresses/elle@example.com
         delivery_mode: regular
@@ -402,7 +472,7 @@ Elle can get her memberships for each of her email addresses.
         member_id: 2
         role: member
         self_link: http://localhost:9001/3.0/members/2
-        user: http://localhost:9001/3.0/users/4
+        user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0
     total_size: 2
@@ -434,7 +504,7 @@ does not show up in the list of memberships for his other address.
         member_id: 1
         role: member
         self_link: http://localhost:9001/3.0/members/1
-        user: http://localhost:9001/3.0/users/4
+        user: http://localhost:9001/3.0/users/5
     entry 1:
         address: http://localhost:9001/3.0/addresses/elle@example.com
         delivery_mode: regular
@@ -445,7 +515,7 @@ does not show up in the list of memberships for his other address.
         member_id: 2
         role: member
         self_link: http://localhost:9001/3.0/members/2
-        user: http://localhost:9001/3.0/users/4
+        user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0
     total_size: 2
@@ -462,7 +532,7 @@ does not show up in the list of memberships for his other address.
         member_id: 3
         role: member
         self_link: http://localhost:9001/3.0/members/3
-        user: http://localhost:9001/3.0/users/4
+        user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0
     total_size: 1
@@ -488,7 +558,6 @@ Addresses can be deleted via the REST API.
 
     >>> dump_json('http://localhost:9001/3.0/addresses/fred@example.com',
     ...     method='DELETE')
-    content-length: 0
     date: ...
     server: ...
     status: 204
@@ -503,7 +572,7 @@ user, it just unlinks it.
 
     >>> gwen = user_manager.create_user('gwen@example.com', 'Gwen Person')
     >>> transaction.commit()
-    >>> dump_json('http://localhost:9001/3.0/users/5/addresses')
+    >>> dump_json('http://localhost:9001/3.0/users/6/addresses')
     entry 0:
         display_name: Gwen Person
         email: gwen@example.com
@@ -511,19 +580,18 @@ user, it just unlinks it.
         original_email: gwen@example.com
         registered_on: 2005-08-01T07:49:23
         self_link: http://localhost:9001/3.0/addresses/gwen@example.com
-        user: http://localhost:9001/3.0/users/5
-    http_etag: "795b0680c57ec2df3dceb68ccce2619fecdc7225"
+        user: http://localhost:9001/3.0/users/6
+    http_etag: "..."
     start: 0
     total_size: 1
 
     >>> dump_json('http://localhost:9001/3.0/addresses/gwen@example.com',
     ...     method='DELETE')
-    content-length: 0
     date: ...
     server: ...
     status: 204
 
-    >>> dump_json('http://localhost:9001/3.0/users/5/addresses')
+    >>> dump_json('http://localhost:9001/3.0/users/6/addresses')
     http_etag: "..."
     start: 0
     total_size: 0

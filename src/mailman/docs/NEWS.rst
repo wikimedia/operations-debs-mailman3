@@ -10,7 +10,84 @@ Here is a history of user visible changes to Mailman.
 
 3.3.0 -- "Tom Sawyer"
 =====================
-(20xx-xx-xx)
+(2019-09-04)
+
+Bugs
+----
+* A list member with ``receive_list_copy`` set to ``False`` who is addressed in
+  ``CC`` will now be removed from ``CC`` even if this results in no ``CC``.
+  (Closes #575)
+* ``X-Mailman-Approved-At`` header now has correct timezone.  (Closes #584)
+* A spurious ``invalid FilterAction: discard. Treating as discard`` log
+  message is eliminated.  (Closes #592)
+* A post from a nonmember matching the legacy ``accept_these_nonmembers`` is
+  now subject to subsequent rules rather than accepted immediately.
+  (Closes #587)
+* Email attempts to subscribe a user who is banned or has a subscription
+  already pending are now handled properly.  (Closes #577 and #583)
+* It is no longer possible to add the list's posting address with any role to
+  a list.  (Closes #599)
+* Fixed the nntp runner which was calling the ``nntplib.NNTP.post()`` method
+  with a string object instead of bytes.  (Closes #613)
+* A post with a Reply-To: the list address will no longer be shunted.
+  (Closes #614)
+* Encoded (base64 or quoted-printable) HTML message bodies are now decoded for
+  ``html_to_plaintext``.  (Closes #616)
+* Non-VERPed temporary failure DSNs are no longer reported as unrecognized
+  bounces.  (Closes #622)
+* Fix ``mailman import21`` command to work in Python 3.7.4 and Python 3.8b4
+  (Closes #625)
+
+Command line
+------------
+* The ``mailman import21`` command now leaves only regexps in the legacy
+  ``*_these_nonmembers`` list attributes.  (Closes #588)
+* The ``mailman import21`` command now imports nonmember accept actions as
+  ``Action.defer`` rather than ``Action.accept``.  (Closes #579)
+* The ``mailman import21`` command now correctly imports ``*_these_nonmembers``
+  actions for nonmembers following a member in the list.  (Closes #580)
+* The progress meter while ``mailman import21`` is importing rosters has been
+  shortened so it no longer wraps and scrolls.  (Closes #589)
+* The ``mailman import21`` command no longer sends an email to existing owners
+  for each imported member.  (Closes #605)
+* A ``mailman notify`` command has been implemented to be run by cron to send
+  periodic notices of held requests to list owners and moderators.
+  (Closes #258)
+* The ``mailman import21`` command now imports ``private_roster``.
+  (Closes #607)
+* A ``mailman gatenews`` command has been implemented to be run by cron to gate
+  messages from usenet to those lists which have the gateway configured.
+* The ``mailman members --add`` command no longer prints a stack trace if an
+  invalid email address is given.  (See !544)
+* A new ``mailman members --remove`` command has been added to help you
+  mass-unsubscribe subscribers from a mailing list.
+
+REST
+----
+* Expose a user's preferred address using REST API. (Closes #240)
+* Expose `header_matches/find` API to find a list of ``HeaderMatches`` belonging
+  to a MailingList. (See !497)
+* Allow adding a comment when rejecting held messages. (Closes #594)
+* Fix a 500 error when creating a user with invalid email address. (Closes #263)
+
+Localization
+------------
+* Add French translations for mail templates. (See !522)
+
+Other
+-----
+* Add a new attribute ``tag`` to ``HeaderMatch`` to find and manage a set of
+  rules. (See !497)
+* Expired cached entries will be deleted efficiently. (Closes #462)
+* REST Runner now uses Gunicorn to run WSGI server instead of the standard
+  library wsgiref for better performance.
+* Add support for SMPTS/STARTTLS for connections to MTA. (See !508)
+* The last remnants of the mailing list attribute ``nntp_host`` have been
+  removed.  (Closes #611)
+* Email confirmation requests now include an ``Auto-Submitted`` header to
+  prevent robotic replies per ``RFC 3834``.  (Closes #23)
+* The mail->news gateway no longer munges Message-ID headers unless the
+  original Message-ID is rejected by the ``nntp_host``.  (Closes #24)
 
 3.2.2
 =====

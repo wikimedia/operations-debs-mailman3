@@ -367,6 +367,8 @@ class IMailingList(Interface):
             that it is possible to subscribe an address to a mailing list with
             a particular role, and also subscribe a user with a matching
             preferred address that is explicitly subscribed with the same role.
+        :raises InvalidEmailAddressError: If the address being subscribed is
+            the list's posting address.
         """
 
     # Delivery.
@@ -647,9 +649,6 @@ class IMailingList(Interface):
         without any other checks.
         """)
 
-    newsgroup_moderation = Attribute(
-        """The moderation policy for the linked newsgroup, if there is one.""")
-
     # Bounces.
 
     forward_unrecognized_bounces_to = Attribute(
@@ -686,6 +685,30 @@ class IMailingList(Interface):
 
     send_goodbye_message = Attribute(
         """Flag indicating whether a goodbye message should be sent.""")
+
+    # Usenet gateway.
+
+    gateway_to_mail = Attribute(
+        """Flag indicating that posts to the linked newsgroup should be gated
+        to the list.""")
+
+    gateway_to_news = Attribute(
+        """Flag indicating that posts to the list should be gated to the
+        linked newsgroup.""")
+
+    linked_newsgroup = Attribute(
+        """The name of the linked newsgroup.""")
+
+    newsgroup_moderation = Attribute(
+        """The moderation policy for the linked newsgroup, if there is one.""")
+
+    nntp_prefix_subject_too = Attribute(
+        """Flag indicating whether the list's subject_prefix should be included
+        in posts gated to usenet.""")
+
+    usenet_watermark = Attribute(
+        """The NNTP server's message number of the last post gated to the
+        list.""")
 
 
 @public
@@ -789,6 +812,14 @@ class IHeaderMatch(Interface):
         file is used.
         """)
 
+    tag = Attribute(
+        """An arbitrary value to identify a set of IHeaderMatches.
+
+        This tag can be used to filter a set of IHeaderMatches, so that they
+        can set and removed together, without having to query the whole list
+        and iterate over them.
+        """)
+
 
 @public
 class IHeaderMatchList(Interface):
@@ -797,7 +828,7 @@ class IHeaderMatchList(Interface):
     def clear():
         """Clear the list of header matching rules."""
 
-    def append(header, pattern, chain=None):
+    def append(header, pattern, chain=None, tag=None):
         """Append the given rule to this mailing list's header match list.
 
         :param header: The email header to filter on.  It will be converted to
@@ -808,11 +839,13 @@ class IHeaderMatchList(Interface):
         :param chain: The chain to jump to, or None to use the site-wide
             antispam jump chain via the configuration.  Defaults to None.
         :type chain: string or None
+        :param tag: An arbitrary value to identify a set of IHeaderMatches.
+        :type tag: string or None
         :raises ValueError: if the header/pattern pair already exists for this
             mailing list.
         """
 
-    def insert(index, header, pattern, chain=None):
+    def insert(index, header, pattern, chain=None, tag=None):
         """Insert a header match rule.
 
         Inserts the given rule at the given index position in this
@@ -828,6 +861,8 @@ class IHeaderMatchList(Interface):
         :param chain: The chain to jump to, or None to use the site-wide
             antispam jump chain via the configuration.  Defaults to None.
         :type chain: string or None
+        :param tag: An arbitrary value to identify a set of IHeaderMatches.
+        :type tag: string or None
         :raises ValueError: if the header/pattern pair already exists for this
             mailing list.
         """

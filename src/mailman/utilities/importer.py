@@ -43,6 +43,7 @@ from mailman.interfaces.member import DeliveryMode, DeliveryStatus, MemberRole
 from mailman.interfaces.nntp import NewsgroupModeration
 from mailman.interfaces.template import ITemplateLoader, ITemplateManager
 from mailman.interfaces.usermanager import IUserManager
+from mailman.model.roster import RosterVisibility
 from mailman.utilities.filesystem import makedirs
 from mailman.utilities.i18n import search
 from public import public
@@ -134,13 +135,25 @@ def member_moderation_action_mapping(value):
 def nonmember_action_mapping(value):
     # For default_nonmember_action, which used to be called
     # generic_nonmember_action, the values were: 0==Accept, 1==Hold,
-    # 2==Reject, 3==Discard
+    # 2==Reject, 3==Discard, but note that Accept is really equivalent to
+    # what is now defer.
     return {
-        0: Action.accept,
+        0: Action.defer,
         1: Action.hold,
         2: Action.reject,
         3: Action.discard,
         }[value]
+
+
+def member_roster_visibility_mapping(value):
+    # For member_roster_visibility, which used to be called private_roster.
+    # The values were: 0==public, 1==members, 2==admins.
+    mapping = {
+        0: RosterVisibility.public,
+        1: RosterVisibility.members,
+        2: RosterVisibility.moderators,
+        }
+    return mapping.get(value, None)
 
 
 def action_to_chain(value):
@@ -367,6 +380,11 @@ def import_config_pck(mlist, config_dict):
         # but .add() would not raise ValueError if address contained '@' and
         # that needs the '^' too as it could be a regexp with an '@' in it.
         alias_set.add(address)
+    # Handle roster visibility.
+    mapping = member_roster_visibility_mapping(
+        config_dict.get('private_roster', None))
+    if mapping is not None:
+        mlist.member_roster_visibility = mapping
     # Handle header_filter_rules conversion to header_matches.
     header_matches = IHeaderMatchList(mlist)
     header_filter_rules = config_dict.get('header_filter_rules', [])
@@ -505,9 +523,11 @@ def import_config_pck(mlist, config_dict):
     regulars_set = set(config_dict.get('members', {}))
     digesters_set = set(config_dict.get('digest_members', {}))
     members = regulars_set.union(digesters_set)
-    # Don't send welcome messages when we import the rosters.
+    # Don't send welcome messages or notify admins when we import the rosters.
     send_welcome_message = mlist.send_welcome_message
     mlist.send_welcome_message = False
+    admin_notify_mchanges = mlist.admin_notify_mchanges
+    mlist.admin_notify_mchanges = False
     try:
         import_roster(mlist, config_dict, members, MemberRole.member)
         import_roster(mlist, config_dict, config_dict.get('owner', []),
@@ -521,6 +541,9 @@ def import_config_pck(mlist, config_dict):
             emails = [addr
                       for addr in config_dict.get(prop_name, [])
                       if not addr.startswith('^')]
+            # MM 2.1 accept maps to MM 3 defer
+            if action_name == 'accept':
+                action_name = 'defer'
             import_roster(mlist, config_dict, emails, MemberRole.nonmember,
                           Action[action_name])
             # Only keep the regexes in the legacy list property.
@@ -529,6 +552,7 @@ def import_config_pck(mlist, config_dict):
                 list_prop.remove(email)
     finally:
         mlist.send_welcome_message = send_welcome_message
+        mlist.admin_notify_mchanges = admin_notify_mchanges
 
 
 def import_roster(mlist, config_dict, members, role, action=None):
@@ -550,8 +574,7 @@ def import_roster(mlist, config_dict, members, role, action=None):
     """
     name = (action and action.name) or role.name
     with click.progressbar(
-            members, label='Importing {} {:<10}'.format(
-                mlist.list_id, name + 's')) as iterator:
+            members, label='Importing {:<10}'.format(name + 's')) as iterator:
         _import_roster(mlist, config_dict, iterator, role, action=action)
 
 
@@ -565,6 +588,7 @@ def _import_roster(mlist, config_dict, members, role, action=None):
     validator = getUtility(IEmailValidator)
     roster = mlist.get_roster(role)
     skipped = []
+    action_arg = action
     for email in members:
         # For owners and members, the emails can have a mixed case, so
         # lowercase them all.
@@ -647,6 +671,10 @@ def _import_roster(mlist, config_dict, members, role, action=None):
             # Either this was set right above or in the function's arguments
             # for nonmembers.
             member.moderation_action = action
+            # We need to restore the action argument in case we changed it
+            # above so the changed action is not applied to the remaining
+            # members.
+            action = action_arg
         # Other preferences.
         if prefs is not None:
             # AcknowledgePosts
