@@ -37,29 +37,29 @@ Author: Jonas Meurer <jonas@freesources.org>
  25 files changed, 23 insertions(+), 25 deletions(-)
 
 diff --git a/setup.py b/setup.py
-index 2420421..9ffd32f 100644
+index 10c13c0..888c879 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -113,7 +113,6 @@ case second 'm'.  Any other spelling is incorrect.""",
+@@ -115,7 +115,6 @@ case second 'm'.  Any other spelling is incorrect.""",
          'flufl.bounce',
          'flufl.i18n>=2.0',
          'flufl.lock>=3.1',
 -        'importlib_resources',
+         'gunicorn',
          'lazr.config',
-         'passlib',
-         'requests',
+         'python-dateutil>=2.0',
 diff --git a/src/mailman.egg-info/requires.txt b/src/mailman.egg-info/requires.txt
-index 4b79ac8..474fc55 100644
+index 6aa7010..0228b16 100644
 --- a/src/mailman.egg-info/requires.txt
 +++ b/src/mailman.egg-info/requires.txt
-@@ -7,7 +7,6 @@ falcon>1.0.0
+@@ -9,7 +9,6 @@ falcon>1.0.0
  flufl.bounce
  flufl.i18n>=2.0
  flufl.lock>=3.1
 -importlib_resources
+ gunicorn
  lazr.config
- passlib
- requests
+ python-dateutil>=2.0
 diff --git a/src/mailman/archiving/tests/test_mhonarc.py b/src/mailman/archiving/tests/test_mhonarc.py
 index f51462e..77eb020 100644
 --- a/src/mailman/archiving/tests/test_mhonarc.py
@@ -152,7 +152,7 @@ index 44a8dfd..af9f144 100644
  from mailman.commands.cli_import import import21
  from mailman.testing.layers import ConfigLayer
 diff --git a/src/mailman/config/config.py b/src/mailman/config/config.py
-index 003183c..44d6874 100644
+index 5034994..494d36d 100644
 --- a/src/mailman/config/config.py
 +++ b/src/mailman/config/config.py
 @@ -24,7 +24,7 @@ import mailman.templates
@@ -165,10 +165,10 @@ index 003183c..44d6874 100644
  from mailman import version
  from mailman.interfaces.configuration import (
 diff --git a/src/mailman/config/tests/test_configuration.py b/src/mailman/config/tests/test_configuration.py
-index 42c23ec..24cb5cc 100644
+index 0a7822f..632021f 100644
 --- a/src/mailman/config/tests/test_configuration.py
 +++ b/src/mailman/config/tests/test_configuration.py
-@@ -21,7 +21,7 @@ import os
+@@ -22,7 +22,7 @@ import tempfile
  import unittest
  
  from contextlib import ExitStack
@@ -204,7 +204,7 @@ index 9d3c312..b3fe526 100644
  from mailman.email.message import Message, UserNotification
  from mailman.testing.helpers import get_queue_messages
 diff --git a/src/mailman/handlers/tests/test_mimedel.py b/src/mailman/handlers/tests/test_mimedel.py
-index 3a2724d..ed8bd79 100644
+index aafee7f..f1e4d40 100644
 --- a/src/mailman/handlers/tests/test_mimedel.py
 +++ b/src/mailman/handlers/tests/test_mimedel.py
 @@ -25,7 +25,7 @@ import tempfile
@@ -217,7 +217,7 @@ index 3a2724d..ed8bd79 100644
  from mailman.app.lifecycle import create_list
  from mailman.config import config
 diff --git a/src/mailman/plugins/docs/intro.rst b/src/mailman/plugins/docs/intro.rst
-index 0e9ce60..2a801d1 100644
+index 9831f70..4d64779 100644
 --- a/src/mailman/plugins/docs/intro.rst
 +++ b/src/mailman/plugins/docs/intro.rst
 @@ -16,7 +16,7 @@ enabled by adding a section to your ``mailman.cfg`` file, such as:
@@ -282,10 +282,10 @@ index 692b21e..93b7426 100644
  
  
 diff --git a/src/mailman/testing/layers.py b/src/mailman/testing/layers.py
-index c7574c9..f433716 100644
+index 714bd25..f6a8f5f 100644
 --- a/src/mailman/testing/layers.py
 +++ b/src/mailman/testing/layers.py
-@@ -31,7 +31,7 @@ import logging
+@@ -32,7 +32,7 @@ import logging
  import datetime
  import tempfile
  
@@ -321,7 +321,7 @@ index 749d08e..3a7cd7d 100644
  
  
 diff --git a/src/mailman/utilities/tests/test_import.py b/src/mailman/utilities/tests/test_import.py
-index 72476d8..2472901 100644
+index 1d7b35b..fea6d54 100644
 --- a/src/mailman/utilities/tests/test_import.py
 +++ b/src/mailman/utilities/tests/test_import.py
 @@ -22,7 +22,7 @@ import unittest
