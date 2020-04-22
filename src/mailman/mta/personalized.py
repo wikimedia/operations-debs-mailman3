@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -49,13 +49,19 @@ class PersonalizedMixin:
         user_manager = getUtility(IUserManager)
         user = user_manager.get_user(recipient)
         if user is None:
-            msg.replace_header('To', recipient)
+            if msg.get('to'):
+                msg.replace_header('To', recipient)
+            else:
+                msg['To'] = recipient
         else:
             # Convert the unicode name to an email-safe representation.
             # Create a Header instance for the name so that it's properly
             # encoded for email transport.
             name = Header(user.display_name).encode()
-            msg.replace_header('To', formataddr((name, recipient)))
+            if msg.get('to'):
+                msg.replace_header('To', formataddr((name, recipient)))
+            else:
+                msg['To'] = formataddr((name, recipient))
 
 
 @public

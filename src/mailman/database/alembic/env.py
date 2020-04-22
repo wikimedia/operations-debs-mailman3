@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -16,6 +16,7 @@
 # GNU Mailman.  If not, see <https://www.gnu.org/licenses/>.
 
 """Alembic migration environment."""
+
 
 from alembic import context
 from contextlib import closing
@@ -45,7 +46,8 @@ def run_migrations_offline():
     Calls to context.execute() here emit the given string to the script
     output.
     """
-    context.configure(url=url, target_metadata=Model.metadata)
+    context.configure(url=url, target_metadata=Model.metadata,
+                      render_as_batch=True)                   # pragma: nocover
     with context.begin_transaction():
         context.run_migrations()
 
@@ -62,7 +64,8 @@ def run_migrations_online():
     connection = engine.connect()
     with closing(connection):
         context.configure(
-            connection=connection, target_metadata=Model.metadata)
+            connection=connection, target_metadata=Model.metadata,
+            render_as_batch=True)
         with context.begin_transaction():
             context.run_migrations()
 

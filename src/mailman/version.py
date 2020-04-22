@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -18,8 +18,8 @@
 """Mailman version strings."""
 
 # Mailman version.
-VERSION = '3.3.0'
-CODENAME = 'La Villa Strangiato'
+VERSION = '3.3.1'
+CODENAME = 'Tom Sawyer'
 
 # And as a hex number in the manner of PY_VERSION_HEX.
 ALPHA = 0xa
@@ -31,10 +31,10 @@ FINAL = 0xf
 
 MAJOR_REV = 3
 MINOR_REV = 3
-MICRO_REV = 0
-REL_LEVEL = RC
+MICRO_REV = 1
+REL_LEVEL = FINAL
 # At most 15 beta releases!
-REL_SERIAL = FINAL
+REL_SERIAL = 1
 
 HEX_VERSION = ((MAJOR_REV << 24) | (MINOR_REV << 16) | (MICRO_REV << 8) |
                (REL_LEVEL << 4)  | (REL_SERIAL << 0))             # noqa: E221

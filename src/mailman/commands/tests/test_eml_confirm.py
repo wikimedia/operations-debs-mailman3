@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -23,6 +23,7 @@ from mailman.app.lifecycle import create_list
 from mailman.commands.eml_confirm import Confirm
 from mailman.config import config
 from mailman.email.message import Message
+from mailman.interfaces.bans import IBanManager
 from mailman.interfaces.command import ContinueProcessing
 from mailman.interfaces.mailinglist import SubscriptionPolicy
 from mailman.interfaces.subscriptions import ISubscriptionManager
@@ -83,6 +84,19 @@ class TestConfirmJoin(unittest.TestCase):
             self._mlist, Message(), {}, (self._token,), result)
         self.assertEqual(status, ContinueProcessing.no)
 
+    def test_confirm_banned_address(self):
+        # Confirmation of a banned address should return an appropriate error.
+        IBanManager(self._mlist).ban('anne@example.com')
+        result = Results()
+        status = self._command.process(
+            self._mlist, Message(), {}, (self._token,), result)
+        self.assertEqual(status, ContinueProcessing.no)
+        # Anne will not be subscribed.
+        self.assertFalse(self._mlist.is_subscribed('anne@example.com'))
+        # The result will contain an error message.
+        self.assertIn('anne@example.com is not allowed to subscribe to '
+                      'test@example.com', str(result))
+
 
 class TestConfirmLeave(unittest.TestCase):
     """Test the `confirm` command when leaving a mailing list."""
@@ -106,6 +120,25 @@ Subject: Re: confirm {token}
         # Anne is no longer a member of the mailing list.
         member = self._mlist.members.get_member('anne@example.com')
         self.assertIsNone(member)
+
+    def test_confirm_leave_moderate(self):
+        msg = mfs("""\
+From: Anne Person <anne@example.com>
+To: test-confirm+{token}@example.com
+Subject: Re: confirm {token}
+
+""".format(token=self._token))
+        self._mlist.unsubscription_policy = (
+            SubscriptionPolicy.confirm_then_moderate)
+        # Clear any previously queued confirmation messages.
+        get_queue_messages('virgin')
+        Confirm().process(self._mlist, msg, {}, (self._token,), Results())
+        # Anne is still a member of the mailing list.
+        member = self._mlist.members.get_member('anne@example.com')
+        self.assertIsNotNone(member)
+        # There should be a notice to the list owners
+        item = get_queue_messages('virgin', expected_count=1)[0]
+        self.assertEqual(item.msg['to'], 'test-owner@example.com')
 
 
 class TestEmailResponses(unittest.TestCase):

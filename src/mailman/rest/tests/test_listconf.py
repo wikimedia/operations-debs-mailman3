@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2014-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -38,6 +38,9 @@ RESOURCE = dict(
         'bee@example.com',
         'cat@example.com',
         ],
+    accept_these_nonmembers=[
+        r'ant_*@example.com',
+        ],
     admin_immed_notify=False,
     admin_notify_mchanges=True,
     administrivia=False,
@@ -52,6 +55,12 @@ RESOURCE = dict(
     autoresponse_owner_text='the owner',
     autoresponse_postings_text='the mailing list',
     autoresponse_request_text='the robot',
+    bounce_info_stale_after='7d',
+    bounce_notify_owner_on_disable=False,
+    bounce_notify_owner_on_removal=True,
+    bounce_score_threshold=5,
+    bounce_you_are_disabled_warnings=3,
+    bounce_you_are_disabled_warnings_interval='2d',
     collapse_alternatives=False,
     convert_html_to_plaintext=True,
     default_member_action='hold',
@@ -61,16 +70,26 @@ RESOURCE = dict(
     digest_size_threshold=10.5,
     digest_volume_frequency='monthly',
     digests_enabled=True,
+    discard_these_nonmembers=[
+       'aperson@example.com',
+       ],
     display_name='Fnords',
     dmarc_mitigate_action='munge_from',
     dmarc_mitigate_unconditionally=False,
     dmarc_moderation_notice='Some moderation notice',
     dmarc_wrapped_message_text='some message text',
+    filter_action='discard',
+    filter_extensions=['.exe'],
     filter_content=True,
+    filter_types=['application/zip'],
     first_strip_reply_to=True,
+    forward_unrecognized_bounces_to='administrators',
     gateway_to_mail=False,
     gateway_to_news=False,
     goodbye_message_uri='mailman:///goodbye.txt',
+    hold_these_nonmembers=[
+        r'*@example.com',
+        ],
     include_rfc2369_headers=False,
     info='This is the mailing list info',
     linked_newsgroup='',
@@ -78,8 +97,15 @@ RESOURCE = dict(
     max_message_size='150',
     newsgroup_moderation='none',
     nntp_prefix_subject_too=False,
+    pass_extensions=['.pdf'],
+    pass_types=['image/jpeg'],
+    personalize='none',
     posting_pipeline='virgin',
     preferred_language='en',
+    process_bounces=True,
+    reject_these_nonmembers=[
+       'bperson@example.com',
+       ],
     reply_goes_to_list='point_to_list',
     reply_to_address='bee@example.com',
     require_explicit_destination=True,
@@ -87,9 +113,11 @@ RESOURCE = dict(
     send_welcome_message=False,
     subject_prefix='[ant]',
     subscription_policy='confirm_then_moderate',
+    unsubscription_policy='confirm',
     welcome_message_uri='mailman:///welcome.txt',
     respond_to_post_requests=True,
     max_num_recipients=150,
+    max_days_to_hold=20,
     )
 
 

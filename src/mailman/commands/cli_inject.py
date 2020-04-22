@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -47,7 +47,7 @@ def show_queues(ctx, param, value):
     '--queue', '-q',
     help=_("""\
     The name of the queue to inject the message to.  QUEUE must be one of the
-    directories inside the qfiles directory.  If omitted, the incoming queue is
+    directories inside the queue directory.  If omitted, the incoming queue is
     used."""))
 @click.option(
     '--show', '-s',

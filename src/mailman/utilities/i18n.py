@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -21,11 +21,11 @@ import os
 import sys
 
 from contextlib import ExitStack
-from importlib_resources import path
 from itertools import product
 from mailman.config import config
 from mailman.core.constants import system_preferences
 from mailman.interfaces.errors import MailmanError
+from mailman.utilities.filesystem import path
 from public import public
 
 

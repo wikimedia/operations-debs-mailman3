@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2007-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -115,7 +115,7 @@ case second 'm'.  Any other spelling is incorrect.""",
         'flufl.bounce',
         'flufl.i18n>=2.0',
         'flufl.lock>=3.1',
-        'importlib_resources',
+        'importlib_resources>=1.1.0',
         'gunicorn',
         'lazr.config',
         'python-dateutil>=2.0',
@@ -125,7 +125,7 @@ case second 'm'.  Any other spelling is incorrect.""",
         'zope.component',
         'zope.configuration',
         'zope.event',
-        'zope.interface',
+        'zope.interface>=5.0',
         ],
     )
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -80,7 +80,10 @@ class TestShell(unittest.TestCase):
             self._command.invoke(shell, ('--interactive',))
         posargs, kws = mock.InteractiveShellEmbed.instance().mainloop.call_args
         self.assertEqual(
-            kws['display_banner'], 'Welcome to the GNU Mailman shell\n')
+            kws['display_banner'], """Welcome to the GNU Mailman shell
+Use commit() to commit changes.
+Use abort() to discard changes since the last commit.
+Exit with ctrl+D does an implicit commit() but exit() does not.\n""")
 
     @configuration('shell', use_ipython='yes')
     def test_start_ipython1(self):
@@ -89,7 +92,10 @@ class TestShell(unittest.TestCase):
             self._command.invoke(shell, ('--interactive',))
         posargs, kws = mock.InteractiveShellEmbed.instance.call_args
         self.assertEqual(
-            kws['banner1'], 'Welcome to the GNU Mailman shell\n')
+            kws['banner1'], """Welcome to the GNU Mailman shell
+Use commit() to commit changes.
+Use abort() to discard changes since the last commit.
+Exit with ctrl+D does an implicit commit() but exit() does not.\n""")
 
     @configuration('shell', use_ipython='debug')
     def test_start_ipython_debug(self):
@@ -98,7 +104,10 @@ class TestShell(unittest.TestCase):
             self._command.invoke(shell, ('--interactive',))
         posargs, kws = mock.InteractiveShellEmbed.instance().mainloop.call_args
         self.assertEqual(
-            kws['display_banner'], 'Welcome to the GNU Mailman shell\n')
+            kws['display_banner'], """Welcome to the GNU Mailman shell
+Use commit() to commit changes.
+Use abort() to discard changes since the last commit.
+Exit with ctrl+D does an implicit commit() but exit() does not.\n""")
 
     @configuration('shell', use_ipython='oops')
     def test_start_ipython_invalid(self):
@@ -133,7 +142,7 @@ class TestShell(unittest.TestCase):
         self.assertEqual(
             results.output,
             'Usage: shell [OPTIONS] [RUN_ARGS]...\n'
-            'Try "shell --help" for help.\n\n'
+            'Try \'shell --help\' for help.\n\n'
             'Error: Regular expression requires --run\n')
 
     def test_listspec_without_run(self):
@@ -148,7 +157,7 @@ class TestShell(unittest.TestCase):
         posargs, kws = interactive_mock.call_args
         self.assertEqual(
             posargs[1],
-            "The variable 'm' is the ant.example.com mailing list")
+            'The variable \'m\' is the ant.example.com mailing list')
 
     def test_listspec_without_run_no_such_list(self):
         results = self._command.invoke(shell, ('-l', 'ant.example.com'))
@@ -156,7 +165,7 @@ class TestShell(unittest.TestCase):
         self.assertEqual(
             results.output,
             'Usage: shell [OPTIONS] [RUN_ARGS]...\n'
-            'Try "shell --help" for help.\n\n'
+            'Try \'shell --help\' for help.\n\n'
             'Error: No such list: ant.example.com\n')
 
     def test_run_without_listspec(self):
@@ -174,5 +183,5 @@ class TestShell(unittest.TestCase):
         self.assertEqual(
             results.output,
             'Usage: shell [OPTIONS] [RUN_ARGS]...\n'
-            'Try "shell --help" for help.\n\n'
+            'Try \'shell --help\' for help.\n\n'
             'Error: No such list: bee.example.com\n')
