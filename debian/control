@@ -31,7 +31,7 @@ Build-Depends: debhelper-compat (= 12),
                python3-zope.component,
                python3-zope.configuration,
                python3-zope.event,
-               python3-zope.interface
+               python3-zope.interface (>= 5.0)
 Rules-Requires-Root: binary-targets
 Standards-Version: 4.4.0
 Homepage: http://www.list.org/

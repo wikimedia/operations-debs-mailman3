@@ -1,12 +1,10 @@
-mailman3 (3.3.0-1) UNRELEASED; urgency=medium
-
-  [ Mike Gabriel ]
-  * New upstream release 3.3.0.
+mailman3 (3.3.1-1) UNRELEASED; urgency=medium
 
   [ Pierre-Elliott Bécue ]
+  * New upstream release 3.3.1. (Closes: #958976, #960072)
   * Update dependencies and patches for the new upstream release
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Sat, 22 Feb 2020 00:02:08 +0100
+ -- Pierre-Elliott Bécue <peb@debian.org>  Wed, 22 Apr 2020 15:09:07 +0200
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
