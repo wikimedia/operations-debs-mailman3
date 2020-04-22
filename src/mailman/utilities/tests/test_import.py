@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -321,8 +321,8 @@ class TestBasicImport(unittest.TestCase):
 
     def test_ban_list(self):
         banned = [
-            ('anne@example.com', 'anne@example.com'),
-            ('^.*@example.com', 'bob@example.com'),
+            ('anne@example.net', 'anne@example.net'),
+            ('^.*@example.edu', 'bob@example.edu'),
             ('non-ascii-\xe8@example.com', 'non-ascii-\ufffd@example.com'),
             ]
         self._pckdict['ban_list'] = [b[0].encode('iso-8859-1') for b in banned]
@@ -1043,16 +1043,17 @@ class TestRosterImport(unittest.TestCase):
                          [a.email for a in self._mlist.members.addresses],
                          'Address fred@ was wrongly added to the members list')
 
-    def test_password(self):
-        # self.anne.password = config.password_context.encrypt('abc123')
-        import_config_pck(self._mlist, self._pckdict)
-        for name in ('anne', 'bob', 'cindy', 'dave'):
-            addr = '%s@example.com' % name
-            user = self._usermanager.get_user(addr)
-            self.assertIsNotNone(user, 'Address %s was not imported' % addr)
-            self.assertEqual(
-                user.password, '{plaintext}%spass' % name,
-                'Password for %s was not imported' % addr)
+    # Commented out because password importing has been disabled.
+    # def test_password(self):
+    #     # self.anne.password = config.password_context.encrypt('abc123')
+    #     import_config_pck(self._mlist, self._pckdict)
+    #     for name in ('anne', 'bob', 'cindy', 'dave'):
+    #         addr = '%s@example.com' % name
+    #         user = self._usermanager.get_user(addr)
+    #         self.assertIsNotNone(user, 'Address %s was not imported' % addr)
+    #         self.assertEqual(
+    #             user.password, '{plaintext}%spass' % name,
+    #             'Password for %s was not imported' % addr)
 
     def test_same_user(self):
         # Adding the address of an existing User must not create another user.
@@ -1174,6 +1175,15 @@ class TestRosterImport(unittest.TestCase):
         self.assertEqual(member.moderation_action, Action.defer)
         member = self._mlist.nonmembers.get_member('homer@example.com')
         self.assertEqual(member.moderation_action, Action.hold)
+
+    def test_no_import_banned_address(self):
+        # Banned addresses should not be imported with any role.
+        self._pckdict['ban_list'] = [b'^.*example.com']
+        import_config_pck(self._mlist, self._pckdict)
+        self.assertEqual([], list(self._mlist.owners.addresses))
+        self.assertEqual([], list(self._mlist.moderators.addresses))
+        self.assertEqual([], list(self._mlist.members.addresses))
+        self.assertEqual([], list(self._mlist.nonmembers.addresses))
 
 
 class TestRosterVisibilityImport(unittest.TestCase):

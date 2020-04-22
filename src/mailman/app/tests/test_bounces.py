@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -191,6 +191,10 @@ Message-ID: <first>
 
 """)
 
+    def test_send_probe_missing_required_params(self):
+        with self.assertRaises(ValueError):
+            send_probe(self._member)
+
     def test_token(self):
         # Show that send_probe() returns a proper token, and that the token
         # corresponds to a record in the pending database.
@@ -275,6 +279,13 @@ list owner at
         send_probe(self._member, self._msg)
         items = get_queue_messages('virgin', expected_count=1)
         self.assertIsNone(items[0].msg['precedence'])
+
+    def test_send_probe_resets_bounce_score(self):
+        # Sending a probe should reset bounce_score so every subsequent bounce
+        # doesn't send another probe.
+        self._member.bounce_score = 5
+        send_probe(self._member, self._msg)
+        self.assertEqual(self._member.bounce_score, 0)
 
 
 class TestSendProbeNonEnglish(unittest.TestCase):

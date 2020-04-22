@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -24,7 +24,7 @@ from mailman.config import config
 from mailman.interfaces.plugin import IPlugin
 from mailman.utilities.modules import call_name
 from public import public
-from zope.interface.exceptions import DoesNotImplement
+from zope.interface import Invalid
 from zope.interface.verify import verifyObject
 
 
@@ -46,7 +46,7 @@ def initialize():
         plugin = call_name(class_path)
         try:
             verifyObject(IPlugin, plugin)
-        except DoesNotImplement:
+        except Invalid:
             log.error('Plugin class does not implement IPlugin: {}'.format(
                 class_path))
             continue

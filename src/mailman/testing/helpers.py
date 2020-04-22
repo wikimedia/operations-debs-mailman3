@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2008-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -83,6 +83,7 @@ def make_testable_runner(runner_class, name=None, predicate=None):
 
         def _do_periodic(self):
             """Stop when the queue is empty."""
+            super()._do_periodic()
             if predicate is None:
                 self._stop = (len(self.switchboard.files) == 0)
             else:

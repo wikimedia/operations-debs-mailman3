@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -25,7 +25,6 @@ import logging
 import datetime
 
 from contextlib import ExitStack
-from mailman.config import config
 from mailman.handlers.decorate import decorate_template
 from mailman.interfaces.action import Action, FilterAction
 from mailman.interfaces.address import IEmailValidator
@@ -588,11 +587,16 @@ def _import_roster(mlist, config_dict, members, role, action=None):
     validator = getUtility(IEmailValidator)
     roster = mlist.get_roster(role)
     skipped = []
+    banned = []
     action_arg = action
     for email in members:
         # For owners and members, the emails can have a mixed case, so
         # lowercase them all.
         email = bytes_to_str(email).lower()
+        # Ignore any banned addresses for all rosters.
+        if IBanManager(mlist).is_banned(email):
+            banned.append((email, role))
+            continue
         if roster.get_member(email) is not None:
             skipped.append((email, role))
             continue
@@ -640,9 +644,16 @@ def _import_roster(mlist, config_dict, members, role, action=None):
                 bytes_to_str(config_dict['usernames'][email])
             user.display_name = \
                 bytes_to_str(config_dict['usernames'][email])
-        if email in config_dict.get('passwords', {}):
-            user.password = config.password_context.encrypt(
-                config_dict['passwords'][email])
+
+        # XXX(abraj): Importing passwords are very slow since encryption takes
+        # a lot of time and tends to slow down the import process a lot,
+        # especially for large lists. There is really no use of user passwords
+        # from list config. For now, this code is just being commented out in
+        # case some use case pops up.
+        #
+        # if email in config_dict.get('passwords', {}):
+        #     user.password = config.password_context.encrypt(
+        #         config_dict['passwords'][email])
         # delivery_status
         oldds = config_dict.get('delivery_status', {}).get(email, (0, 0))[0]
         if oldds == 0:
@@ -687,4 +698,7 @@ def _import_roster(mlist, config_dict, members, role, action=None):
             member.preferences.receive_list_copy = not bool(prefs & 256)
     for email, role in skipped:
         print('{} is already imported with role {}'.format(email, role),
+              file=sys.stderr)
+    for email, role in banned:
+        print('{} is banned and not imported with role {}'.format(email, role),
               file=sys.stderr)

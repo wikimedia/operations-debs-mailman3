@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -55,6 +55,7 @@ class Template(Model):
     password = Column(SAUnicode, nullable=True)
 
     def __init__(self, name, context, uri, username, password):
+        super().__init__()
         self.name = name
         self.context = context
         self.reset(uri, username, password)

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -98,6 +98,7 @@ class _ListBase(CollectionMixin):
     def _resource_as_dict(self, mlist):
         """See `CollectionMixin`."""
         return dict(
+            advertised=mlist.advertised,
             display_name=mlist.display_name,
             fqdn_listname=mlist.fqdn_listname,
             list_id=mlist.list_id,

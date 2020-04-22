@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -63,7 +63,7 @@ class TestInject(unittest.TestCase):
         self.assertEqual(
             result.output,
             'Usage: inject [OPTIONS] LISTSPEC\n'
-            'Try "inject --help" for help.\n\n'
+            'Try \'inject --help\' for help.\n\n'
             'Error: No such list: bee.example.com\n')
 
     def test_inject_no_such_queue(self):
@@ -73,7 +73,7 @@ class TestInject(unittest.TestCase):
         self.assertEqual(
             result.output,
             'Usage: inject [OPTIONS] LISTSPEC\n'
-            'Try "inject --help" for help.\n\n'
+            'Try \'inject --help\' for help.\n\n'
             'Error: No such queue: bogus\n')
 
     def test_inject_no_filename_option(self):

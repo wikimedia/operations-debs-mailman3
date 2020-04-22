@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -32,6 +32,8 @@ class ModelMeta:
     """
     @staticmethod
     def _reset(db):
+        # Make sure we delete/expunge all objects before we drop tables.
+        config.db.store.expunge_all()
         with closing(config.db.engine.connect()) as connection:
             transaction = connection.begin()
             try:

@@ -60,6 +60,7 @@ Table of Contents
     src/mailman/docs/mta
     src/mailman/docs/postorius
     src/mailman/docs/hyperkitty
+    src/mailman/docs/documentation
     src/mailman/plugins/docs/intro
     src/mailman/docs/contribute
     src/mailman/docs/STYLEGUIDE
@@ -70,6 +71,16 @@ Table of Contents
     src/mailman/docs/ACKNOWLEDGMENTS
 
 
+REST API
+--------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: REST API
+
+    src/mailman/rest/docs/rest
+
+
 Mailman modules
 ---------------
 
@@ -77,13 +88,13 @@ These documents are generated from the internal module documentation.
 
 .. toctree::
     :maxdepth: 1
+    :caption: Mailman Modules
 
     src/mailman/model/docs/model
     src/mailman/runners/docs/runners
     src/mailman/chains/docs/chains
     src/mailman/rules/docs/rules
     src/mailman/handlers/docs/handlers
-    src/mailman/rest/docs/rest
     src/mailman/core/docs/core
     src/mailman/app/docs/app
     src/mailman/styles/docs/styles

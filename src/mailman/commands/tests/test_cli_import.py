@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2015-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -58,8 +58,8 @@ class TestImport(unittest.TestCase):
         self.assertEqual(
             result.output,
             'Usage: import21 [OPTIONS] LISTSPEC PICKLE_FILE\n'
-            'Try "import21 --help" for help.\n\n'
-            'Error: Missing argument "LISTSPEC".\n')
+            'Try \'import21 --help\' for help.\n\n'
+            'Error: Missing argument \'LISTSPEC\'.\n')
 
     def test_pickle_with_nondict(self):
         with NamedTemporaryFile() as pckfile:

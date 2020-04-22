@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -173,6 +173,8 @@ ALL_TEMPLATES = {
         'list:admin:notice:subscribe',
         'list:admin:notice:unrecognized',
         'list:admin:notice:unsubscribe',
+        'list:admin:notice:disable',
+        'list:admin:notice:removal',
         'list:member:digest:footer',
         'list:member:digest:header',
         'list:member:digest:masthead',
@@ -188,6 +190,7 @@ ALL_TEMPLATES = {
         'list:user:notice:refuse',
         'list:user:notice:rejected',
         'list:user:notice:welcome',
+        'list:user:notice:warning',
         }
     }
 

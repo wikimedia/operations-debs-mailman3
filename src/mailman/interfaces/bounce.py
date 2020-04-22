@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -20,6 +20,14 @@
 from enum import Enum
 from public import public
 from zope.interface import Attribute, Interface
+
+
+class InvalidBounceEvent(Exception):
+    """An invalid bounce event was found during processing.
+
+    This either means the email is no longer a member or the MailingList does
+    not exist anymore.
+    """
 
 
 @public
@@ -88,6 +96,21 @@ class IBounceProcessor(Interface):
         :type context: BounceContext
         :return: The registered bounce event.
         :rtype: IBounceEvent
+        """
+
+    def process_event(event):
+        """Process a single bounce event.
+
+        :param event: The bounce event to process.
+        :type event: IBounceEvent
+        """
+
+    def send_warnings_and_remove():
+        """Send warnings to disabled users and remove them if needed.
+
+        All users, that have their delivery disabled, get warnings about being
+        un-subscribed until Mailinglist's maximum configured numbered of
+        warnings are sent and then remove the user.
         """
 
     events = Attribute(

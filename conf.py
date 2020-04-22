@@ -27,7 +27,9 @@ import sys, os
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
-              'sphinx.ext.graphviz']
+              'sphinx.ext.graphviz',
+              'sphinxcontrib.zopeext.autointerface',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -95,7 +97,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -210,6 +212,11 @@ latex_documents = [
 #latex_domain_indices = True
 
 
+autodoc_mock_imports = [
+    "mailman.testing.helpers"
+]
+
+
 # -- Options for manual page output --------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -232,7 +239,7 @@ def index_html():
         os.chdir('build/sphinx/html')
         try:
             os.symlink('README.html', 'index.html')
-            print 'index.html -> README.html'
+            print('index.html -> README.html')
         except OSError as error:
             if error.errno != errno.EEXIST:
                 raise

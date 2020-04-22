@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -41,7 +41,7 @@ class FakeMTA:
     def delete(self, mlist):
         pass
 
-    def regenerate(self, output=None):
+    def regenerate(self, directory=None):
         pass
 
 

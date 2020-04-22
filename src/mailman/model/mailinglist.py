@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2006-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -27,6 +27,7 @@ from mailman.interfaces.action import Action, FilterAction
 from mailman.interfaces.address import IAddress, InvalidEmailAddressError
 from mailman.interfaces.archiver import ArchivePolicy
 from mailman.interfaces.autorespond import ResponseAction
+from mailman.interfaces.bans import IBanManager
 from mailman.interfaces.bounce import UnrecognizedBounceDisposition
 from mailman.interfaces.digests import DigestFrequency
 from mailman.interfaces.domain import IDomainManager
@@ -36,8 +37,8 @@ from mailman.interfaces.mailinglist import (
     IHeaderMatch, IHeaderMatchList, IListArchiver, IListArchiverSet,
     IMailingList, Personalization, ReplyToMunging, SubscriptionPolicy)
 from mailman.interfaces.member import (
-    AlreadySubscribedError, MemberRole, MissingPreferredAddressError,
-    SubscriptionEvent)
+    AlreadySubscribedError, MemberRole, MembershipIsBannedError,
+    MissingPreferredAddressError, SubscriptionEvent)
 from mailman.interfaces.mime import FilterType
 from mailman.interfaces.nntp import NewsgroupModeration
 from mailman.interfaces.user import IUser
@@ -118,13 +119,13 @@ class MailingList(Model):
     collapse_alternatives = Column(Boolean)
     convert_html_to_plaintext = Column(Boolean)
     # Bounces.
-    bounce_info_stale_after = Column(Interval)                   # XXX
+    bounce_info_stale_after = Column(Interval)
     bounce_matching_headers = Column(SAUnicode)                  # XXX
-    bounce_notify_owner_on_disable = Column(Boolean)             # XXX
-    bounce_notify_owner_on_removal = Column(Boolean)             # XXX
-    bounce_score_threshold = Column(Integer)                     # XXX
-    bounce_you_are_disabled_warnings = Column(Integer)           # XXX
-    bounce_you_are_disabled_warnings_interval = Column(Interval)  # XXX
+    bounce_notify_owner_on_disable = Column(Boolean)
+    bounce_notify_owner_on_removal = Column(Boolean)
+    bounce_score_threshold = Column(Integer)
+    bounce_you_are_disabled_warnings = Column(Integer)
+    bounce_you_are_disabled_warnings_interval = Column(Interval)
     forward_unrecognized_bounces_to = Column(
         Enum(UnrecognizedBounceDisposition))
     process_bounces = Column(Boolean)
@@ -483,20 +484,26 @@ class MailingList(Model):
         return member is not None
 
     @dbconnection
-    def subscribe(self, store, subscriber, role=MemberRole.member):
+    def subscribe(self, store, subscriber, role=MemberRole.member,
+                  send_welcome_message=None):
         """See `IMailingList`."""
         member, email = self._get_subscriber(store, subscriber, role)
         test_email = email or subscriber.lower()
-        if test_email == self.posting_address:
+        # Allow list posting address only for nonmember role.
+        if (test_email == self.posting_address and
+                role != MemberRole.nonmember):
             raise InvalidEmailAddressError('List posting address not allowed')
         if member is not None:
             raise AlreadySubscribedError(self.fqdn_listname, email, role)
+        if IBanManager(self).is_banned(test_email):
+            raise MembershipIsBannedError(self, test_email)
         member = Member(role=role,
                         list_id=self._list_id,
                         subscriber=subscriber)
         member.preferences = Preferences()
         store.add(member)
-        notify(SubscriptionEvent(self, member))
+        notify(SubscriptionEvent(
+            self, member, send_welcome_message=send_welcome_message))
         return member
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -22,11 +22,11 @@ import sys
 import unittest
 
 from contextlib import ExitStack, contextmanager
-from importlib_resources import path
 from mailman.interfaces.rules import IRule
 from mailman.interfaces.styles import IStyle
 from mailman.testing.helpers import configuration
 from mailman.testing.layers import ConfigLayer
+from mailman.utilities.filesystem import path
 from mailman.utilities.modules import (
     find_components, find_pluggable_components, hacked_sys_modules)
 from pathlib import Path
@@ -162,7 +162,7 @@ class AbstractStyle:
     def test_find_pluggable_components_by_plugin_name(self):
         with ExitStack() as resources:
             testing_path = resources.enter_context(
-                path('mailman.plugins.testing', ''))
+                path('mailman.plugins.testing',  ''))
             resources.enter_context(hack_syspath(0, str(testing_path)))
             resources.enter_context(configuration('plugin.example', **{
                 'class': 'example.hooks.ExamplePlugin',

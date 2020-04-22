@@ -8,6 +8,76 @@ Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 Here is a history of user visible changes to Mailman.
 
 
+3.3.1
+=====
+
+(2020-04-19)
+
+Bugs
+----
+* Allow ``action`` for header matches to be None in REST interface. (Closes #671)
+* It is now possible to add the list posting address with nonmember role, e.g.
+  to give it a moderaction of discard.  (Closes #633)
+* The issue of posting a message without a To: header to a fully personalized
+  list throwing a KeyError has been fixed.  (Closes #639)
+* Confirmation or moderator approval of a subscription from an address banned
+  subsequent to subscribing will no longer succeed.  (Closes #642)
+* Fixed an issue caused by the fix for #642 where email confirmation of a
+  banned subscription address would cause a shunted message.  (Closes #643)
+* Fixed a bug where the ``postfix_vmap`` file would merge two columns for long
+  domain names. (Closes #651)
+* Fix failing test cases due to changed API in a new version of dkimpy. (Closes
+  #655)
+* Mailman now auto-geneartes alias maps when it starts for the first
+  time. (Closes #469)
+* Sending a bounce probe now resets ``bounce_score``.  (Closes #660)
+* Bounce probes which bounce are now properly recognized.  (Closes #661)
+* Residual bounces are logged but are not processed further.  (Closes #662)
+* Disabling delivery by bounce properly initializes some bounce info so
+  warnings can be sent and the member eventually removed.  (Closes #663)
+* Bouncing member is not removed until
+  ``bounce_you_are_disabled_warnings_interval`` after the last warning was
+  sent.  (Closes #664)
+* Fixed recipient address in delivery disabled by bounce notice to the user.
+  (Closes #665)
+* Residial bounces are now marked as processed.  (Closes #669)
+* Find members API now searches for the Member's display name too. (Closes #667)
+* Content filtering ``convert_html_to_plaintext`` no longer creates messages
+  that can't be flattened as_bytes.  (Closes #677)
+* Removed an incorrect failing assertion when confirming a confirm_then_moderate
+  unsubscription.  (Closes #553)
+* Fix a bug due to incompatible API of a new version of ``importlib_resources``
+  library which causes Templates loading to fail. (Closes #691)
+* Fix a bug due to incompatible API of a new version of ``zope.intefaces``.
+  (See !606)
+* Import21 no longer tries to import banned addresses.  (Closes #688)
+
+Command line
+------------
+* A new ``mailman members --sync`` command has been added to help you
+synchronize subscribed mailing list members against a text list of
+subscription addresses. (see !545)
+
+REST
+----
+* Expose ``max_days_to_hold``, ``accept_these_nonmembers``,
+  ``reject_these_nonmembers``, ``discard_these_nonmembers``,
+  ``hold_these_nonmembers``, ``personalize``, and ``unsubscription_policy``
+  attributes of a MailingList through API. (See !570)
+* Add a new ``send_welcome_message`` flag when subscribing users to override
+  MailingList's default setting. (Closes #362)
+* Expose content filtering settings for MailingList. (Closes #694)
+* Add ``advertised`` attribute to ``MailingList`` object so Postorius doesn't
+  have to make multiple calls for Index Page. (See !608)
+* Expose ``filter_action`` attribute of MailingList through API. (See !609)
+
+Features
+--------
+* Add support for processing of email bounce events. Thanks to Aaryan Bhagat for
+  working on this as a part of his GSoC project and Thanks to Google for
+  sponsoring the project as a part of GSoC.(See !584)
+
+
 3.3.0 -- "Tom Sawyer"
 =====================
 (2019-09-04)

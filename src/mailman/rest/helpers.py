@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2010-2020 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -18,6 +18,7 @@
 """Web service helpers."""
 
 import json
+import types
 import falcon
 import hashlib
 
@@ -213,7 +214,11 @@ class GetterSetter:
         :return: The attribute value, ready for JSON encoding.
         :rtype: object
         """
-        return getattr(obj, attribute)
+        value = getattr(obj, attribute)
+        # If the attribute is a generator type, return a list instead.
+        if isinstance(value, types.GeneratorType):
+            value = list(value)
+        return value
 
     def put(self, obj, attribute, value):
         """Set the named object attribute value.
