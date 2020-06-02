@@ -8,8 +8,10 @@ mailman3 (3.2.1-1+deb10u1) buster; urgency=medium
   [ Pierre-Elliott Bécue ]
   * Import d/p/0003 to fix issues with import21 subcommand
     Closes: #958976
+  * Add d/gbp.conf file to avoid gbp complaining about what branch to build
+    against.
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:43:40 +0200
+ -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:45:24 +0200
 
 mailman3 (3.2.1-1) unstable; urgency=medium
 
