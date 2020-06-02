@@ -8,7 +8,7 @@
 	create 640 list list
 	postrotate
 		if /etc/init.d/mailman3 status >/dev/null; then \
-		    /usr/bin/mailman reopen >/dev/null; \
+		    /usr/bin/mailman-wrapper reopen >/dev/null; \
 		fi;
 	endscript
 }

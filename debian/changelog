@@ -1,3 +1,12 @@
+mailman3 (3.2.1-1+deb10u1) buster; urgency=medium
+
+  [ Daniel Kahn Gillmor <dkg@fifthhorseman.net> ]
+  * debian/mailman3.logrotate: use mailman-wrapper instead of mailman binary
+    after logrotate's call, otherwise the backend won't work properly for the
+    root user. (Closes: #958977)
+
+ -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:38:37 +0200
+
 mailman3 (3.2.1-1) unstable; urgency=medium
 
   * New upstream release 3.2.1
