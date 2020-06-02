@@ -1,10 +1,14 @@
 mailman3 (3.3.1-1) UNRELEASED; urgency=medium
 
+  [ Daniel Kahn Gillmor ]
+  * d/mailman3.logrotate: use mailman-wrapper instead of mailman binary
+    after logrotate's job. (Closes: #958977)
+
   [ Pierre-Elliott Bécue ]
   * New upstream release 3.3.1. (Closes: #958976, #960072)
   * Update dependencies and patches for the new upstream release
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Wed, 22 Apr 2020 15:09:07 +0200
+ -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:50:34 +0200
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
