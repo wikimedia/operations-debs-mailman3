@@ -5,7 +5,11 @@ mailman3 (3.2.1-1+deb10u1) buster; urgency=medium
     after logrotate's call, otherwise the backend won't work properly for the
     root user. (Closes: #958977)
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:38:37 +0200
+  [ Pierre-Elliott Bécue ]
+  * Import d/p/0003 to fix issues with import21 subcommand
+    Closes: #958976
+
+ -- Pierre-Elliott Bécue <peb@debian.org>  Tue, 02 Jun 2020 20:43:40 +0200
 
 mailman3 (3.2.1-1) unstable; urgency=medium
 
