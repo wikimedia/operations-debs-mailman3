@@ -15,9 +15,10 @@ mailman3 (3.3.2-1) UNRELEASED; urgency=medium
       moderation notifications
   * d/control:
     - Bump Standards-Version to 4.5.1
-    - Remove versioned dependency on python3-falcon 
+    - Remove versioned build-dependency on python3-falcon 
+    - Add build-dependency on python3-atpublic
 
- -- Jonas Meurer <jonas@freesources.org>  Mon, 28 Dec 2020 20:52:42 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 28 Dec 2020 20:57:35 +0100
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
