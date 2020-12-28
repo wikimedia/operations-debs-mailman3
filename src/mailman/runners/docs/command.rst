@@ -7,6 +7,7 @@ are extensible using the Mailman plug-in system, but Mailman comes with a
 number of email commands out of the box.  These are processed when a message
 is sent to the list's ``-request`` address.
 
+    >>> from mailman.app.lifecycle import create_list
     >>> mlist = create_list('test@example.com')
     >>> mlist.send_welcome_messages = False
 
@@ -18,6 +19,8 @@ For example, the ``echo`` command simply echoes the original command back to
 the sender.  The command can be in the ``Subject`` header.
 ::
 
+    >>> from mailman.testing.helpers import (specialized_message_from_string
+    ...   as message_from_string)
     >>> msg = message_from_string("""\
     ... From: aperson@example.com
     ... To: test-request@example.com
@@ -61,6 +64,7 @@ And now the response is in the ``virgin`` queue.
     - Done.
     <BLANKLINE>
 
+    >>> from mailman.testing.documentation import dump_msgdata    
     >>> dump_msgdata(messages[0].msgdata)
     _parsemsg           : False
     listid              : test.example.com
@@ -143,14 +147,16 @@ address, and the other is the results of his email command.
     >>> from mailman.interfaces.subscriptions import ISubscriptionManager
 
     >>> manager = ISubscriptionManager(mlist)
+    >>> import re
     >>> for item in messages:
     ...     subject = item.msg['subject']
     ...     print('Subject:', subject)
     ...     if 'confirm' in str(subject):
-    ...         token = str(subject).split()[1].strip()
+    ...         token = re.sub(r'^.*\+([^+@]*)@.*$', r'\1', 
+    ...                        str(item.msg['from']))
     ...         new_token, token_owner, member = manager.confirm(token)
     ...         assert new_token is None, 'Confirmation failed'
-    Subject: confirm ...
+    Subject: Your confirmation ...
 
 .. Clear the queue
     >>> ignore = get_queue_messages('virgin')

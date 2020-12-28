@@ -8,6 +8,95 @@ Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 Here is a history of user visible changes to Mailman.
 
 
+3.3.2
+=====
+
+(2020-11-6)
+
+Bugs
+----
+* When importing 2.1 lists, ignore CR characters added by browsers in headers
+  and footers.  (Closes #701)
+* RFC 2369 headers are now added to notification messages.  (Closes #710)
+* Bounce probes are now encoded in the correct charset.  (Closes #712)
+* We now unfold address containing headers before parsing in avoid_duplicates.
+  (Closes #725)
+* The ``dmarc`` rule no longer misses if DNS returns a name containing upper
+  case.  (Closes #726)
+* Fixed ``mailman.email.message.Message.as_string`` to not return unicode
+  surrogates.  (Closes #732)
+* Bounce probes can now be sent to a member subscribed as a User.
+  (Closes #739)
+* A member subscribed as a User can now be unsubscribed.  (Closes #734)
+* When a handler rejects or discards a message, it won't be delivered or
+  archived anyway.  (Closes #752)
+* Messages forwarded when content filtering removes the entire message and
+  ``filter_action`` is forward now go to owners as well as moderators.
+  (Closes #753)
+* Handle TOCTOU conditions when there are two simultaneous subscription
+  requests for the same email address. (Closes #748)
+* Removed unnecessary call to ``Lock().disown()`` from ``bin/master.py``.
+  (Closes #754)
+* Fixed an invalid logging call in bin/master.py.  (Closes #756)
+* VERPed list welcome messages now have a correct envelope sender.
+  (Closes #757)
+* Messages in digests now contain a ``Message: N`` header.  (Closes #764)
+* The LMTP runner will now add a ``Message-ID:`` header if missing.
+  (Closes #448 and #490)
+* The ``mailman gatenews`` command now adds ``original_size`` to the msgdata.
+  (Closes #762)
+
+Command line
+------------
+* New ``addmembers``, ``delmembers`` and ``syncmembers`` ``mailman``
+  subcommands have been added.  These provide more options and controls than
+  the corresponding ``mailman members`` modes which are now deprecated.
+  (Closes #686)
+* The ``mailman conf`` command without a ``-s/--section`` argument will now
+  show sections defined only in mailman.cfg in addition to those from
+  schema.cfg.  (Closes #736)
+* Added a ``charset`` option to the ``import21`` subcommand.  (Closes #769)
+* The ``import21`` subcommand will now truncate long SAUnicode values if the
+  database is MySQL.  (Closes #772)
+* The ``import21`` subcommand no longer adds the entire legacy
+  ``*_these_nonmembers`` list and then removes the non-regexps.  It now just
+  adds the regexps.  (Closes #773)
+
+REST
+----
+* Add a new endpoint ``/lists/<listid>/requests/count`` which returns total
+  number of pending requests. (Closes #713)
+* Subscription requests API now allows filtering requests with ``token_owner``
+  parameter. (Closes #714)
+* Add ``subscription_mode`` to ``Member`` resource so API clients can
+  differentiate between subscription via address and via primary address of an
+  user. (Closes #707)
+* Add ``/list/<listid>/held/count`` to get a count of total held
+  messages. (Closes #713)
+* Add ``fields`` as an optional parameter in all the Member's APIs to customize
+  which fields are included in the resource. (Closes #716)
+* Expose ``emergency`` field of MailingList via REST API. (Closes #719)
+
+Localization
+------------
+* Italian translations of the templates have been added.
+* The default charset for many languages is changed to utf-8.  (Closes #747)
+
+Others
+------
+* Add a new ``archive_rendering_mode`` attribute to ``MailingList`` to
+  configure what kind of rendering should Archivers use to render
+  Emails. (Closes #720)
+* An ``address=`` option has been added to the email ``join`` command to allow
+  requesting subscription of other than the sender of the email.  (Closes #721)
+* Added the ability to invite members to a list.  (Closes #510 and #730)
+* Made (un)subscription confirmation email subjects user friendly and
+  translatable.  (Closes #541)
+* Implemented a new email ``who`` command to obtain list membership.
+* Add support  for dnspython>=2.0. (Closes #743)
+* Added information about ``pass_types``, ``filter_extensions`` and
+  ``pass_extensions`` to the content filtering doc.  (Closes #775)
+
 3.3.1
 =====
 
@@ -55,8 +144,8 @@ Bugs
 Command line
 ------------
 * A new ``mailman members --sync`` command has been added to help you
-synchronize subscribed mailing list members against a text list of
-subscription addresses. (see !545)
+  synchronize subscribed mailing list members against a text list of
+  subscription addresses. (see !545)
 
 REST
 ----
@@ -70,6 +159,9 @@ REST
 * Add ``advertised`` attribute to ``MailingList`` object so Postorius doesn't
   have to make multiple calls for Index Page. (See !608)
 * Expose ``filter_action`` attribute of MailingList through API. (See !609)
+* Unsubscribing a user by calling ``DELETE`` on a Member resources now honors
+  Lists's ``unsubscription_policy`` and also sends out notifications to user
+  and admins if list is configured to do so. (Closes #759)
 
 Features
 --------

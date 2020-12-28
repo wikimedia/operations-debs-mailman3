@@ -22,8 +22,8 @@ from setuptools import setup, find_packages
 from string import Template
 
 
-if sys.hexversion < 0x30500f0:
-    print('Mailman requires at least Python 3.5')
+if sys.hexversion < 0x30600f0:
+    print('Mailman requires at least Python 3.6')
     sys.exit(1)
 
 
@@ -83,6 +83,11 @@ case second 'm'.  Any other spelling is incorrect.""",
     author_email    = 'mailman-developers@python.org',
     license         = 'GPLv3',
     url             = 'https://www.list.org',
+    project_urls={
+        'Documentation': 'https://docs.mailman3.org/projects/mailman/en/latest/README.html',
+        'Source': 'https://gitlab.com/mailman/mailman.git',
+        'Tracker': 'https://gitlab.com/mailman/mailman/-/issues',
+        },
     keywords        = 'email',
     classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -90,9 +95,10 @@ case second 'm'.  Any other spelling is incorrect.""",
         'License :: OSI Approved :: '
         'GNU General Public License v3 or later (GPLv3+)',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Communications :: Email :: Mailing List Servers',
         'Topic :: Communications :: Usenet News',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',

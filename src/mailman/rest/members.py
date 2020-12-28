@@ -18,7 +18,7 @@
 """REST for members."""
 
 from lazr.config import as_boolean
-from mailman.app.membership import add_member, delete_member
+from mailman.app.membership import add_member
 from mailman.interfaces.action import Action
 from mailman.interfaces.address import IAddress, InvalidEmailAddressError
 from mailman.interfaces.listmanager import IListManager
@@ -35,7 +35,8 @@ from mailman.rest.helpers import (
     created, etag, no_content, not_found, okay)
 from mailman.rest.preferences import Preferences, ReadOnlyPreferences
 from mailman.rest.validator import (
-    Validator, enum_validator, subscriber_validator)
+    Validator, enum_validator, list_of_strings_validator, subscriber_validator)
+from operator import attrgetter
 from public import public
 from uuid import UUID
 from zope.component import getUtility
@@ -44,9 +45,13 @@ from zope.component import getUtility
 class _MemberBase(CollectionMixin):
     """Shared base class for member representations."""
 
-    def _resource_as_dict(self, member):
-        """See `CollectionMixin`."""
-        enum, dot, role = str(member.role).partition('.')
+    @property
+    def all_fields(self):
+        """Get a mapping of all the supported fields for a Member resource.
+
+        Keys are the name of the fields and values are callables that return
+        values of those fields.
+        """
         # The member will always have a member id and an address id.  It will
         # only have a user id if the address is linked to a user.
         # E.g. nonmembers we've only seen via postings to lists they are not
@@ -54,33 +59,85 @@ class _MemberBase(CollectionMixin):
         # member_id are UUIDs.  In API 3.0 we use the integer equivalent of
         # the UID in the URL, but in API 3.1 we use the hex equivalent.  See
         # issue #121 for details.
-        member_id = self.api.from_uuid(member.member_id)
-        response = dict(
-            address=self.api.path_to(
-                'addresses/{}'.format(member.address.email)),
-            delivery_mode=member.delivery_mode,
-            email=member.address.email,
-            list_id=member.list_id,
-            member_id=member_id,
-            role=role,
-            self_link=self.api.path_to('members/{}'.format(member_id)),
-            )
-        # Add the moderation action if overriding the list's default.
-        if member.moderation_action is not None:
-            response['moderation_action'] = member.moderation_action
-        # Add display_name if it is present
-        if member.display_name is not None:
-            response['display_name'] = member.display_name
-        # Add the user link if there is one.
+        return {
+            'address': self._get_address,
+            'delivery_mode': attrgetter('delivery_mode'),
+            'email': attrgetter('address.email'),
+            'list_id': attrgetter('list_id'),
+            'subscription_mode': attrgetter('subscription_mode'),
+            'role': attrgetter('role.name'),
+            'user': self._get_user,
+            'moderation_action': attrgetter('moderation_action'),
+            'display_name': attrgetter('display_name'),
+            'self_link': self._get_self_link,
+            'member_id': self._get_member_id,
+            }
+
+    def _get_member_id(self, member):
+        """Get member_id."""
+        return self.api.from_uuid(member.member_id)
+
+    def _get_address(self, member):
+        """Get url to member's addresses."""
+        return self.api.path_to(
+                'addresses/{}'.format(member.address.email))
+
+    def _get_user(self, member):
+        """Get url to member's user if one exists."""
         user = member.user
-        if user is not None:
+        if user:
             user_id = self.api.from_uuid(user.user_id)
-            response['user'] = self.api.path_to('users/{}'.format(user_id))
+            return self.api.path_to('users/{}'.format(user_id))
+        return None
+
+    def _get_self_link(self, member):
+        """Get self_link to member resource."""
+        member_id = self.api.from_uuid(member.member_id)
+        return self.api.path_to('members/{}'.format(member_id))
+
+    def _resource_as_dict(self, member, fields=None):
+        """See `CollectionMixin`."""
+        if fields is None:
+            fields = self.all_fields.keys()
+
+        response = {}
+        for field in fields:
+            value_getter = self.all_fields.get(field, None)
+            if value_getter is None:
+                raise ValueError(
+                    'Unknown field "{}" for Member resource.'
+                    ' Allowed fields are: {}'.format(
+                        field, ', '.join(self.all_fields.keys())))
+            value = value_getter(member)
+            if value is not None:
+                response[field] = value
         return response
 
     def _get_collection(self, request):
         """See `CollectionMixin`."""
         return list(getUtility(ISubscriptionService))
+
+    def on_get(self, request, response):
+        """/members"""
+        validator = Validator(
+            fields=list_of_strings_validator,
+            count=int,
+            page=int,
+            _optional=['fields', 'count', 'page'],
+            )
+        try:
+            data = validator(request)
+        except ValueError as ex:
+            bad_request(response, str(ex))
+            return
+        fields = data.get('fields', None)
+
+        try:
+            resource = self._make_collection(request, fields)
+        except ValueError as ex:
+            bad_request(response, str(ex))
+            return
+        okay(response, etag(resource))
 
 
 @public
@@ -94,11 +151,6 @@ class MemberCollection(_MemberBase):
     def _get_collection(self, request):
         """See `CollectionMixin`."""
         raise NotImplementedError
-
-    def on_get(self, request, response):
-        """roster/[members|owners|moderators]"""
-        resource = self._make_collection(request)
-        okay(response, etag(resource))
 
 
 @public
@@ -154,10 +206,39 @@ class AMember(_MemberBase):
             return
         mlist = getUtility(IListManager).get_by_list_id(self._member.list_id)
         if self._member.role is MemberRole.member:
-            delete_member(mlist, self._member.address.email, False, False)
+            try:
+                values = Validator(
+                    pre_confirmed=as_boolean,
+                    pre_approved=as_boolean,
+                    _optional=('pre_confirmed', 'pre_approved'),
+                    )(request)
+            except ValueError as error:
+                bad_request(response, str(error))
+                return
+            manager = ISubscriptionManager(mlist)
+            # XXX(maxking): For backwards compat, we are going to keep
+            # pre-confirmed to be "True" by defualt instead of "False", that it
+            # should be. Any, un-authenticated requests should manually specify
+            # that it is *not* confirmed by the user.
+            if 'pre_confirmed' in values:
+                pre_confirmed = values.get('pre_confirmed')
+            else:
+                pre_confirmed = True
+            token, token_owner, member = manager.unregister(
+                self._member.address,
+                pre_approved=values.get('pre_approved'),
+                pre_confirmed=pre_confirmed)
+            if member is None:
+                assert token is None
+                assert token_owner is TokenOwner.no_one
+                no_content(response)
+            else:
+                assert token is not None
+                content = dict(token=token, token_owner=token_owner.name)
+                accepted(response, etag(content))
         else:
             self._member.unsubscribe()
-        no_content(response)
+            no_content(response)
 
     def on_patch(self, request, response):
         """Patch the membership.
@@ -211,10 +292,11 @@ class AllMembers(_MemberBase):
                 pre_verified=as_boolean,
                 pre_confirmed=as_boolean,
                 pre_approved=as_boolean,
+                invitation=as_boolean,
                 send_welcome_message=as_boolean,
                 _optional=('delivery_mode', 'display_name', 'role',
                            'pre_verified', 'pre_confirmed', 'pre_approved',
-                           'send_welcome_message',))
+                           'invitation', 'send_welcome_message',))
             arguments = validator(request)
         except ValueError as error:
             bad_request(response, str(error))
@@ -256,6 +338,7 @@ class AllMembers(_MemberBase):
             pre_verified = arguments.pop('pre_verified', False)
             pre_confirmed = arguments.pop('pre_confirmed', False)
             pre_approved = arguments.pop('pre_approved', False)
+            invitation = arguments.pop('invitation', False)
             send_welcome_message = arguments.pop('send_welcome_message', None)
             # Now we can run the registration process until either the
             # subscriber is subscribed, or the workflow is paused for
@@ -267,6 +350,7 @@ class AllMembers(_MemberBase):
                     pre_verified=pre_verified,
                     pre_confirmed=pre_confirmed,
                     pre_approved=pre_approved,
+                    invitation=invitation,
                     send_welcome_message=send_welcome_message)
             except AlreadySubscribedError:
                 conflict(response, b'Member already subscribed')
@@ -282,6 +366,9 @@ class AllMembers(_MemberBase):
                 return
             except SubscriptionPendingError:
                 conflict(response, b'Subscription request already pending')
+                return
+            except Exception as e:
+                bad_request(response, str(e))
                 return
             if token is None:
                 assert token_owner is TokenOwner.no_one, token_owner
@@ -348,11 +435,6 @@ class AllMembers(_MemberBase):
         location = self.api.path_to('members/{}'.format(member_id))
         created(response, location)
 
-    def on_get(self, request, response):
-        """/members"""
-        resource = self._make_collection(request)
-        okay(response, etag(resource))
-
 
 class _FoundMembers(MemberCollection):
     """The found members collection."""
@@ -387,7 +469,9 @@ class FindMembers(_MemberBase):
             # Allow pagination.
             page=int,
             count=int,
-            _optional=('list_id', 'subscriber', 'role', 'page', 'count'))
+            fields=list_of_strings_validator,
+            _optional=(
+                'list_id', 'subscriber', 'role', 'page', 'count', 'fields'))
         try:
             data = validator(request)
         except ValueError as error:
@@ -397,6 +481,12 @@ class FindMembers(_MemberBase):
             # handled later.
             data.pop('page', None)
             data.pop('count', None)
+            fields = data.pop('fields', None)
             members = service.find_members(**data)
             resource = _FoundMembers(members, self.api)
-            okay(response, etag(resource._make_collection(request)))
+            try:
+                collection = resource._make_collection(request, fields)
+            except ValueError as ex:
+                bad_request(response, str(ex))
+                return
+            okay(response, etag(collection))

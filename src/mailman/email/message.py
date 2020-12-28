@@ -55,7 +55,8 @@ class Message(email.message.Message):
         except (KeyError, LookupError, UnicodeEncodeError):
             value = email.message.Message.as_bytes(self).decode(
                 'ascii', 'replace')
-        return value
+        # Also ensure no unicode surrogates in the returned string.
+        return email.utils._sanitize(value)
 
     @property
     def sender(self):
@@ -143,10 +144,11 @@ class UserNotification(Message):
         self['From'] = sender
         if isinstance(recipients, (list, set, tuple)):
             self['To'] = COMMASPACE.join(recipients)
-            self.recipients = recipients
+            self.recipients = {email.utils.parseaddr(recipient)[1] for
+                               recipient in recipients}
         else:
             self['To'] = recipients
-            self.recipients = set([recipients])
+            self.recipients = set([email.utils.parseaddr(recipients)[1]])
 
     def send(self, mlist, *, add_precedence=True, **_kws):
         """Sends the message by enqueuing it to the 'virgin' queue.

@@ -2,9 +2,9 @@
 Sending Digests
 ===============
 
-Whwn a list's ``digests_enabled`` setting is ``True``, Mailman accumulates
+When a list's ``digests_enabled`` setting is ``True``, Mailman accumulates
 list posts in a mailbox for eventual sending to digest members.  When the size
-of this maolbox reaches the list's ``digest_size_threshold``, a digest is sent
+of this mailbox reaches the list's ``digest_size_threshold``, a digest is sent
 to the digest members and the mailbox is cleared.
 
 A list may also have its ``digest_send_periodic`` setting ``True`` in which
@@ -22,6 +22,7 @@ Complete information about command options may be obtained by running
 ``mailman digests --help``.
 ::
 
+    >>> from mailman.testing.documentation import cli   
     >>> command = cli('mailman.commands.cli_digests.digests')
 
     >>> command('mailman digests --help')

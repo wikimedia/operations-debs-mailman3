@@ -10,6 +10,7 @@ Mailman's configuration is divided in multiple sections which contain multiple
 key-value pairs.  The ``mailman conf`` command allows you to display a
 specific key-value pair, or several key-value pairs.
 
+    >>> from mailman.testing.documentation import cli
     >>> command = cli('mailman.commands.cli_conf.conf')
 
 To get a list of all key-value pairs of any section, you need to call the
@@ -54,6 +55,21 @@ key, along with the names of the corresponding sections.
     [logging.smtp] path: smtp.log
     [logging.subscribe] path: mailman.log
     [logging.vette] path: mailman.log
+    [runner.archive] path: $QUEUE_DIR/$name
+    [runner.bad] path: $QUEUE_DIR/$name
+    [runner.bounces] path: $QUEUE_DIR/$name
+    [runner.command] path: $QUEUE_DIR/$name
+    [runner.digest] path: $QUEUE_DIR/$name
+    [runner.in] path: $QUEUE_DIR/$name
+    [runner.lmtp] path:
+    [runner.nntp] path: $QUEUE_DIR/$name
+    [runner.out] path: $QUEUE_DIR/$name
+    [runner.pipeline] path: $QUEUE_DIR/$name
+    [runner.rest] path:
+    [runner.retry] path: $QUEUE_DIR/$name
+    [runner.shunt] path: $QUEUE_DIR/$name
+    [runner.virgin] path: $QUEUE_DIR/$name
+
 
 If you specify both a section and a key, you will get the corresponding value.
 

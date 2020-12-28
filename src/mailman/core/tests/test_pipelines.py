@@ -22,6 +22,7 @@ import unittest
 from mailman.app.lifecycle import create_list
 from mailman.config import config
 from mailman.core.pipelines import process
+from mailman.handlers.to_outgoing import ToOutgoing
 from mailman.interfaces.handler import IHandler
 from mailman.interfaces.member import MemberRole
 from mailman.interfaces.pipeline import (
@@ -62,6 +63,7 @@ class DiscardingPipeline:
 
     def __iter__(self):
         yield DiscardingHandler()
+        yield ToOutgoing()
 
 
 @implementer(IPipeline)
@@ -74,6 +76,7 @@ class RejectingPipeline:
 
     def __iter__(self):
         yield RejectHandler(self.message)
+        yield ToOutgoing()
 
 
 class TestPostingPipeline(unittest.TestCase):
@@ -104,6 +107,14 @@ testing
         self.assertEqual(self._msg['list-id'], '<test.example.com>')
         self.assertEqual(self._msg['list-post'], '<mailto:test@example.com>')
 
+    def test_rfc2369_headers_virgin(self):
+        # Internally crafted messages should get reduced List-* headers.
+        msgdata = {'reduced_list_headers': True}
+        process(self._mlist, self._msg, msgdata,
+                pipeline_name='virgin')
+        self.assertEqual(self._msg['list-id'], '<test.example.com>')
+        self.assertIsNone(self._msg['list-post'])
+
     def test_discarding_pipeline(self):
         # If a handler in the pipeline raises DiscardMessage, the message will
         # be thrown away, but with a log message.
@@ -113,6 +124,8 @@ testing
         self.assertTrue(line.endswith(
             '<ant> discarded by "test-discarding" pipeline handler '
             '"discarding": by test handler'))
+        # There should be no outgoing message.
+        get_queue_messages('out', expected_count=0)
 
     def test_rejecting_pipeline(self):
         # If a handler in the pipeline raises RejectMessage, the post will
@@ -134,6 +147,8 @@ testing
         # The first payload contains the rejection reason.
         payload = items[0].msg.get_payload(0).get_payload()
         self.assertEqual(payload, 'by test handler')
+        # There should be no outgoing message.
+        get_queue_messages('out', expected_count=0)
 
     def test_rejecting_pipeline_without_message(self):
         # Similar to above, but without a rejection message.
@@ -158,6 +173,8 @@ testing
         # The first payload contains the rejection reason.
         payload = items[0].msg.get_payload(0).get_payload()
         self.assertEqual(payload, '[No details are available]')
+        # There should be no outgoing message.
+        get_queue_messages('out', expected_count=0)
 
     def test_decorate_bulk(self):
         # Ensure that bulk postings get decorated with the footer.

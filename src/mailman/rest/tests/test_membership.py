@@ -71,7 +71,8 @@ class TestMembership(unittest.TestCase):
 
     def test_try_to_leave_a_list_twice(self):
         with transaction():
-            anne = self._usermanager.create_address('anne@example.com')
+            anne = self._usermanager.create_user('anne@example.com')
+            set_preferred(anne)
             self._mlist.subscribe(anne)
         url = 'http://localhost:9001/3.0/members/1'
         json, response = call_api(url, method='DELETE')
@@ -82,6 +83,76 @@ class TestMembership(unittest.TestCase):
         with self.assertRaises(HTTPError) as cm:
             call_api(url, method='DELETE')
         self.assertEqual(cm.exception.code, 404)
+
+    def test_leave_mlist_sends_notice_to_user(self):
+        with transaction():
+            anne = self._usermanager.create_user('anne@example.com')
+            set_preferred(anne)
+            self._mlist.subscribe(anne)
+        # Empty the virgin queue.
+        get_queue_messages('virgin', expected_count=1)
+        url = 'http://localhost:9001/3.0/members/1'
+        # Calling the DELETE api should send user a notice.
+        json, response = call_api(url, method='DELETE')
+        self.assertEqual(json, None)
+        self.assertEqual(response.status_code, 204)
+        items = get_queue_messages('virgin', expected_count=1)
+        self.assertEqual(str(items[0].msg['to']), 'anne@example.com')
+        self.assertEqual(
+            str(items[0].msg['subject']),
+            'You have been unsubscribed from the Test mailing list')
+
+    def test_leave_mlist_moderate_policy(self):
+        with transaction():
+            self._mlist.unsubscription_policy = SubscriptionPolicy.moderate
+            anne = self._usermanager.create_user('anne@example.com')
+            set_preferred(anne)
+            self._mlist.subscribe(anne)
+        # Empty the virgin queue.
+        get_queue_messages('virgin', expected_count=1)
+        url = 'http://localhost:9001/3.0/members/1'
+        # Try unsubscribing the user.
+        with transaction():
+            json, resp = call_api(
+                url,
+                data=dict(pre_confirmed=True),
+                method='DELETE')
+        self.assertEqual(resp.status_code, 202)
+        self.assertEqual(json.get('token_owner'), 'moderator')
+        token = json.get('token')
+        # The member should not have been deleted.
+        json, resp = call_api(url)
+        self.assertEqual(resp.status_code, 200)
+        # Now, approve the un-subscription request.
+        json, resp = call_api(
+            'http://localhost:9001/3.0/lists/test.example.com/'
+            'requests/{}'.format(token),
+            data={'action': 'accept'})
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(json, None)
+        # Finally, the user should be unsubscribed.
+        with self.assertRaises(HTTPError) as cm:
+            resp = call_api(url)
+        self.assertEqual(cm.exception.code, 404)
+
+    def test_leave_mlist_confirm_policy(self):
+        with transaction():
+            anne = self._usermanager.create_user('anne@example.com')
+            set_preferred(anne)
+            self._mlist.subscribe(anne)
+        # Empty the virgin queue.
+        get_queue_messages('virgin', expected_count=1)
+        url = 'http://localhost:9001/3.0/members/1'
+        # The default policy is to confirm, so an un-confirmed request would be
+        # held for user confirmation.
+        json, response = call_api(url, data={'pre_confirmed': False},
+                                  method='DELETE')
+        items = get_queue_messages('virgin', expected_count=1)
+        self.assertEqual(str(items[0].msg['to']), 'anne@example.com')
+        self.assertEqual(
+            str(items[0].msg['subject']),
+            'Your confirmation is needed to leave the test@example.com'
+            ' mailing list.')
 
     def test_try_to_join_a_list_twice(self):
         with transaction():
@@ -109,6 +180,37 @@ class TestMembership(unittest.TestCase):
                 'pre_verified': False,
                 'pre_confirmed': False,
                 'pre_approved': False,
+                })
+        self.assertEqual(cm.exception.code, 409)
+        self.assertEqual(cm.exception.reason, 'Member already subscribed')
+
+    def test_invite_new_member(self):
+        # Invite an email address to join a list.
+        json, response = call_api('http://localhost:9001/3.0/members', {
+            'list_id': 'test.example.com',
+            'subscriber': 'anne@example.com',
+            'display_name': 'Anne Person',
+            'invitation': True,
+            })
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(len(json), 3)
+
+        # Response will always add http_etag.
+        fields = ['http_etag', 'token', 'token_owner']
+        self.assertEqual(sorted(json.keys()), fields)
+        self.assertEqual(json['token_owner'], 'subscriber')
+
+    def test_invite_existing_member(self):
+        # Invite an existing member's email address to join a list.
+        with transaction():
+            anne = self._usermanager.create_address('anne@example.com')
+            self._mlist.subscribe(anne)
+        with self.assertRaises(HTTPError) as cm:
+            call_api('http://localhost:9001/3.0/members', {
+                'list_id': 'test.example.com',
+                'subscriber': 'anne@example.com',
+                'display_name': 'Anne Person',
+                'invitation': True,
                 })
         self.assertEqual(cm.exception.code, 409)
         self.assertEqual(cm.exception.reason, 'Member already subscribed')
@@ -793,3 +895,94 @@ class TestAPI31Members(unittest.TestCase):
         self.assertEqual(
             cm.exception.reason,
             'anne@example.com is already an owner of ant@example.com')
+
+
+class TestMemberFields(unittest.TestCase):
+    layer = RESTLayer
+
+    def setUp(self):
+        with transaction():
+            self._mlist = create_list('test@example.com')
+        self._usermanager = getUtility(IUserManager)
+
+    def _test_get_member_roster_with_specific_fields(
+            self, url, total_size, data=None):
+        if data:
+            data['fields'] = ['member_id', 'role', 'address']
+        else:
+            url = url + '?fields=member_id&fields=role&fields=address'
+        json, response = call_api(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['total_size'], total_size)
+        entries = json['entries']
+        self.assertEqual(len(entries), total_size)
+
+        # Response will always add http_etag.
+        fields = ['address', 'http_etag', 'member_id', 'role']
+        self.assertEqual(sorted(entries[0].keys()), fields)
+
+    def _test_get_member_roster_invalid_fields(self, url, data=None):
+        if data:
+            data['fields'] = ['bogus']
+        else:
+            url = url + '?fields=bogus'
+        with self.assertRaises(HTTPError) as cm:
+            call_api(url, data=data)
+        self.assertEqual(cm.exception.code, 400)
+        self.assertIn(
+            'Unknown field "bogus" for Member resource. Allowed fields are: ',
+            cm.exception.reason
+            )
+
+    def test_get_top_level_members_with_fields(self):
+        with transaction():
+            subscribe(self._mlist, 'Anne')
+            subscribe(self._mlist, 'Bart')
+        self._test_get_member_roster_with_specific_fields(
+            'http://localhost:9001/3.1/members', total_size=2)
+        self._test_get_member_roster_invalid_fields(
+            'http://localhost:9001/3.1/members')
+
+    def test_get_members_roster_with_fields(self):
+        with transaction():
+            subscribe(self._mlist, 'Anne')
+            subscribe(self._mlist, 'Bart')
+        self._test_get_member_roster_with_specific_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/member'.format(
+                self._mlist.list_id), total_size=2)
+        self._test_get_member_roster_invalid_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/member'.format(
+                self._mlist.list_id))
+
+    def test_get_owners_roster_fields(self):
+        with transaction():
+            subscribe(self._mlist, 'Anne', role=MemberRole.owner)
+            subscribe(self._mlist, 'Bart', role=MemberRole.owner)
+        self._test_get_member_roster_with_specific_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/owner'.format(
+                self._mlist.list_id), total_size=2)
+        self._test_get_member_roster_invalid_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/owner'.format(
+                self._mlist.list_id))
+
+    def test_get_moderator_roster_fields(self):
+        with transaction():
+            subscribe(self._mlist, 'Anne', role=MemberRole.moderator)
+            subscribe(self._mlist, 'Bart', role=MemberRole.moderator)
+        self._test_get_member_roster_with_specific_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/moderator'.format(
+                self._mlist.list_id), total_size=2)
+        self._test_get_member_roster_invalid_fields(
+            'http://localhost:9001/3.1/lists/{}/roster/moderator'.format(
+                self._mlist.list_id))
+
+    def test_find_members_with_fields(self):
+        with transaction():
+            subscribe(self._mlist, 'Anne')
+        self._test_get_member_roster_with_specific_fields(
+            'http://localhost:9001/3.1/members/find',
+            data={'list_id': self._mlist.list_id},
+            total_size=1)
+        self._test_get_member_roster_invalid_fields(
+            'http://localhost:9001/3.1/members/find',
+            data={'list_id': self._mlist.list_id})
