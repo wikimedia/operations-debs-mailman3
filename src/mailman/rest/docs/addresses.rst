@@ -6,6 +6,7 @@ The REST API can be used to manage addresses.
 
 There are no addresses yet.
 
+    >>> from mailman.testing.documentation import dump_json
     >>> dump_json('http://localhost:9001/3.0/addresses')
     http_etag: "..."
     start: 0
@@ -19,6 +20,8 @@ API.
     >>> from mailman.interfaces.usermanager import IUserManager
     >>> user_manager = getUtility(IUserManager)
     >>> anne = user_manager.create_address('anne@example.com')
+    >>> from mailman.config import config
+    >>> transaction = config.db    
     >>> transaction.commit()
 
     >>> dump_json('http://localhost:9001/3.0/addresses')
@@ -239,7 +242,7 @@ followed by a POST request, or you can send a PUT request.
 
     >>> dump_json('http://localhost:9001/3.0/addresses/cris@example.com/user',
     ...           {'display_name': 'Cris Q Person'}, method="PUT")
-		content-length: 0
+    content-length: 0
     content-type: application/json
     date: ...
     location: http://localhost:9001/3.0/users/2
@@ -375,6 +378,7 @@ address is unset.
 
 Setting Ram's preferred addresses requires that it first be verified:
 ::
+
     >>> dump_json('http://localhost:9001/3.1/users/ram@example.com/preferred_address',
     ...     {'email': 'ram@example.com'})
     Traceback (most recent call last):
@@ -383,6 +387,7 @@ Setting Ram's preferred addresses requires that it first be verified:
 
 Verify Ram's address first:
 ::
+
     >>> addr = ram.addresses[0]
     >>> addr.verified_on = now()
     >>> transaction.commit()
@@ -436,6 +441,7 @@ Elle registers several email addresses.
 Elle subscribes to two mailing lists with one of her addresses.
 ::
 
+    >>> from mailman.app.lifecycle import create_list   
     >>> ant = create_list('ant@example.com')
     >>> bee = create_list('bee@example.com')
     >>> ant.subscribe(subscriber)
@@ -461,6 +467,7 @@ Elle can get her memberships for each of her email addresses.
         member_id: 1
         role: member
         self_link: http://localhost:9001/3.0/members/1
+        subscription_mode: as_address
         user: http://localhost:9001/3.0/users/5
     entry 1:
         address: http://localhost:9001/3.0/addresses/elle@example.com
@@ -472,6 +479,7 @@ Elle can get her memberships for each of her email addresses.
         member_id: 2
         role: member
         self_link: http://localhost:9001/3.0/members/2
+        subscription_mode: as_address
         user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0
@@ -504,6 +512,7 @@ does not show up in the list of memberships for his other address.
         member_id: 1
         role: member
         self_link: http://localhost:9001/3.0/members/1
+        subscription_mode: as_address
         user: http://localhost:9001/3.0/users/5
     entry 1:
         address: http://localhost:9001/3.0/addresses/elle@example.com
@@ -515,6 +524,7 @@ does not show up in the list of memberships for his other address.
         member_id: 2
         role: member
         self_link: http://localhost:9001/3.0/members/2
+        subscription_mode: as_address
         user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0
@@ -532,6 +542,7 @@ does not show up in the list of memberships for his other address.
         member_id: 3
         role: member
         self_link: http://localhost:9001/3.0/members/3
+        subscription_mode: as_address
         user: http://localhost:9001/3.0/users/5
     http_etag: "..."
     start: 0

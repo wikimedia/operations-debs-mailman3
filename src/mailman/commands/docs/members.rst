@@ -5,6 +5,7 @@ Managing members
 The ``mailman members`` command allows a site administrator to display, add,
 and delete members from a mailing list.
 
+    >>> from mailman.testing.documentation import cli
     >>> command = cli('mailman.commands.cli_members.members')
 
 
@@ -14,6 +15,7 @@ Listing members
 You can list all the members of a mailing list by calling the command with no
 options.  To start with, there are no members of the mailing list.
 
+    >>> from mailman.app.lifecycle import create_list
     >>> ant = create_list('ant@example.com')
     >>> command('mailman members ant.example.com')
     ant.example.com has no members
@@ -176,8 +178,10 @@ need a file containing email addresses and full names that can be parsed by
     ... """, file=fp)
 
     >>> command('mailman members --add ' + filename + ' bee.example.com')
+    Warning: The --add option is deprecated. Use `mailman addmembers` instead.
 
     >>> from operator import attrgetter
+    >>> from mailman.testing.documentation import dump_list    
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
     aperson@example.com
     Bart Person <bperson@example.com>
@@ -193,6 +197,7 @@ taken from standard input.
     ... fperson@example.com (Fred Person)
     ... """
     >>> command('mailman members --add - bee.example.com', input=stdin)
+    Warning: The --add option is deprecated. Use `mailman addmembers` instead.
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
     aperson@example.com
@@ -214,6 +219,7 @@ Blank lines and lines that begin with '#' are ignored.
     ... """, file=fp)
 
     >>> command('mailman members --add ' + filename + ' bee.example.com')
+    Warning: The --add option is deprecated. Use `mailman addmembers` instead.
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
     aperson@example.com
@@ -237,6 +243,7 @@ printed.
     ... """, file=fp)
 
     >>> command('mailman members --add ' + filename + ' bee.example.com')
+    Warning: The --add option is deprecated. Use `mailman addmembers` instead.
     Already subscribed (skipping): gperson@example.com
     Already subscribed (skipping): aperson@example.com
 
@@ -271,6 +278,7 @@ use these code snippets to delete subscriptions from the list again.
     ... """, file=fp)
 
     >>> command('mailman members --delete ' + filename + ' bee.example.com')
+    Warning: The --delete option is deprecated. Use `mailman delmembers` instead.
 
     >>> from operator import attrgetter
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
@@ -291,6 +299,7 @@ taken from standard input.
     ... Elly Person <eperson@example.com>
     ... """
     >>> command('mailman members --delete - bee.example.com', input=stdin)
+    Warning: The --delete option is deprecated. Use `mailman delmembers` instead.
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
     Bart Person <bperson@example.com>
@@ -310,6 +319,7 @@ Blank lines and lines that begin with '#' are ignored.
     ... """, file=fp)
 
     >>> command('mailman members --delete ' + filename + ' bee.example.com')
+    Warning: The --delete option is deprecated. Use `mailman delmembers` instead.
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
     Fred Person <fperson@example.com>
@@ -328,6 +338,7 @@ printed.
     ... """, file=fp)
 
     >>> command('mailman members --delete ' + filename + ' bee.example.com')
+    Warning: The --delete option is deprecated. Use `mailman delmembers` instead.
     Member not subscribed (skipping): kperson@example.com
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))
@@ -360,6 +371,7 @@ written to output.
     ... """, file=fp)
 
     >>> command('mailman members --sync ' + filename + ' bee.example.com')
+    Warning: The --sync option is deprecated. Use `mailman syncmembers` instead.
     [ADD] aperson@example.com
     [ADD] Cate Person <cperson@example.com>
     [DEL] gperson@example.com
@@ -380,6 +392,7 @@ taken from standard input.
     ... Elly Person <eperson@example.com>
     ... """
     >>> command('mailman members --sync - bee.example.com', input=stdin)
+    Warning: The --sync option is deprecated. Use `mailman syncmembers` instead.
     [ADD] dperson@example.com
     [ADD] Elly Person <eperson@example.com>
     [DEL] aperson@example.com
@@ -402,6 +415,7 @@ Blank lines and lines that begin with '#' are ignored.
     ... """, file=fp)
 
     >>> command('mailman members --sync ' + filename + ' bee.example.com')
+    Warning: The --sync option is deprecated. Use `mailman syncmembers` instead.
     [ADD] bperson@example.com
     [DEL] dperson@example.com
 
@@ -419,6 +433,7 @@ If there is nothing to do, it will output just that.
     ... """, file=fp)
 
     >>> command('mailman members --sync ' + filename + ' bee.example.com')
+    Warning: The --sync option is deprecated. Use `mailman syncmembers` instead.
     Nothing to do
 
     >>> dump_list(bee.members.addresses, key=attrgetter('email'))

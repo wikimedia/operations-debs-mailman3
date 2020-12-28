@@ -4,7 +4,10 @@ Mailing list configuration
 
 Mailing lists can be configured via the REST API.
 
+    >>> from mailman.app.lifecycle import create_list
     >>> mlist = create_list('ant@example.com')
+    >>> from mailman.config import config
+    >>> transaction = config.db    
     >>> transaction.commit()
 
 
@@ -13,6 +16,7 @@ Reading a configuration
 
 All readable attributes for a list are available on a sub-resource.
 
+    >>> from mailman.testing.documentation import dump_json
     >>> dump_json('http://localhost:9001/3.0/lists/ant@example.com/config')
     accept_these_nonmembers: []
     acceptable_aliases: []
@@ -23,6 +27,7 @@ All readable attributes for a list are available on a sub-resource.
     allow_list_posts: True
     anonymous_list: False
     archive_policy: public
+    archive_rendering_mode: text
     autorespond_owner: none
     autorespond_postings: none
     autorespond_requests: none
@@ -56,6 +61,7 @@ All readable attributes for a list are available on a sub-resource.
     dmarc_mitigate_unconditionally: False
     dmarc_moderation_notice:
     dmarc_wrapped_message_text:
+    emergency: False
     filter_action: discard
     filter_content: False
     filter_extensions: []
@@ -131,6 +137,7 @@ When using ``PUT``, all writable attributes must be included.
     ...             advertised=False,
     ...             anonymous_list=True,
     ...             archive_policy='never',
+    ...             archive_rendering_mode='text',
     ...             autorespond_owner='respond_and_discard',
     ...             autorespond_postings='respond_and_continue',
     ...             autorespond_requests='respond_and_discard',
@@ -194,6 +201,7 @@ When using ``PUT``, all writable attributes must be included.
     ...             pass_extensions=['.pdf'],
     ...             pass_types=['image/jpeg'],
     ...             filter_action='preserve',
+    ...             emergency=False,
     ...             ),
     ...           'PUT')
     date: ...
@@ -213,6 +221,7 @@ These values are changed permanently.
     allow_list_posts: False
     anonymous_list: True
     archive_policy: never
+    archive_rendering_mode: text
     autorespond_owner: respond_and_discard
     autorespond_postings: respond_and_continue
     autorespond_requests: respond_and_discard
@@ -244,6 +253,7 @@ These values are changed permanently.
     dmarc_mitigate_unconditionally: False
     dmarc_moderation_notice: Some moderation notice
     dmarc_wrapped_message_text: some message text
+    emergency: False
     filter_action: preserve
     filter_content: True
     filter_extensions: ['.mkv']
@@ -385,6 +395,7 @@ dictionary are ignored.
 
 You can get all the mailing list's acceptable aliases through the REST API.
 
+    >>> from mailman.testing.documentation import call_http
     >>> response = call_http(
     ...     'http://localhost:9001/3.0/lists/'
     ...     'ant@example.com/config/acceptable_aliases')

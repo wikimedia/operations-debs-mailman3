@@ -199,7 +199,7 @@ def send_probe(member, msg=None, message_id=None):
         code=member.preferred_language.code,
         )
     text = wrap(expand(template, mlist, dict(
-        sender_email=member.subscriber.email,
+        sender_email=member.address.email,
         # For backward compatibility.
         address=member.address.email,
         email=member.address.email,
@@ -230,7 +230,7 @@ def send_probe(member, msg=None, message_id=None):
     probe = UserNotification(member.address.email, probe_sender,
                              subject, lang=member.preferred_language)
     probe.set_type('multipart/mixed')
-    notice = MIMEText(text, _charset=mlist.preferred_language.charset)
+    notice = MIMEText(text, _charset=member.preferred_language.charset)
     probe.attach(notice)
     if msg is not None:
         probe.attach(MIMEMessage(msg))

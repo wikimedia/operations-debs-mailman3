@@ -66,7 +66,7 @@ message.
 
 """)
         subject = _('Content filter message notification')
-        notice = OwnerNotification(mlist, subject, roster=mlist.moderators)
+        notice = OwnerNotification(mlist, subject, roster=mlist.administrators)
         notice.set_type('multipart/mixed')
         notice.attach(MIMEText(text))
         notice.attach(MIMEMessage(msg))
@@ -166,16 +166,19 @@ def process(mlist, msg, msgdata):
 
 def reset_payload(msg, subpart):
     # Reset payload of msg to contents of subpart, and fix up content headers
-    payload = subpart.get_payload()
-    msg.set_payload(payload)
+    if subpart.is_multipart():
+        msg.set_payload(subpart.get_payload())
+    else:
+        cset = subpart.get_content_charset() or 'us-ascii'
+        msg.set_payload(subpart.get_payload(decode=True).decode(
+                        cset, errors='replace'),
+                        charset=cset)
+    # Don't restore Content-Transfer-Encoding; set_payload sets it based
+    # on the charset.
     del msg['content-type']
-    del msg['content-transfer-encoding']
     del msg['content-disposition']
     del msg['content-description']
     msg['Content-Type'] = subpart.get('content-type', 'text/plain')
-    cte = subpart.get('content-transfer-encoding')
-    if cte:
-        msg['Content-Transfer-Encoding'] = cte
     cdisp = subpart.get('content-disposition')
     if cdisp:
         msg['Content-Disposition'] = cdisp

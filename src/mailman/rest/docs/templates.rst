@@ -23,12 +23,15 @@ Examples
 
 Let's say you have a mailing list::
 
+    >>> from mailman.app.lifecycle import create_list  
     >>> ant = create_list('ant@example.com')
 
 The standard welcome message doesn't have any links to it because by default
 Mailman doesn't know about any web user interface front-end.  When Anne is
 subscribed to the mailing list, she sees this plain welcome message.
 
+    >>> from mailman.testing.helpers import subscribe
+    >>> from mailman.testing.helpers import get_queue_messages    
     >>> anne = subscribe(ant, 'Anne')
     >>> items = get_queue_messages('virgin')
     >>> print(items[0].msg)
@@ -42,7 +45,7 @@ subscribed to the mailing list, she sees this plain welcome message.
     <BLANKLINE>
     Welcome to the "Ant" mailing list!
     <BLANKLINE>
-    To post to this list, send your email to:
+    To post to this list, send your message to:
     <BLANKLINE>
       ant@example.com
     <BLANKLINE>
@@ -62,6 +65,7 @@ welcome message.  You publish both the code of conduct and the welcome message
 pointing to the code on your website.  Now you can tell the mailing list to
 use this welcome message instead of the default one.
 
+    >>> from mailman.testing.documentation import call_http
     >>> call_http('http://localhost:9001/3.1/lists/ant.example.com/uris', {
     ...     'list:user:notice:welcome': 'http://localhost:8180/welcome_1.txt',
     ...     }, method='PATCH')
@@ -110,7 +114,7 @@ retrieving the welcome message.
 
 The username and password will be used to retrieve the welcome text.
 
-    >>> cris = subscribe(ant, 'Cris')
+    >>> cris = subscribe(ant, 'Cris')    
     >>> items = get_queue_messages('virgin')
     >>> print(items[0].msg)
     MIME-Version: 1.0
@@ -550,6 +554,11 @@ below.  Here are all the supported template names:
     * ``request`` - the type of request being rejected
     * ``reason`` - the reason for the rejection, as provided by the list's
       moderators
+
+* ``list:user:notice:rejected``
+    Notice sent to a poster when their message has been automatically rejected.
+
+    * ``reasons`` - some reasons why the post was rejected
 
 * ``list:user:notice:welcome``
     The notice sent to a member when they are subscribed to the mailing list.

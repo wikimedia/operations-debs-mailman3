@@ -26,7 +26,8 @@ from mailman.interfaces.mailinglist import SubscriptionPolicy
 from mailman.interfaces.pending import IPendings
 from mailman.interfaces.subscriptions import TokenOwner
 from mailman.interfaces.usermanager import IUserManager
-from mailman.testing.helpers import LogFileMark, get_queue_messages
+from mailman.testing.helpers import (LogFileMark, get_queue_messages,
+                                     set_preferred, subscribe)
 from mailman.testing.layers import ConfigLayer
 from mailman.utilities.datetime import now
 from unittest.mock import patch
@@ -53,7 +54,7 @@ class TestUnSubscriptionWorkflow(unittest.TestCase):
     def tearDown(self):
         # There usually should be no pending after all is said and done, but
         # some tests don't complete the workflow.
-        self.assertEqual(getUtility(IPendings).count,
+        self.assertEqual(getUtility(IPendings).count(),
                          self._expected_pendings_count)
 
     def test_start_state(self):
@@ -94,6 +95,19 @@ class TestUnSubscriptionWorkflow(unittest.TestCase):
         workflow = UnSubscriptionWorkflow(self._mlist, addr)
         self.assertRaises(AssertionError,
                           workflow.run_thru, 'subscription_checks')
+
+    def test_subscription_checks_for_user(self):
+        # subscription_checks must pass for IUser subscribed as IAddress.
+        member = subscribe(self._mlist, 'Bart')
+        set_preferred(member.user)
+        workflow = UnSubscriptionWorkflow(self._mlist, member.user)
+        workflow.run_thru('subscription_checks')
+
+    def test_subscription_checks_for_address(self):
+        # subscription_checks must pass for IAddress subscribed as IUser.
+        workflow = UnSubscriptionWorkflow(self._mlist,
+                                          self.anne.preferred_address)
+        workflow.run_thru('subscription_checks')
 
     def test_confirmation_checks_open_list(self):
         # An unsubscription from an open list does not need to be confirmed or
@@ -325,8 +339,9 @@ request approval:
         items = get_queue_messages('virgin', expected_count=1)
         message = items[0].msg
         token = workflow.token
-        self.assertEqual(
-            message['Subject'], 'confirm {}'.format(workflow.token))
+        self.assertTrue(
+            str(message['Subject']).startswith('Your confirmation is '
+                                               'needed to leave the '))
         self.assertEqual(
             message['From'], 'test-confirm+{}@example.com'.format(token))
         # The confirmation message is not `Precedence: bulk`.

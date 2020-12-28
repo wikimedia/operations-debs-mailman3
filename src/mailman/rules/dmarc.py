@@ -207,15 +207,16 @@ def is_reject_or_quarantine(mlist, email, dmarc_domain, org=False):
     # Check all the TXT records returned by DNS.  Keep track of the CNAMEs for
     # checking later on.  Ignore any other non-TXT records.
     for txt_rec in txt_recs.response.answer:
+        # Don't be fooled by an answer with uppercase in the name.
+        name = txt_rec.name.to_text().lower()
         if txt_rec.rdtype == dns.rdatatype.CNAME:
-            cnames[txt_rec.name.to_text()] = (
-                txt_rec.items[0].target.to_text())
+            cnames[name] = (
+                next(iter(txt_rec.items)).target.to_text())
         if txt_rec.rdtype != dns.rdatatype.TXT:
             continue
         result = EMPTYSTRING.join(
             str(record, encoding='utf-8')
-            for record in txt_rec.items[0].strings)
-        name = txt_rec.name.to_text()
+            for record in next(iter(txt_rec.items)).strings)
         results_by_name.setdefault(name, []).append(result)
     expands = list(want_names)
     seen = set(expands)

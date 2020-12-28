@@ -274,6 +274,18 @@ list owner at
         self.assertEqual(message['to'], 'anne@example.com')
         self.assertEqual(message['subject'], 'Test mailing list probe message')
 
+    def test_send_probe_to_user(self):
+        # Can we send probe to member subscribed as a user.
+        self._member = subscribe(self._mlist, 'Bart', email='bart@example.com',
+                                 as_user=True)
+        token = send_probe(self._member, self._msg)
+        items = get_queue_messages('virgin', expected_count=1)
+        message = items[0].msg
+        self.assertEqual(message['from'],
+                         'test-bounces+{0}@example.com'.format(token))
+        self.assertEqual(message['to'], 'bart@example.com')
+        self.assertEqual(message['subject'], 'Test mailing list probe message')
+
     def test_no_precedence_header(self):
         # Probe messages should not have a Precedence header (LP: #808821).
         send_probe(self._member, self._msg)
@@ -342,7 +354,8 @@ $owneraddr
         send_probe(self._member, self._msg)
         items = get_queue_messages('virgin', expected_count=1)
         message = items[0].msg
-        notice = message.get_payload(0).get_payload()
+        notice = message.get_payload(0).get_payload(decode=True)
+        notice = notice.decode(self._member.preferred_language.charset)
         self.assertMultiLineEqual(notice, """\
 blah blah blah test@example.com anne@example.com
 test-owner@example.com

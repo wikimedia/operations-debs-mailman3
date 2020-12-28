@@ -97,6 +97,26 @@ Something else.
                          'Invalid Parameter "action": Accepted Values are:'
                          ' hold, reject, discard, accept, defer.')
 
+    def test_held_message_count(self):
+        # Initially, the count should be zero.
+        url = 'http://localhost:9001/3.0/lists/ant@example.com/held/count'
+        json, resp = call_api(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(json['count'], 0)
+        # Now, verify that we get the number when a held message is added.
+        with transaction():
+            hold_message(self._mlist, self._msg)
+        json, resp = call_api(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(json['count'], 1)
+        # Hold some more to see if we get the right numbers.
+        with transaction():
+            hold_message(self._mlist, self._msg)
+            hold_message(self._mlist, self._msg)
+        json, resp = call_api(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(json['count'], 3)
+
     def test_discard(self):
         # Discarding a message removes it from the moderation queue.
         with transaction():
@@ -243,6 +263,51 @@ class TestSubscriptionModeration(unittest.TestCase):
         self.assertEqual(tokens, {token_1, token_2})
         emails = set(entry['email'] for entry in json['entries'])
         self.assertEqual(emails, {'anne@example.com', 'bart@example.com'})
+
+    def test_list_held_requests_with_owner(self):
+        with transaction():
+            token_1, token_owner, member = self._registrar.register(self._anne)
+            # Anne's subscription request got held.
+            self.assertIsNotNone(token_1)
+            self.assertIsNone(member)
+            token_2, token_owner, member = self._registrar.register(self._bart)
+            self.assertIsNotNone(token_2)
+            self.assertIsNone(member)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '?token_owner=moderator')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['total_size'], 0)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '?token_owner=subscriber')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['total_size'], 2)
+
+    def test_list_held_requests_count(self):
+        with transaction():
+            token_1, token_owner, member = self._registrar.register(self._anne)
+            # Anne's subscription request got held.
+            self.assertIsNotNone(token_1)
+            self.assertIsNone(member)
+            token_2, token_owner, member = self._registrar.register(self._bart)
+            self.assertIsNotNone(token_2)
+            self.assertIsNone(member)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '/count')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['count'], 2)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '/count?token_owner=moderator')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['count'], 0)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '/count?token_owner=subscriber')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['count'], 2)
 
     def test_individual_request(self):
         # We can view an individual request.

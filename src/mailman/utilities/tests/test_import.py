@@ -20,11 +20,13 @@
 import os
 import unittest
 
-from datetime import timedelta, datetime
+from contextlib import ExitStack
+from datetime import datetime, timedelta
 from enum import Enum
 from importlib_resources import open_binary
 from mailman.app.lifecycle import create_list
 from mailman.config import config
+from mailman.database.helpers import is_mysql
 from mailman.handlers.decorate import decorate
 from mailman.interfaces.action import Action, FilterAction
 from mailman.interfaces.address import InvalidEmailAddressError
@@ -44,9 +46,11 @@ from mailman.model.roster import RosterVisibility
 from mailman.testing.helpers import LogFileMark
 from mailman.testing.layers import ConfigLayer
 from mailman.utilities.filesystem import makedirs
+from mailman.utilities.i18n import search
 from mailman.utilities.importer import (
     Import21Error, check_language_code, import_config_pck)
 from pickle import load
+from shutil import rmtree
 from unittest import mock
 from urllib.error import URLError
 from zope.component import getUtility
@@ -603,6 +607,22 @@ class TestBasicImport(unittest.TestCase):
         self.assertIn('Skipping duplicate header_filter rule',
                       error_log.readline())
 
+    def test_long_saunicode(self):
+        # Long SAUnicode fields should truncate for MySql with warning only.
+        long_desc = (
+            'A very long description exceeding 255 ckaracters to test '
+            'truncation of SAUnicode field data for MySQL. just add some '
+            'dots .......................................................'
+            '............................................................'
+            '... and a bit more Thats 255 ending at more')
+        self._pckdict['description'] = long_desc
+        self._import()
+        if is_mysql(config.db.engine):
+            self.assertEqual(long_desc[:255], self._mlist.description)
+            self.assertTrue(self._mlist.description.endswith('a bit more'))
+        else:
+            self.assertEqual(long_desc, self._mlist.description)
+
 
 class TestArchiveImport(unittest.TestCase):
     """Test conversion of the archive policies.
@@ -785,6 +805,10 @@ class TestConvertToURI(unittest.TestCase):
             digest_footer='list:member:digest:footer',
             )
         self._pckdict = dict()
+        # Remove any residual template files.
+        with ExitStack() as resources:
+            filepath = list(search(resources, '', self._mlist))[0]
+        rmtree(filepath, ignore_errors=True)
 
     def test_text_to_uri(self):
         for oldvar, newvar in self._conf_mapping.items():
@@ -811,6 +835,22 @@ class TestConvertToURI(unittest.TestCase):
                 text, expected_text,
                 'Old variables were not converted for %s' % newvar)
 
+    def test_drop_listinfo_if_contains_crs(self):
+        self._pckdict = dict(msg_footer=(
+            '_______________________________________________\r\n'
+            'This is a message footer\r\n'
+            '%(web_page_url)slistinfo%(cgiext)s/%(_internal_name)s\r\n'
+            ))
+        expected_text = (
+            '_______________________________________________\n'
+            'This is a message footer\n'
+            )
+        import_config_pck(self._mlist, self._pckdict)
+        newvar = 'list:member:regular:footer'
+        text = getUtility(ITemplateLoader).get(newvar, self._mlist)
+        self.assertEqual(
+            text, expected_text, 'Listinfo URL not dropped')
+
     def test_keep_default(self):
         # If the value was not changed from MM2.1's default, don't import it.
         default_msg_footer = (
@@ -823,6 +863,33 @@ class TestConvertToURI(unittest.TestCase):
         for oldvar in ('msg_footer', 'digest_footer'):
             newvar = self._conf_mapping[oldvar]
             self._pckdict[str(oldvar)] = str(default_msg_footer)
+            try:
+                old_value = loader.get(newvar, self._mlist)
+            except URLError:
+                old_value = None
+            import_config_pck(self._mlist, self._pckdict)
+            try:
+                new_value = loader.get(newvar, self._mlist)
+            except URLError:
+                new_value = None
+            self.assertEqual(
+                old_value, new_value,
+                '{} changed unexpectedly: {} != {}'.format(
+                    newvar, old_value, new_value))
+
+    def test_keep_default_with_crs(self):
+        # If the value was not changed from MM2.1's default, don't import it.
+        default_msg_footer = (
+            '_______________________________________________\n'
+            '%(real_name)s mailing list\n'
+            '%(real_name)s@%(host_name)s\n'
+            '%(web_page_url)slistinfo%(cgiext)s/%(_internal_name)s\n'
+            )
+        loader = getUtility(ITemplateLoader)
+        for oldvar in ('msg_footer', 'digest_footer'):
+            newvar = self._conf_mapping[oldvar]
+            self._pckdict[str(oldvar)] = str(default_msg_footer).replace(
+                '\n', '\r\n')
             try:
                 old_value = loader.get(newvar, self._mlist)
             except URLError:

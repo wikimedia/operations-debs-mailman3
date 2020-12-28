@@ -11,11 +11,15 @@ Viewing subscription requests
 
 A mailing list starts with no pending subscription or unsubscription requests.
 
+    >>> from mailman.app.lifecycle import create_list
     >>> ant = create_list('ant@example.com')
     >>> ant.admin_immed_notify = False
     >>> from mailman.interfaces.mailinglist import SubscriptionPolicy
     >>> ant.subscription_policy = SubscriptionPolicy.moderate
+    >>> from mailman.config import config
+    >>> transaction = config.db    
     >>> transaction.commit()
+    >>> from mailman.testing.documentation import dump_json    
     >>> dump_json('http://localhost:9001/3.0/lists/ant.example.com/requests')
     http_etag: "..."
     start: 0
@@ -81,7 +85,7 @@ request's resource.  The POST data requires an action of one of the following:
 
  * discard - throw the request away.
  * reject - the request is denied and a notification is sent to the email
-            address requesting the membership change.
+   address requesting the membership change.
  * defer - defer any action on this membership change (continue to hold it).
  * accept - accept the membership change.
 

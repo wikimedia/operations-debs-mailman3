@@ -175,7 +175,13 @@ class MIMEDigester(Digester):
         """Add the message to the digest."""
         # Make a copy of the message object, since the RFC 1153 processing
         # scrubs out attachments.
-        self._digest_part.attach(MIMEMessage(deepcopy(msg)))
+        digest_msg = MIMEMessage(deepcopy(msg))
+        digest_msg_content = digest_msg.get_payload(0)
+        # It would be nice to add Message: n near the beginning, but there's no
+        # method for that.  MUAs mostly don't display it anyway, so it doesn't
+        # really matter.
+        digest_msg_content['Message'] = str(count)
+        self._digest_part.attach(digest_msg)
 
     def finish(self):
         """Finish up the digest, producing the email-ready copy."""
@@ -232,6 +238,9 @@ class RFC1153Digester(Digester):
             print(self._separator30, file=self._text)
             print(file=self._text)
         # Each message section contains a few headers.
+        # add the Message: n header first.
+        print('Message: {}'.format(count), file=self._text)
+        # Then the others.
         for header in config.digests.plain_digest_keep_headers.split():
             if header in msg:
                 value = oneline(msg[header], in_unicode=True)

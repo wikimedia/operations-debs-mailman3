@@ -15,7 +15,7 @@ In order to pend an event, you first need a pending database.
 
 There are nothing in the pendings database.
 
-    >>> pendingdb.count
+    >>> pendingdb.count()
     0
 
 The pending database can add any ``IPendable`` to the database, returning a
@@ -39,7 +39,7 @@ token that can be used in urls and such.
 
 There's exactly one entry in the pendings database now.
 
-    >>> pendingdb.count
+    >>> pendingdb.count()
     1
 
 You can *confirm* the pending, which means returning the `IPendable` structure
@@ -56,6 +56,7 @@ If the token isn't in the database, None is returned.
     >>> print(pendable)
     None
     >>> pendable = pendingdb.confirm(token)
+    >>> from mailman.testing.documentation import dump_msgdata    
     >>> dump_msgdata(pendable)
     address     : aperson@example.com
     display_name: Anne Person

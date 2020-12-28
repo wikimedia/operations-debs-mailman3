@@ -5,6 +5,7 @@ Email command help
 You can get some help about the various email commands that are available by
 sending the word `help` to a mailing list's -request address.
 
+    >>> from mailman.app.lifecycle import create_list
     >>> mlist = create_list('test@example.com')
     >>> from mailman.commands.eml_help import Help
     >>> help = Help()
@@ -37,6 +38,7 @@ short description of each of them.
     stop        - An alias for 'end'.
     subscribe   - An alias for 'join'.
     unsubscribe - An alias for 'leave'.
+    who         - Get a list of the list members.
     <BLANKLINE>
 
 With an argument, you can get more detailed help about a specific command.
@@ -59,13 +61,15 @@ Some commands have even more detailed help.
     >>> print(results)
     The results of your email command are provided below.
     <BLANKLINE>
-    join [digest=<no|mime|plain>]
+    join [digest=<no|mime|plain>] [address=user@example.com]
     Join this mailing list.
     <BLANKLINE>
     You will be asked to confirm your subscription request and you may be
     issued a provisional password.
     <BLANKLINE>
     By using the 'digest' option, you can specify whether you want digest
-    delivery or not.  If not specified, the mailing list's default delivery
-    mode will be used.
+    delivery or not.  If not specified, the mailing list's default
+    delivery mode will be used.  You can use the 'address' option to
+    request subscription of an address other than the sender of the
+    command.
     <BLANKLINE>

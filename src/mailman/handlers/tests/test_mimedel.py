@@ -123,12 +123,12 @@ Message-ID: <ant>
         get_queue_messages('bad', expected_count=0)
 
     def test_dispose_forward(self):
-        # The disposed message gets forwarded to the list moderators.  So
-        # first add some moderators.
+        # The disposed message gets forwarded to the list administrators.  So
+        # first add an owner and a moderator.
         user_manager = getUtility(IUserManager)
         anne = user_manager.create_address('anne@example.com')
         bart = user_manager.create_address('bart@example.com')
-        self._mlist.subscribe(anne, MemberRole.moderator)
+        self._mlist.subscribe(anne, MemberRole.owner)
         self._mlist.subscribe(bart, MemberRole.moderator)
         # Now set the filter action and dispose the message.
         self._mlist.filter_action = FilterAction.forward
@@ -381,6 +381,102 @@ multipart/signed
     application/pgp-signature
 """)
 
+    def test_collapse_alternatives_non_ascii(self):
+        # Ensure we can flatten as bytes a message whose non-ascii payload
+        # has been reset.
+        with resource_open(
+                'mailman.handlers.tests.data',
+                'c_a_non_ascii.eml') as fp:
+            msg = email.message_from_binary_file(fp)
+        process = config.handlers['mime-delete'].process
+        process(self._mlist, msg, {})
+        self.assertFalse(msg.is_multipart())
+        self.assertEqual(msg.get_payload(decode=True),
+                         b'Body with non-ascii can\xe2\x80\x99t see '
+                         b'won\xe2\x80\x99t know\n')
+        # Ensure we can flatten it.
+        dummy = msg.as_bytes()                             # noqa: F841
+
+    def test_collapse_alternatives_non_ascii_encoded(self):
+        msg = mfs("""\
+From: anne@example.com
+To: test@example.com
+Subject: Testing mpa with transfer encoded subparts
+Message-ID: <ant>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="AAAA"
+
+--AAAA
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Let=E2=80=99s also consider
+
+--AAAA
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Let=E2=80=99s also consider
+
+--AAAA--
+""")
+        process = config.handlers['mime-delete'].process
+        process(self._mlist, msg, {})
+        self.assertFalse(msg.is_multipart())
+        self.assertEqual(msg.get_payload(decode=True),
+                         b'Let\xe2\x80\x99s also consider\n')
+        # Ensure we can flatten it.
+        dummy = msg.as_bytes()                             # noqa: F841
+
+    def test_reset_payload_multipart(self):
+        msg = mfs("""\
+From: anne@example.com
+To: test@example.com
+Subject: Testing mpa with multipart subparts
+Message-ID: <ant>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="AAAA"
+
+--AAAA
+Content-Type: multipart/mixed; boundary="BBBB"
+
+--BBBB
+Content-Type: text/plain
+
+Part 1
+
+--BBBB
+Content-Type: text/plain
+
+Part 2
+
+--BBBB--
+
+--AAAA
+Content-Type: multipart/mixed; boundary="CCCC"
+
+--CCCC
+Content-Type: text/html
+
+Part 3
+
+--CCCC
+Content-Type: text/html
+
+Part 4
+
+--CCCC--
+
+--AAAA--
+""")
+        process = config.handlers['mime-delete'].process
+        process(self._mlist, msg, {})
+        self.assertTrue(msg.is_multipart())
+        self.assertEqual(msg.get_content_type(), 'multipart/mixed')
+        self.assertEqual(len(msg.get_payload()), 2)
+        self.assertEqual(msg.get_payload(0).get_payload(), 'Part 1\n')
+        self.assertEqual(msg.get_payload(1).get_payload(), 'Part 2\n')
+
     def test_msg_rfc822(self):
         with resource_open(
                 'mailman.handlers.tests.data', 'msg_rfc822.eml') as fp:
@@ -419,6 +515,6 @@ spreadsheet
         process = config.handlers['mime-delete'].process
         process(self._mlist, msg, {})
         self.assertEqual(msg['content-type'], 'text/plain; charset="utf-8"')
-        self.assertEqual(msg.get_payload(), """\
+        self.assertEqual(msg.get_payload(decode=True), b"""\
 Plain text
 """)
