@@ -34,7 +34,7 @@ init_service_failed () {
 # might be interpreted by the shell.
 create_config () {
     trap cleanup EXIT
-    mailmancfg_new=`tempfile -m 0640`
+    mailmancfg_new=`mktemp`
     cp -a /usr/share/mailman3/mailman.cfg.sample $mailmancfg_new
 
     # get database settings from dbconfig-common
