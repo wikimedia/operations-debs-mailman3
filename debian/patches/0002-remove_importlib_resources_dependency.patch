@@ -1,5 +1,5 @@
 From: Jonas Meurer <jonas@freesources.org>
-Date: Fri, 22 Feb 2019 23:44:12 +0100
+Date: Tue, 29 Dec 2020 16:18:05 +0100
 Subject: Replace importlib_resources with importlib.resources
 
 `importlib_resources` is not available in Debian. Since Debian Buster
@@ -18,7 +18,7 @@ Author: Jonas Meurer <jonas@freesources.org>
  src/mailman/commands/docs/import.rst           | 2 +-
  src/mailman/commands/tests/test_cli_control.py | 2 +-
  src/mailman/commands/tests/test_cli_import.py  | 2 +-
- src/mailman/config/config.py                   | 4 ++--
+ src/mailman/config/config.py                   | 3 ++-
  src/mailman/config/tests/test_configuration.py | 2 +-
  src/mailman/core/initialize.py                 | 2 +-
  src/mailman/email/tests/test_message.py        | 2 +-
@@ -31,13 +31,13 @@ Author: Jonas Meurer <jonas@freesources.org>
  src/mailman/testing/layers.py                  | 2 +-
  src/mailman/utilities/modules.py               | 3 ++-
  src/mailman/utilities/tests/test_import.py     | 2 +-
- 22 files changed, 22 insertions(+), 23 deletions(-)
+ 22 files changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/setup.py b/setup.py
-index a061598..5cf6fdc 100644
+index e1b2e07..4a01e73 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -115,7 +115,6 @@ case second 'm'.  Any other spelling is incorrect.""",
+@@ -121,7 +121,6 @@ case second 'm'.  Any other spelling is incorrect.""",
          'flufl.bounce',
          'flufl.i18n>=2.0',
          'flufl.lock>=3.1',
@@ -46,70 +46,56 @@ index a061598..5cf6fdc 100644
          'lazr.config',
          'python-dateutil>=2.0',
 diff --git a/src/mailman.egg-info/requires.txt b/src/mailman.egg-info/requires.txt
-index 54ac2bd..61ec47c 100644
+index a54945d..d3720db 100644
 --- a/src/mailman.egg-info/requires.txt
 +++ b/src/mailman.egg-info/requires.txt
-@@ -9,7 +9,6 @@ falcon>1.0.0
- flufl.bounce
+@@ -10,7 +10,6 @@ flufl.bounce
  flufl.i18n>=2.0
  flufl.lock>=3.1
--importlib_resources>=1.1.0
  gunicorn
+-importlib_resources>=1.1.0
  lazr.config
+ passlib
  python-dateutil>=2.0
 diff --git a/src/mailman/archiving/tests/test_mhonarc.py b/src/mailman/archiving/tests/test_mhonarc.py
-index 7a5e16a..e432016 100644
+index 7a5e16a..8bcab32 100644
 --- a/src/mailman/archiving/tests/test_mhonarc.py
 +++ b/src/mailman/archiving/tests/test_mhonarc.py
-@@ -23,10 +23,10 @@ import shutil
+@@ -23,7 +23,7 @@ import shutil
  import tempfile
  import unittest
  
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.app.lifecycle import create_list
  from mailman.archiving.mhonarc import MHonArc
  from mailman.database.transaction import transaction
-+from mailman.utilities.filesystem import path
- from mailman.testing.helpers import (
-     configuration, specialized_message_from_string as mfs)
- from mailman.testing.layers import ConfigLayer
 diff --git a/src/mailman/bin/tests/test_mailman.py b/src/mailman/bin/tests/test_mailman.py
-index 4f6900d..5e03011 100644
+index 4f6900d..4a41b40 100644
 --- a/src/mailman/bin/tests/test_mailman.py
 +++ b/src/mailman/bin/tests/test_mailman.py
-@@ -21,7 +21,6 @@ import unittest
+@@ -21,7 +21,7 @@ import unittest
  
  from click.testing import CliRunner
  from datetime import timedelta
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.app.lifecycle import create_list
  from mailman.bin.mailman import main
  from mailman.config import config
-@@ -29,6 +28,7 @@ from mailman.database.transaction import transaction
- from mailman.interfaces.command import ICLISubCommand
- from mailman.testing.layers import ConfigLayer
- from mailman.utilities.datetime import now
-+from mailman.utilities.filesystem import path
- from mailman.utilities.modules import add_components
- from unittest.mock import patch
- 
 diff --git a/src/mailman/bin/tests/test_master.py b/src/mailman/bin/tests/test_master.py
-index f176bf1..51edc48 100644
+index 757f50b..200b711 100644
 --- a/src/mailman/bin/tests/test_master.py
 +++ b/src/mailman/bin/tests/test_master.py
-@@ -25,11 +25,11 @@ from click.testing import CliRunner
+@@ -25,7 +25,7 @@ from click.testing import CliRunner
  from contextlib import ExitStack, suppress
  from datetime import timedelta
  from flufl.lock import Lock, TimeOutError
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from io import StringIO
  from mailman.bin import master
  from mailman.config import config
- from mailman.testing.layers import ConfigLayer
-+from mailman.utilities.filesystem import path
- from unittest.mock import patch
- 
- 
 diff --git a/src/mailman/chains/tests/test_hold.py b/src/mailman/chains/tests/test_hold.py
 index f93bc2f..087b0b5 100644
 --- a/src/mailman/chains/tests/test_hold.py
@@ -124,10 +110,10 @@ index f93bc2f..087b0b5 100644
  from mailman.chains.builtin import BuiltInChain
  from mailman.chains.hold import HoldChain, autorespond_to_sender
 diff --git a/src/mailman/commands/docs/import.rst b/src/mailman/commands/docs/import.rst
-index 67e0f8b..cc3a523 100644
+index 947d932..26935d1 100644
 --- a/src/mailman/commands/docs/import.rst
 +++ b/src/mailman/commands/docs/import.rst
-@@ -25,7 +25,7 @@ You must also specify a pickle file to import.
+@@ -26,7 +26,7 @@ You must also specify a pickle file to import.
  
  Too bad the list doesn't exist.
  
@@ -137,78 +123,58 @@ index 67e0f8b..cc3a523 100644
      ...     pickle_file = str(pickle_path)
      ...     command('mailman import21 import@example.com ' + pickle_file)
 diff --git a/src/mailman/commands/tests/test_cli_control.py b/src/mailman/commands/tests/test_cli_control.py
-index 6222fb8..374ac2f 100644
+index 6222fb8..171bf6c 100644
 --- a/src/mailman/commands/tests/test_cli_control.py
 +++ b/src/mailman/commands/tests/test_cli_control.py
-@@ -29,12 +29,12 @@ from click.testing import CliRunner
+@@ -29,7 +29,7 @@ from click.testing import CliRunner
  from contextlib import ExitStack, suppress
  from datetime import datetime, timedelta
  from flufl.lock import SEP
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.bin.master import WatcherState
  from mailman.commands.cli_control import reopen, restart, start
  from mailman.config import config
- from mailman.testing.helpers import configuration
- from mailman.testing.layers import ConfigLayer
-+from mailman.utilities.filesystem import path
- from public import public
- from tempfile import TemporaryDirectory
- from unittest.mock import patch
 diff --git a/src/mailman/commands/tests/test_cli_import.py b/src/mailman/commands/tests/test_cli_import.py
-index 6a3dd0a..5dfea6e 100644
+index 3080691..dd536da 100644
 --- a/src/mailman/commands/tests/test_cli_import.py
 +++ b/src/mailman/commands/tests/test_cli_import.py
-@@ -21,10 +21,10 @@ import unittest
+@@ -21,7 +21,7 @@ import unittest
  
  from click.testing import CliRunner
  from contextlib import ExitStack
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.app.lifecycle import create_list
  from mailman.commands.cli_import import import21
  from mailman.testing.layers import ConfigLayer
-+from mailman.utilities.filesystem import path
- from mailman.utilities.importer import Import21Error
- from pickle import dump
- from tempfile import NamedTemporaryFile
 diff --git a/src/mailman/config/config.py b/src/mailman/config/config.py
-index 104e926..3c024f5 100644
+index 104e926..2b4d1ab 100644
 --- a/src/mailman/config/config.py
 +++ b/src/mailman/config/config.py
-@@ -24,13 +24,13 @@ import mailman.templates
+@@ -24,7 +24,8 @@ import mailman.templates
  from configparser import ConfigParser
  from contextlib import ExitStack
  from flufl.lock import Lock
 -from importlib_resources import path, read_text
-+from importlib.resourcess import read_text
++from mailman.utilities.filesystem import path
++from importlib.resources import read_text
  from lazr.config import ConfigSchema, as_boolean
  from mailman import version
  from mailman.interfaces.configuration import (
-     ConfigurationUpdatedEvent, IConfiguration, MissingConfigurationFileError)
- from mailman.interfaces.languages import ILanguageManager
--from mailman.utilities.filesystem import makedirs
-+from mailman.utilities.filesystem import makedirs, path
- from mailman.utilities.modules import call_name, expand_path
- from public import public
- from string import Template
 diff --git a/src/mailman/config/tests/test_configuration.py b/src/mailman/config/tests/test_configuration.py
-index 74c1838..583fca3 100644
+index 74c1838..b50cc6d 100644
 --- a/src/mailman/config/tests/test_configuration.py
 +++ b/src/mailman/config/tests/test_configuration.py
-@@ -22,13 +22,13 @@ import tempfile
+@@ -22,7 +22,7 @@ import tempfile
  import unittest
  
  from contextlib import ExitStack
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.config.config import (
      Configuration, external_configuration, load_external)
  from mailman.interfaces.configuration import (
-     ConfigurationUpdatedEvent, MissingConfigurationFileError)
- from mailman.testing.helpers import configuration, event_subscribers
- from mailman.testing.layers import ConfigLayer
-+from mailman.utilities.filesystem import path
- from tempfile import NamedTemporaryFile, TemporaryDirectory
- from unittest import mock
- 
 diff --git a/src/mailman/core/initialize.py b/src/mailman/core/initialize.py
 index d23685b..3f5a966 100644
 --- a/src/mailman/core/initialize.py
@@ -223,24 +189,20 @@ index d23685b..3f5a966 100644
  from public import public
  from zope.component import getUtility
 diff --git a/src/mailman/email/tests/test_message.py b/src/mailman/email/tests/test_message.py
-index cf097e0..0859270 100644
+index dd75fbc..5206cbd 100644
 --- a/src/mailman/email/tests/test_message.py
 +++ b/src/mailman/email/tests/test_message.py
-@@ -22,11 +22,11 @@ import unittest
- from email import message_from_binary_file
+@@ -23,7 +23,7 @@ from email import message_from_binary_file
  from email.header import Header
  from email.parser import FeedParser
+ from email.utils import _has_surrogates
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.app.lifecycle import create_list
  from mailman.email.message import Message, UserNotification
  from mailman.testing.helpers import get_queue_messages
- from mailman.testing.layers import ConfigLayer
-+from mailman.utilities.filesystem import path
- 
- 
- class TestMessage(unittest.TestCase):
 diff --git a/src/mailman/handlers/tests/test_mimedel.py b/src/mailman/handlers/tests/test_mimedel.py
-index 25c8994..560e626 100644
+index 35092a1..8f919b1 100644
 --- a/src/mailman/handlers/tests/test_mimedel.py
 +++ b/src/mailman/handlers/tests/test_mimedel.py
 @@ -25,7 +25,7 @@ import tempfile
@@ -253,7 +215,7 @@ index 25c8994..560e626 100644
  from mailman.app.lifecycle import create_list
  from mailman.config import config
 diff --git a/src/mailman/plugins/docs/intro.rst b/src/mailman/plugins/docs/intro.rst
-index 9831f70..a77adf1 100644
+index e605318..be5b7ab 100644
 --- a/src/mailman/plugins/docs/intro.rst
 +++ b/src/mailman/plugins/docs/intro.rst
 @@ -16,7 +16,7 @@ enabled by adding a section to your ``mailman.cfg`` file, such as:
@@ -266,23 +228,20 @@ index 9831f70..a77adf1 100644
      ...     path('mailman.plugins.testing', 'hooks.cfg')))
  
 diff --git a/src/mailman/plugins/testing/layer.py b/src/mailman/plugins/testing/layer.py
-index 230be56..597fe45 100644
+index 230be56..781f8ff 100644
 --- a/src/mailman/plugins/testing/layer.py
 +++ b/src/mailman/plugins/testing/layer.py
-@@ -20,10 +20,10 @@
+@@ -20,7 +20,7 @@
  import os
  
  from contextlib import ExitStack
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from mailman.testing.helpers import (
      TestableMaster, hackenv, wait_for_webservice)
  from mailman.testing.layers import SMTPLayer
-+from mailman.utilities.filesystem import path
- from public import public
- 
- 
 diff --git a/src/mailman/rules/dmarc.py b/src/mailman/rules/dmarc.py
-index e9235bd..c3d26f8 100644
+index 4172653..227cb5f 100644
 --- a/src/mailman/rules/dmarc.py
 +++ b/src/mailman/rules/dmarc.py
 @@ -24,7 +24,7 @@ import dns.resolver
@@ -295,25 +254,18 @@ index e9235bd..c3d26f8 100644
  from mailman.config import config
  from mailman.core.i18n import _
 diff --git a/src/mailman/rules/tests/test_dmarc.py b/src/mailman/rules/tests/test_dmarc.py
-index 68ba04b..0011988 100644
+index dce5a7a..7bc44de 100644
 --- a/src/mailman/rules/tests/test_dmarc.py
 +++ b/src/mailman/rules/tests/test_dmarc.py
-@@ -27,7 +27,6 @@ from dns.rdatatype import CNAME, TXT
+@@ -27,7 +27,7 @@ from dns.rdatatype import CNAME, TXT
  from dns.resolver import NXDOMAIN, NoAnswer, NoNameservers
  from email import message_from_bytes
  from http.server import BaseHTTPRequestHandler, HTTPServer
 -from importlib_resources import path
++from mailman.utilities.filesystem import path
  from lazr.config import as_timedelta
  from mailman.app.lifecycle import create_list
  from mailman.config import config
-@@ -38,6 +37,7 @@ from mailman.testing.helpers import (
-     wait_for_webservice)
- from mailman.testing.layers import ConfigLayer
- from mailman.utilities.datetime import now
-+from mailman.utilities.filesystem import path
- from public import public
- from unittest import TestCase
- from unittest.mock import patch
 diff --git a/src/mailman/testing/i18n.py b/src/mailman/testing/i18n.py
 index cab6365..2162c16 100644
 --- a/src/mailman/testing/i18n.py
@@ -355,15 +307,15 @@ index 6c572ca..13f0ae5 100644
  
  
 diff --git a/src/mailman/utilities/tests/test_import.py b/src/mailman/utilities/tests/test_import.py
-index 950f7ba..202f279 100644
+index 0f615e6..f0294ef 100644
 --- a/src/mailman/utilities/tests/test_import.py
 +++ b/src/mailman/utilities/tests/test_import.py
-@@ -22,7 +22,7 @@ import unittest
- 
- from datetime import timedelta, datetime
+@@ -23,7 +23,7 @@ import unittest
+ from contextlib import ExitStack
+ from datetime import datetime, timedelta
  from enum import Enum
 -from importlib_resources import open_binary
 +from importlib.resources import open_binary
  from mailman.app.lifecycle import create_list
  from mailman.config import config
- from mailman.handlers.decorate import decorate
+ from mailman.database.helpers import is_mysql

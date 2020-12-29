@@ -13,7 +13,7 @@ Author: Jonas Meurer <jonas@freesources.org>
  1 file changed, 12 deletions(-)
 
 diff --git a/README.rst b/README.rst
-index a706c11..a25488a 100644
+index 1cc1487..9cb103e 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -2,18 +2,6 @@
