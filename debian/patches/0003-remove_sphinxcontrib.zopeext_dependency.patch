@@ -1,0 +1,36 @@
+From: Jonas Meurer <jonas@freesources.org>
+Date: Tue, 29 Dec 2020 17:24:16 +0100
+Subject: Remove sphinx dependency `sphinxcontrib.zopeext.autointerface`
+
+`sphinxcontrib.zopeext` is not available in Debian. We might want to
+package it for Debian one day, but until then let's just ignore the
+dependency (and make a small part of the docs not build properly).
+
+Forwarded: not-needed
+Author: Jonas Meurer <jonas@freesources.org>
+---
+ conf.py               | 1 -
+ requirements-docs.txt | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/conf.py b/conf.py
+index 5716fcc..8522acd 100644
+--- a/conf.py
++++ b/conf.py
+@@ -29,7 +29,6 @@ sys.path.append(os.path.abspath('_ext'))
+ extensions = ['sphinx.ext.autodoc',
+               'sphinx.ext.viewcode',
+               'sphinx.ext.graphviz',
+-              'sphinxcontrib.zopeext.autointerface',
+               'configplugin',
+ ]
+ 
+diff --git a/requirements-docs.txt b/requirements-docs.txt
+index fa78f08..279c4fc 100644
+--- a/requirements-docs.txt
++++ b/requirements-docs.txt
+@@ -1,4 +1,3 @@
+ sphinx>=3.2
+ sphinx_rtd_theme
+ docutils==0.12
+-sphinxcontrib-zopeext
