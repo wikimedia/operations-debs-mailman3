@@ -24,8 +24,10 @@ mailman3 (3.3.2-1) UNRELEASED; urgency=medium
   * d/p/0004-add_missing_sphinx_configplugin.patch: New patch to add the
     missing custom sphinx plugin `configplugin`
   * d/mailman3.lintian-overrides: Ignore national encoding for testing files
+  * d/p/0005-fix_template_permissions.patch: Fix permissions of italian
+    template translation files.
 
- -- Jonas Meurer <jonas@freesources.org>  Tue, 29 Dec 2020 18:18:44 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 29 Dec 2020 18:21:06 +0100
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 

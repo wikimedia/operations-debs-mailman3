@@ -2,3 +2,4 @@
 0002-remove_importlib_resources_dependency.patch
 0003-remove_sphinxcontrib.zopeext_dependency.patch
 0004-add_missing_sphinx_configplugin.patch
+0005-fix_template_permissions.patch
