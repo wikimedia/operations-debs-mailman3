@@ -1,0 +1,2 @@
+mailman3: national-encoding usr/lib/python3/dist-packages/mailman/email/tests/data/bad_email.eml
+mailman3: national-encoding usr/lib/python3/dist-packages/mailman/testing/mailman-fr.po
