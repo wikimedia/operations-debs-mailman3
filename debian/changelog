@@ -5,11 +5,11 @@ mailman3 (3.3.2-1) UNRELEASED; urgency=medium
     after logrotate's job. (Closes: #958977)
 
   [ Pierre-Elliott Bécue ]
-  * New upstream release 3.3.1. (Closes: #958976, #960072)
+  * New upstream release 3.3.1. (Closes: #958976, #960072, #968371)
   * Update dependencies and patches for the new upstream release
 
   [ Jonas Meurer ]
-  * New upstream release 3.3.2.
+  * New upstream release 3.3.2. (Closes: #968817, #977935)
     - d/p/0002-remove_importlib_resources_dependency.patch: rebase
   * d/mailman3.cron.d:
     - Fix cronjob for digests
@@ -24,7 +24,7 @@ mailman3 (3.3.2-1) UNRELEASED; urgency=medium
   * d/p/0004-add_missing_sphinx_configplugin.patch: New patch to add the
     missing custom sphinx plugin `configplugin`
 
- -- Jonas Meurer <jonas@freesources.org>  Tue, 29 Dec 2020 17:50:02 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 29 Dec 2020 18:12:36 +0100
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
