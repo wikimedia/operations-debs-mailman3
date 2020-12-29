@@ -11,14 +11,15 @@ mailman3 (3.3.2-1) UNRELEASED; urgency=medium
   [ Jonas Meurer ]
   * New upstream release 3.3.2.
   * d/mailman3.cron.d:
-    - Fix cronjob for digests and add cronjobs for sending out pending
-      moderation notifications
+    - Fix cronjob for digests
+    - Add cronjob for sending out pending moderation notifications
+    - Add cronjob for gating messages from usenet to mailinglists
   * d/control:
     - Bump Standards-Version to 4.5.1
     - Remove versioned build-dependency on python3-falcon 
     - Add build-dependency on python3-atpublic
 
- -- Jonas Meurer <jonas@freesources.org>  Mon, 28 Dec 2020 20:57:35 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 29 Dec 2020 13:31:12 +0100
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
