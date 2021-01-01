@@ -11,7 +11,7 @@ mailman3 (3.3.2-1) unstable; urgency=medium
   [ Jonas Meurer ]
   * New upstream release 3.3.2. (Closes: #968817, #977935)
     - d/p/0002-remove_importlib_resources_dependency.patch: rebase
-  * d/mailman3.cron.d:
+  * d/mailman3.cron.d: (Closes: #978959)
     - Fix cronjob for digests
     - Add cronjob for sending out pending moderation notifications
     - Add cronjob for gating messages from usenet to mailinglists
