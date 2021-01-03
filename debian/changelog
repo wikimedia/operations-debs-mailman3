@@ -28,9 +28,9 @@ mailman3 (3.3.2-1) unstable; urgency=medium
   * d/mailman3.lintian-overrides: Ignore national encoding for testing files
   * d/p/0005-fix_template_permissions.patch: Fix permissions of italian
     template translation files.
-  * d/mailman3.postinst: Replace depricated `tempfile` with `mktemp`
+  * d/mailman3.postinst: Replace deprecated `tempfile` with `mktemp`
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 03 Jan 2021 21:04:09 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 03 Jan 2021 21:19:46 +0100
 
 mailman3 (3.2.2-1) unstable; urgency=medium
 
