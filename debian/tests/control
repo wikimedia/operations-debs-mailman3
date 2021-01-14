@@ -1,14 +1,17 @@
 # Unit tests not working yet, see upstream issue #400
-#Test-Command: python3 -m nose2
-#Depends: python3-flufl.testing,
-#         python3-nose2
+Tests: mailman3-nose2
+Depends: mailman3,
+         procps,
+         python3-flufl.testing,
+         python3-nose2
+Restrictions: isolation-container, needs-root
 
 Test-Command: mailman create testlist@example.org
-Depends: @,
+Depends: mailman3,
          postfix
 Restrictions: isolation-container, needs-root
 
 Tests: mailman3-api
-Depends: @,
+Depends: mailman3,
          curl
 Restrictions: isolation-container, needs-root
