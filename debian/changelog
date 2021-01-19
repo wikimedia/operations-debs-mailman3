@@ -1,4 +1,4 @@
-mailman3 (3.3.3~rc1-1) UNRELEASED; urgency=medium
+mailman3 (3.3.3~rc1-1) unstable; urgency=high
 
   * New upstream rc 3.3.3~rc1.
     - drop obsolete patch d/p/0003-add_missing_sphinx_configplugin.patch
