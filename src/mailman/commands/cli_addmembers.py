@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -29,7 +29,8 @@ from mailman.interfaces.listmanager import IListManager
 from mailman.interfaces.member import (
     AlreadySubscribedError, DeliveryMode, DeliveryStatus,
     MembershipIsBannedError)
-from mailman.interfaces.subscriptions import ISubscriptionManager
+from mailman.interfaces.subscriptions import (ISubscriptionManager,
+                                              SubscriptionPendingError)
 from mailman.interfaces.usermanager import IUserManager
 from mailman.utilities.options import I18nCommand
 from public import public
@@ -98,6 +99,9 @@ def add_members(mlist, in_fp, delivery, invite, welcome_msg):
             print(_('Already subscribed (skipping): $email'), file=sys.stderr)
         except MembershipIsBannedError:
             print(_('Membership is banned (skipping): $email'),
+                  file=sys.stderr)
+        except SubscriptionPendingError:
+            print(_('Subscription already pending (skipping): $email'),
                   file=sys.stderr)
 
 

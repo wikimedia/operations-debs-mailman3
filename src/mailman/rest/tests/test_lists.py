@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2011-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -634,6 +634,7 @@ class TestListDigests(unittest.TestCase):
     def setUp(self):
         with transaction():
             self._mlist = create_list('ant@example.com')
+            self._mlist.send_goodbye_message = False
             self._mlist.send_welcome_message = False
             anne = getUtility(IUserManager).create_address('anne@example.com')
             self._mlist.subscribe(anne)

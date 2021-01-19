@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -241,10 +241,13 @@ class Test_gatenews(TestCase):
         self.assertEqual(lines[3], 'Bad message')
         self.assertTrue(lines[4].endswith('mylist@example.com watermark: 3'))
 
-    def test_original_size_in_msgdata(self):
+    def test_original_size_in_msgdata_and_message(self):
         with get_nntplib_nntp():
             self._command.invoke(gatenews)
         items = get_queue_messages('in', expected_count=1)
         msgdata = items[0].msgdata
+        msg = items[0].msg
         self.assertTrue(msgdata.get('original_size', False))
         self.assertEqual(msgdata['original_size'], 184)
+        self.assertTrue(hasattr(msg, 'original_size'))
+        self.assertEqual(msg.original_size, 184)

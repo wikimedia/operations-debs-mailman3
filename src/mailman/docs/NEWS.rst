@@ -8,6 +8,58 @@ Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 Here is a history of user visible changes to Mailman.
 
 
+.. _news-3.3.3:
+
+3.3.3rc1
+========
+
+(2021-01-17)
+
+Bugs
+----
+* Handle some UnicodeEncodeErrors in creating digests.  (Closes #560)
+* Increased the size of the data column in the workflowstate table.
+  (Closes #793)
+* Implemented a ``scrubber`` for plain text digests.  (Closes #473)
+* The ``mailman gatenews`` command now adds ``original_size`` as a message
+  attribute.  (Extends fix for #762)
+* Handle FileNotFoundError when creating digest.mmdf file without a
+  parent directory present.  (Closes #699)
+* Fixed an issue where content filtering can throw UnicodeEncodeError when
+  converting HTML to plain text.  (Closes #798)
+* A bounce for a non-existent list is now handled.  (Closes #799)
+* RFC 2047 From: headers in emailed ``join`` commands are now decoded.
+  (Closes #802)
+* The ``mailman addmembers`` command now catches and reports a
+  ``SubscriptionPendingError``.  (Closes #805)
+* RFC 2369 ``List-Owner`` header is now added when these headers are included.
+  (Closes #809)
+* Header filters will now properly match RFC 2047 encoded headers.
+  (Closes #815)
+
+Command line
+------------
+* A new ``findmember`` ``mailman`` subcommand has been added to find to which
+  lists and with which roles an address matching a given pattern belongs.
+* A new ``changeaddress`` ``mailman`` subcommand has been added to enable site
+  admins to change a user's address.
+
+New Features
+------------
+* There is a new setting ``hold_digest`` in the ``[mailman]`` section of
+  mailman.cfg.  If this is set to ``yes``, posts with a digest like Subject:
+  header or which quote the digest masthead will be held for moderation.
+
+REST
+----
+* List configuration option ``send_goodbye_message`` is now exposed through
+  the REST API. (See !737)
+* Allow updating an Addresses' display_name attribute. (Closes #786)
+* Allow specifying a reason when rejecting a subscription request. (Closes
+  #767)
+* REST API now exposes unsubscription requests that can be handled by
+  Moderator. (Closes #768)
+
 3.3.2
 =====
 

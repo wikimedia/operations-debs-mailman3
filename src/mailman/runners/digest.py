@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2009-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -35,6 +35,7 @@ from mailman.handlers.decorate import decorate
 from mailman.interfaces.member import DeliveryMode, DeliveryStatus
 from mailman.interfaces.template import ITemplateLoader
 from mailman.utilities.mailbox import Mailbox
+from mailman.utilities.scrubber import scrub
 from mailman.utilities.string import expand, oneline, wrap
 from public import public
 from zope.component import getUtility
@@ -248,20 +249,10 @@ class RFC1153Digester(Digester):
                 value = '\n\t'.join(value.split('\n'))
                 print(value, file=self._text)
         print(file=self._text)
-        # Add the payload.  If the decoded payload is empty, this may be a
-        # multipart message.  In that case, just stringify it.
-        payload = msg.get_payload(decode=True)
-        if not payload:
-            payload = msg.as_string().split('\n\n', 1)[1]
-        if isinstance(payload, bytes):
-            try:
-                # Do the decoding inside the try/except so that if the charset
-                # conversion fails, we'll just drop back to ascii.
-                charset = msg.get_content_charset('us-ascii')
-                payload = payload.decode(charset, 'replace')
-            except (LookupError, TypeError):
-                # Unknown or empty charset.
-                payload = payload.decode('us-ascii', 'replace')
+        # Get the scrubbed payload.  This is the original payload with all
+        # non text/plain parts replaced by notes that they've been removed.
+        payload = scrub(msg)
+        # Add the payload.
         print(payload, file=self._text)
         if not payload.endswith('\n'):
             print(file=self._text)
@@ -286,13 +277,14 @@ class RFC1153Digester(Digester):
         print(sign_off, file=self._text)
         print('*' * len(sign_off), file=self._text)
         # If the digest message can't be encoded by the list character set,
-        # fall back to utf-8.
+        # fall back to utf-8 with error replacement.
         text = self._text.getvalue()
         try:
             self._message.set_payload(text.encode(self._charset),
                                       charset=self._charset)
         except UnicodeError:
-            self._message.set_payload(text.encode('utf-8'), charset='utf-8')
+            self._message.set_payload(text.encode('utf-8', errors='replace'),
+                                      charset='utf-8')
         return self._message
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2015-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -19,7 +19,7 @@
 
 from mailman.database.model import Model
 from mailman.database.transaction import dbconnection
-from mailman.database.types import SAUnicode
+from mailman.database.types import SAUnicode, SAUnicodeLarge
 from mailman.interfaces.workflow import IWorkflowState, IWorkflowStateManager
 from public import public
 from sqlalchemy import Column
@@ -35,7 +35,7 @@ class WorkflowState(Model):
 
     token = Column(SAUnicode, primary_key=True)
     step = Column(SAUnicode)
-    data = Column(SAUnicode)
+    data = Column(SAUnicodeLarge)
 
 
 @public

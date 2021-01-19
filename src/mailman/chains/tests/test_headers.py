@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -230,6 +230,30 @@ This is junk
         msgdata = {}
         header_matches = IHeaderMatchList(self._mlist)
         header_matches.append('Content-Type', 'application/junk', 'hold')
+        # This event subscriber records the event that occurs when the message
+        # is processed by the owner chain.
+        events = []
+        with event_subscribers(events.append):
+            process(self._mlist, msg, msgdata, start_chain='header-match')
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertIsInstance(event, HoldEvent)
+        self.assertEqual(event.chain, config.chains['hold'])
+
+    def test_rfc2047_encodedheader(self):
+        # Test case where msg.get_all() returns raw rfc2047 encoded string.
+        msg = message_from_bytes(b"""\
+From: anne@example.com
+To: test@example.com
+Subject: =?utf-8?b?SSBsaWtlIElrZQo=?=
+Message-ID: <ant>
+
+body
+
+""", Message)
+        msgdata = {}
+        header_matches = IHeaderMatchList(self._mlist)
+        header_matches.append('Subject', 'I Like Ike', 'hold')
         # This event subscriber records the event that occurs when the message
         # is processed by the owner chain.
         events = []
