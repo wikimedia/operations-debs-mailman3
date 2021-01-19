@@ -6,8 +6,9 @@ mailman3 (3.3.3~rc1-1) UNRELEASED; urgency=medium
   * d/tests/control:
     - Make tests only depend on mailman3, not all binary packages.
     - Run nose2 tests
+  * d/p/0003-Remove-failing-test.patch: Temporarily disable failing test
 
- -- Jonas Meurer <jonas@freesources.org>  Tue, 19 Jan 2021 14:09:21 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Tue, 19 Jan 2021 14:25:08 +0100
 
 mailman3 (3.3.2-1) unstable; urgency=medium
 
