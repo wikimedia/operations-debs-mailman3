@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -207,6 +207,7 @@ class TestSubscriptionModeration(unittest.TestCase):
     def setUp(self):
         with transaction():
             self._mlist = create_list('ant@example.com')
+            self._mlist.unsubscription_policy = SubscriptionPolicy.moderate
             self._registrar = ISubscriptionManager(self._mlist)
             manager = getUtility(IUserManager)
             self._anne = manager.create_address(
@@ -308,6 +309,52 @@ class TestSubscriptionModeration(unittest.TestCase):
             '/count?token_owner=subscriber')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json['count'], 2)
+
+    def test_list_held_unsubscription_request(self):
+        with transaction():
+            # First, subscribe Anne and then trigger an un-subscription.
+            self._mlist.subscribe(self._bart)
+            token, token_owner, member = self._registrar.unregister(self._bart)
+            # Anne's un-subscription request got held.
+            self.assertIsNotNone(token)
+            self.assertIsNotNone(member)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests'
+            '?request_type=unsubscription')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json['entries']), 1)
+        # Individual request can then be fetched.
+        url = 'http://localhost:9001/3.0/lists/ant@example.com/requests/{}'
+        json, response = call_api(url.format(token))
+        self.assertEqual(json['token'], token)
+        self.assertEqual(json['token_owner'], token_owner.name)
+        self.assertEqual(json['email'], 'bart@example.com')
+        self.assertEqual(json['type'], 'unsubscription')
+        # Bart should still be a Member.
+        self.assertIsNotNone(
+            self._mlist.members.get_member('bart@example.com'))
+        # Now, accept the request.
+        json, response, call_api(url.format(token), dict(
+            action='accept',
+            ))
+        self.assertEqual(response.status_code, 200)
+        # Now, the Member should be un-subscribed.
+        self.assertIsNone(
+            self._mlist.members.get_member('bart@example.com'))
+
+    def test_unsubscription_request_count(self):
+        with transaction():
+            # First, subscribe Anne and then trigger an un-subscription.
+            self._mlist.subscribe(self._bart)
+            token, token_owner, member = self._registrar.unregister(self._bart)
+            # Anne's un-subscription request got held.
+            self.assertIsNotNone(token)
+            self.assertIsNotNone(member)
+        json, response = call_api(
+            'http://localhost:9001/3.0/lists/ant@example.com/requests/count'
+            '?request_type=unsubscription')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json['count'], 1)
 
     def test_individual_request(self):
         # We can view an individual request.
@@ -501,6 +548,33 @@ class TestSubscriptionModeration(unittest.TestCase):
                      '/requests/bogus',
                      dict(action='reject'))
         self.assertEqual(cm.exception.code, 404)
+
+    def test_reject_with_reason(self):
+        # Try to reject a request with an additional comment/reason.
+        # POST to the request to reject it.  This leaves a bounce message in
+        # the virgin queue.
+        with transaction():
+            token, token_owner, member = self._registrar.register(self._anne)
+        # Anne's subscription request got held.
+        self.assertIsNone(member)
+        # Clear out the virgin queue, which currently contains the
+        # confirmation message sent to Anne.
+        get_queue_messages('virgin')
+        url = 'http://localhost:9001/3.0/lists/ant@example.com/requests/{}'
+        reason = 'You are not authorized!'
+        json, response = call_api(url.format(token), dict(
+            action='reject',
+            reason=reason))
+        self.assertEqual(response.status_code, 204)
+        # And the rejection message to Anne is now in the virgin queue.
+        items = get_queue_messages('virgin')
+        self.assertEqual(len(items), 1)
+        message = items[0].msg
+        self.assertEqual(message['From'], 'ant-bounces@example.com')
+        self.assertEqual(message['To'], 'anne@example.com')
+        self.assertEqual(message['Subject'],
+                         'Request to mailing list "Ant" rejected')
+        self.assertTrue(reason in message.as_string())
 
     def test_hold_keeps_holding(self):
         # POST to the request to continue holding it.
