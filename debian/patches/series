@@ -1,4 +1,4 @@
 0001_README_remove_embedded_images.patch
 0002-remove_sphinxcontrib.zopeext_dependency.patch
 0003-add_missing_sphinx_configplugin.patch
-0004-fix_template_permissions.patch
+#0004-fix_template_permissions.patch
