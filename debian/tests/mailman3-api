@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# install postfix
+debconf-set-selections <<< "postfix postfix/mailname string localhost" 2>&1
+debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'" 2>&1
+hostname localhost
+apt-get install -y postfix 2>&1
+
 mailman3_cfg="/etc/mailman3/mailman.cfg"
 
 port="$(sed -ne 's|^port:\s*\(\S\+\)|\1|p' $mailman3_cfg)"
