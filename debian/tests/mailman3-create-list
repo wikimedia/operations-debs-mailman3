@@ -6,4 +6,7 @@ debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Si
 hostname localhost
 apt-get install -y postfix 2>&1
 
+# restart mailman3 after postfix is available
+systemctl restart mailman3
+
 mailman create testlist@example.org
