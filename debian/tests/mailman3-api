@@ -9,6 +9,9 @@ apt-get install -y postfix 2>&1
 # restart mailman3 after postfix is available
 service mailman3 restart
 
+# wait for mailman3 to come back after restart
+sleep 10
+
 mailman3_cfg="/etc/mailman3/mailman.cfg"
 
 port="$(sed -ne 's|^port:\s*\(\S\+\)|\1|p' $mailman3_cfg)"
