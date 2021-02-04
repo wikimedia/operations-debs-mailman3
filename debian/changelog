@@ -1,3 +1,9 @@
+mailman3 (3.3.3-1) unstable; urgency=medium
+
+  *  New upstream release 3.3.3.
+
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 04 Feb 2021 22:32:08 +0100
+
 mailman3 (3.3.3~rc1-1) unstable; urgency=high
 
   * New upstream rc 3.3.3~rc1.
