@@ -101,6 +101,7 @@ src/mailman/chains/tests/__init__.py
 src/mailman/chains/tests/issue144.eml
 src/mailman/chains/tests/test_accept.py
 src/mailman/chains/tests/test_base.py
+src/mailman/chains/tests/test_discard.py
 src/mailman/chains/tests/test_dmarc.py
 src/mailman/chains/tests/test_headers.py
 src/mailman/chains/tests/test_hold.py

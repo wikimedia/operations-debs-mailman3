@@ -10,10 +10,10 @@ Here is a history of user visible changes to Mailman.
 
 .. _news-3.3.3:
 
-3.3.3rc1
-========
+3.3.3
+=====
 
-(2021-01-17)
+(2021-02-02)
 
 Bugs
 ----
@@ -36,6 +36,14 @@ Bugs
   (Closes #809)
 * Header filters will now properly match RFC 2047 encoded headers.
   (Closes #815)
+* Mailman's ``vette`` log discard messages now include the reasons.
+  (Closes #816)
+* Increase the default REST API (gunicorn) timeout to 360 seconds from 30 as
+  several API endpoinds can be very slow. (Closes #770)
+* Header filter rules are now properly processed after deletions and/or
+  reordering.  (Closes #818)
+* Folded ``To: list-confirm+token@...`` headers are now parsed correctly.
+  (Closes: #819)
 
 Command line
 ------------
