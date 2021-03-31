@@ -1,3 +1,10 @@
+mailman3 (3.2.1-1+wmf1) buster-wikimedia; urgency=medium
+
+  * Add fixes for Python 3.7.4 compatibility (cherry-pick).
+  * Add RFC 2369 headers to notification messages (cherry-pick).
+
+ -- Kunal Mehta <legoktm@debian.org>  Wed, 31 Mar 2021 16:22:11 -0700
+
 mailman3 (3.2.1-1) unstable; urgency=medium
 
   * New upstream release 3.2.1
